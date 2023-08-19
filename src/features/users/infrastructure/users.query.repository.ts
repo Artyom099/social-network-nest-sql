@@ -14,6 +14,8 @@ import {
   BannedUserForBlogModelType,
 } from '../schemas/banned.users.for.blog.schema';
 import { BannedUserForBlogViewModel } from '../api/models/banned.user.for.blog.view.model';
+import {InjectDataSource} from "@nestjs/typeorm";
+import {DataSource} from "typeorm";
 
 @Injectable()
 export class UsersQueryRepository {
@@ -21,8 +23,10 @@ export class UsersQueryRepository {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(BannedUserForBlog.name)
     private BannedUserForBlogModel: BannedUserForBlogModelType,
+
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
-  getViewModel(user): UserViewModel {
+  getViewModel(user: UserDocument): UserViewModel {
     return {
       id: user.id,
       login: user.accountData.login,
@@ -127,5 +131,13 @@ export class UsersQueryRepository {
       totalCount, // общее количество пользователей
       items,
     };
+  }
+
+  async getUser(id: string) {
+    return this.dataSource.query(`
+    select "Id" as "id", "Login" as "login", "Email" as "email", "CreatedAt" as "createdAt"
+    from "Users"
+    where "Id" = $1
+    `, [id])
   }
 }

@@ -39,6 +39,7 @@ import {
   BannedUserForBlog,
   BannedUserForBlogSchema,
 } from './features/users/schemas/banned.users.for.blog.schema';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 config();
 
@@ -66,6 +67,16 @@ const useCases = [
       { name: Request.name, schema: RequestSchema },
       { name: BannedUserForBlog.name, schema: BannedUserForBlogSchema },
     ]),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: '127.0.0.1',
+      port: 4000,
+      username: 'postgres',
+      password: 'vgy78uhb',
+      database: 'postgres',
+      autoLoadEntities: false,
+      synchronize: false,
+    }),
   ],
   controllers: [
     AppController,

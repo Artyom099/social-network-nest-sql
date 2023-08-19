@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Device, DeviceDocument } from '../devices.schema';
 import { Model } from 'mongoose';
-import { DeviceViewModel } from '../api/models/devices.models';
+
+import {DeviceViewModel} from "../api/models/device.view.model";
 
 @Injectable()
 export class DevicesQueryRepository {
@@ -12,14 +13,16 @@ export class DevicesQueryRepository {
 
   async getSession(deviceId: string): Promise<DeviceViewModel | null> {
     const device = await this.devicesModel.findOne({ deviceId }).exec();
-    if (!device) return null;
-    else
+    if (!device) {
+      return null;
+    } else {
       return {
         ip: device.ip,
         title: device.title,
         lastActiveDate: device.lastActiveDate.toISOString(),
         deviceId: device.deviceId,
       };
+    }
   }
 
   async getSessions(userId: string): Promise<DeviceViewModel[]> {

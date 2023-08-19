@@ -41,7 +41,7 @@ export class DevicesController {
       req.cookies.refreshToken,
     );
     if (payload)
-      await this.devicesService.deleteOtherSessions(payload.deviceId);
+      return this.devicesService.deleteOtherSessions(payload.deviceId);
   }
 
   @Delete('devices/:id')
@@ -53,9 +53,7 @@ export class DevicesController {
     );
     if (!currentSession) throw new NotFoundException();
 
-    const payload = await this.authService.getTokenPayload(
-      req.cookies.refreshToken,
-    );
+    const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
     const activeSessions = await this.devicesQueryRepository.getSessions(
       payload.userId,
     );
@@ -63,7 +61,7 @@ export class DevicesController {
     if (!activeSessions.find((s) => s.deviceId === currentSession.deviceId)) {
       throw new ForbiddenException();
     } else {
-      await this.devicesService.deleteCurrentSession(deviceId);
+      return this.devicesService.deleteCurrentSession(deviceId);
     }
   }
 }

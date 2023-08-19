@@ -39,18 +39,17 @@ import { UsersRepository } from '../users/infrastructure/users.repository';
 import { BannedUsersForBlogRepository } from '../users/infrastructure/banned.users.for.blog.repository';
 import { BlogsQueryRepository } from '../blogs/infrastructure/blogs.query.repository';
 import { Blog, BlogSchema } from '../blogs/blogs.schema';
+import {TypeOrmModule} from "@nestjs/typeorm";
 
 const useCases = [
   BanUserUseCase,
   UnbanUserUseCase,
-
   DeleteUserUseCase,
   ConfirmEmailUseCase,
   RegisterUserUseCase,
   UpdatePasswordUseCase,
   SendRecoveryCodeUseCase,
   CreateUserByAdminUseCase,
-
   BanUserForCurrentBlogUseCase,
   UpdateConfirmationCodeUseCase,
 ];
@@ -68,6 +67,7 @@ const useCases = [
       { name: Request.name, schema: RequestSchema },
       { name: BannedUserForBlog.name, schema: BannedUserForBlogSchema },
     ]),
+    // TypeOrmModule.forFeature([User, BannedUserForBlog])
   ],
   controllers: [
     AuthController,
