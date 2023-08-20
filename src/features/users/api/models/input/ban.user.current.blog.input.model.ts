@@ -7,9 +7,9 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { Injectable } from '@nestjs/common';
-import { BlogsQueryRepository } from '../../../blogs/infrastructure/blogs.query.repository';
+import {Transform} from 'class-transformer';
+import {Injectable} from '@nestjs/common';
+import {BlogsQueryRepository} from '../../../../blogs/infrastructure/blogs.query.repository';
 
 @Injectable()
 @ValidatorConstraint({ name: 'BlogExists', async: true })

@@ -1,4 +1,4 @@
-import { CommentsService } from '../application/comments.service';
+import {CommentsService} from '../application/comments.service';
 import {
   Body,
   Controller,
@@ -13,13 +13,13 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CommentInputModel } from './models/comment.input.model';
-import { BearerAuthGuard } from '../../../infrastructure/guards/bearer-auth.guard';
-import { CheckUserIdGuard } from '../../../infrastructure/guards/check-userId.guard';
-import { CommentsQueryRepository } from '../infrastructure/comments.query.repository';
-import { CommentViewModel } from './models/comment.view.model';
-import { LikeStatusInputModel } from './models/like.status.input.model';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import {CommentInputModel} from './models/comment.input.model';
+import {BearerAuthGuard} from '../../../infrastructure/guards/bearer-auth.guard';
+import {CheckUserIdGuard} from '../../../infrastructure/guards/check-userId.guard';
+import {CommentsQueryRepository} from '../infrastructure/comments.query.repository';
+import {CommentViewModel} from './models/comment.view.model';
+import {LikeStatusInputModel} from './models/like.status.input.model';
+import {UsersRepository} from '../../users/infrastructure/users.repository';
 
 @Controller('comments')
 export class CommentsController {
@@ -43,7 +43,7 @@ export class CommentsController {
     );
     if (!foundComment) throw new NotFoundException();
 
-    const user = await this.usersRepository.getUserDocumentById(
+    const user = await this.usersRepository.getUserById(
       foundComment.commentatorInfo.userId,
     );
     if (user?.banInfo.isBanned) {

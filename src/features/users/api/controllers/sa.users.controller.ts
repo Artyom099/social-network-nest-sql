@@ -12,18 +12,18 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UsersQueryRepository } from '../../infrastructure/users.query.repository';
-import { BasicAuthGuard } from '../../../../infrastructure/guards/basic-auth.guard';
-import { CreateUserByAdminCommand } from '../../application/sa.users.use.cases/create.user.use.case';
-import { BanUserCommand } from '../../application/sa.users.use.cases/ban.user.use.case';
-import { CommandBus } from '@nestjs/cqrs';
-import { UnbanUserCommand } from '../../application/sa.users.use.cases/unban.user.use.case';
-import { DevicesService } from '../../../devices/application/devices.service';
-import { UsersPaginationInput } from '../../../../infrastructure/utils/common.models';
-import { DeleteUserCommand } from '../../application/sa.users.use.cases/delete.user.use.case';
-import { BanUserInputModel } from '../models/ban.user.input.model';
-import { CreateUserInputModel } from '../models/create.user.input.model';
-import { UsersRepository } from '../../infrastructure/users.repository';
+import {UsersQueryRepository} from '../../infrastructure/users.query.repository';
+import {BasicAuthGuard} from '../../../../infrastructure/guards/basic-auth.guard';
+import {CreateUserByAdminCommand} from '../../application/sa.users.use.cases/create.user.use.case';
+import {BanUserCommand} from '../../application/sa.users.use.cases/ban.user.use.case';
+import {CommandBus} from '@nestjs/cqrs';
+import {UnbanUserCommand} from '../../application/sa.users.use.cases/unban.user.use.case';
+import {DevicesService} from '../../../devices/application/devices.service';
+import {UsersPaginationInput} from '../../../../infrastructure/utils/common.models';
+import {DeleteUserCommand} from '../../application/sa.users.use.cases/delete.user.use.case';
+import {BanUserInputModel} from '../models/input/ban.user.input.model';
+import {CreateUserInputModel} from '../models/input/create.user.input.model';
+import {UsersRepository} from '../../infrastructure/users.repository';
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
@@ -65,8 +65,8 @@ export class SaUsersController {
     @Param('id') userId: string,
     @Body() inputModel: BanUserInputModel,
   ) {
-    const foundUser = await this.usersRepository.getUserDocumentById(userId);
-    if (!foundUser) throw new NotFoundException('User not found');
+    const user = await this.usersRepository.getUserById(userId);
+    if (!user) throw new NotFoundException('User not found');
 
     if (inputModel.isBanned) {
       await this.commandBus.execute(new BanUserCommand(userId, inputModel));

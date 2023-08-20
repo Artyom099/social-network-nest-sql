@@ -1,66 +1,26 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../../users/application/users.service';
+import {Injectable} from '@nestjs/common';
+import {JwtService} from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { randomUUID } from 'crypto';
-import { EmailManager } from '../../../infrastructure/services/email.manager';
-import { jwtConstants } from '../../../infrastructure/utils/settings';
-import { CreateUserInputModel } from '../../users/api/models/create.user.input.model';
-import { UserViewModel } from '../../users/api/models/user.view.model';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import {randomUUID} from 'crypto';
+import {jwtConstants} from '../../../infrastructure/utils/settings';
+import {UsersRepository} from '../../users/infrastructure/users.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private emailManager: EmailManager,
-    private usersService: UsersService,
     private usersRepository: UsersRepository,
   ) {}
 
-  async createUser(
-    InputModel: CreateUserInputModel,
-  ): Promise<UserViewModel | null> {
-    const passwordSalt = await bcrypt.genSalt(10);
-    const passwordHash = await this.generateHash(
-      InputModel.password,
-      passwordSalt,
-    );
-    //создание умного юзера
-    const user = await this.usersRepository.createUserBySelf(
-      InputModel,
-      passwordSalt,
-      passwordHash,
-    );
-    // сохранение умного юзера через репозиторий
-    await this.usersRepository.save(user);
-
-    try {
-      // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
-      await this.emailManager.sendEmailConfirmationMessage(
-        user.accountData.email,
-        user.emailConfirmation.confirmationCode,
-      );
-    } catch (error) {
-      await this.usersRepository.deleteUser(user.id);
-      return null;
-    }
-    return user.getViewModel();
-  }
-
   async checkCredentials(
-    loginOrEmail,
-    password,
+    loginOrEmail: string,
+    password: string,
   ): Promise<{ accessToken: string; refreshToken: string } | null> {
-    const user = await this.usersRepository.getUserDocumentByLoginOrEmail(
-      loginOrEmail,
-    );
+    const user = await this.usersRepository.getUserByLoginOrEmail(loginOrEmail);
     if (!user) return null;
-    const passwordHash = await this.generateHash(
-      password,
-      user.accountData.passwordSalt,
-    );
-    if (user.accountData.passwordHash !== passwordHash) {
+
+    const hash = await this.generateHash(password, user.passwordSalt);
+    if (user.passwordHash !== hash) {
       return null;
     } else {
       const payload = { userId: user.id, deviceId: randomUUID() };

@@ -1,13 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {HttpStatus, INestApplication} from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { appSettings } from '../src/infrastructure/settings/app.settings';
-import {
-  getRefreshTokenByResponse,
-  getRefreshTokenByResponseWithTokenName,
-} from '../src/infrastructure/utils/utils';
-import { LikeStatus } from '../src/infrastructure/utils/constants';
+import {AppModule} from '../src/app.module';
+import {appSettings} from '../src/infrastructure/settings/app.settings';
+import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName,} from '../src/infrastructure/utils/utils';
+import {LikeStatus} from '../src/infrastructure/utils/constants';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
@@ -27,7 +24,7 @@ describe('UsersController (e2e)', () => {
   it('1 – GET:/sa/users – return 200 & empty array', async () => {
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 0,
         page: 1,
@@ -45,7 +42,7 @@ describe('UsersController (e2e)', () => {
     };
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: firstUser.login,
         password: firstUser.password,
@@ -69,7 +66,7 @@ describe('UsersController (e2e)', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -77,18 +74,19 @@ describe('UsersController (e2e)', () => {
         totalCount: 1,
         items: [firstCreatedUser],
       });
-    expect.setState({ firstCreatedUser: firstCreatedUser });
+    expect.setState({firstCreatedUser: firstCreatedUser});
   });
   it('3 – POST:/sa/users – return 201 & create 2nd user', async () => {
-    const { firstCreatedUser } = expect.getState();
+    const {firstCreatedUser} = expect.getState();
     const secondUser = {
       login: 'lg-222222',
       password: 'qwerty2',
       email: 'valid-email@mail2.ru',
     };
+
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: secondUser.login,
         password: secondUser.password,
@@ -112,7 +110,7 @@ describe('UsersController (e2e)', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -120,10 +118,11 @@ describe('UsersController (e2e)', () => {
         totalCount: 2,
         items: [secondCreatedUser, firstCreatedUser],
       });
-    expect.setState({ secondCreatedUser: secondCreatedUser });
+
+    expect.setState({secondCreatedUser: secondCreatedUser});
   });
   it('4 – POST:/sa/users – return 201 & create 3rd user', async () => {
-    const { firstCreatedUser, secondCreatedUser } = expect.getState();
+    const {firstCreatedUser, secondCreatedUser} = expect.getState();
     const thirdUser = {
       login: 'lg-333333',
       password: 'qwerty3',
@@ -131,7 +130,7 @@ describe('UsersController (e2e)', () => {
     };
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: thirdUser.login,
         password: thirdUser.password,
@@ -155,7 +154,7 @@ describe('UsersController (e2e)', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -163,10 +162,11 @@ describe('UsersController (e2e)', () => {
         totalCount: 3,
         items: [thirdCreatedUser, secondCreatedUser, firstCreatedUser],
       });
-    expect.setState({ thirdCreatedUser: thirdCreatedUser });
+
+    expect.setState({thirdCreatedUser: thirdCreatedUser});
   });
   it('5 – POST:/sa/users – return 201 & create 4th user', async () => {
-    const { firstCreatedUser, secondCreatedUser, thirdCreatedUser } =
+    const {firstCreatedUser, secondCreatedUser, thirdCreatedUser} =
       expect.getState();
     const fourthUser = {
       login: 'lg-444444',
@@ -175,7 +175,7 @@ describe('UsersController (e2e)', () => {
     };
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: fourthUser.login,
         password: fourthUser.password,
@@ -199,7 +199,7 @@ describe('UsersController (e2e)', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -213,13 +213,13 @@ describe('UsersController (e2e)', () => {
         ],
       });
 
-    expect.setState({ fourthCreatedUser: fourthCreatedUser });
+    expect.setState({fourthCreatedUser: fourthCreatedUser});
   });
 
   it('6 – DELETE:/sa/users – return 404', async () => {
     await request(server)
       .delete('/sa/users/1')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.NOT_FOUND);
   });
   it('7 – DELETE:/sa/users – return 204 & delete 1st user', async () => {
@@ -232,12 +232,12 @@ describe('UsersController (e2e)', () => {
 
     await request(server)
       .delete(`/sa/users/${firstCreatedUser.id}`)
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.NO_CONTENT);
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -250,7 +250,7 @@ describe('UsersController (e2e)', () => {
   it('8 – PUT:/sa/users/:id/ban – return 404', async () => {
     await request(server)
       .put('/sa/users/1111/ban')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         isBanned: true,
         banReason: 'kmkmkmkmkkmkmkmkmkmkm',
@@ -258,7 +258,7 @@ describe('UsersController (e2e)', () => {
       .expect(HttpStatus.NOT_FOUND);
   });
   it('9 – PUT:/sa/users/:id/ban – return 204 & ban 2nd user', async () => {
-    const { fourthCreatedUser, thirdCreatedUser, secondCreatedUser } =
+    const {fourthCreatedUser, thirdCreatedUser, secondCreatedUser} =
       expect.getState();
     const banInputModel = {
       isBanned: true,
@@ -267,7 +267,7 @@ describe('UsersController (e2e)', () => {
 
     await request(server)
       .put(`/sa/users/${secondCreatedUser.id}/ban`)
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send(banInputModel)
       .expect(HttpStatus.NO_CONTENT);
 
@@ -285,7 +285,7 @@ describe('UsersController (e2e)', () => {
 
     const getUsers = await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK);
 
     // todo (совет) если у body большая вложенность, использовть такой expect
@@ -297,16 +297,16 @@ describe('UsersController (e2e)', () => {
       items: [fourthCreatedUser, thirdCreatedUser, secondBannedUser],
     });
 
-    expect.setState({ secondBannedUser });
+    expect.setState({secondBannedUser});
   });
 
   it('10 – GET:/sa/users – return 200 & 2, 3, 4 users (all)', async () => {
-    const { fourthCreatedUser, thirdCreatedUser, secondBannedUser } =
+    const {fourthCreatedUser, thirdCreatedUser, secondBannedUser} =
       expect.getState();
 
     const getUsers = await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK);
 
     expect(getUsers.body).toEqual({
@@ -318,11 +318,11 @@ describe('UsersController (e2e)', () => {
     });
   });
   it('11 – GET:/sa/users – return 200 & 2 user (banned)', async () => {
-    const { secondBannedUser } = expect.getState();
+    const {secondBannedUser} = expect.getState();
 
     const getUsers = await request(server)
       .get('/sa/users?banStatus=banned')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK);
 
     expect(getUsers.body).toEqual({
@@ -334,11 +334,11 @@ describe('UsersController (e2e)', () => {
     });
   });
   it('12 – GET:/sa/users – return 200 & 3, 4 users (not banned)', async () => {
-    const { fourthCreatedUser, thirdCreatedUser } = expect.getState();
+    const {fourthCreatedUser, thirdCreatedUser} = expect.getState();
 
     const getUsers = await request(server)
       .get('/sa/users?banStatus=notBanned')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK);
 
     expect(getUsers.body).toEqual({
@@ -351,7 +351,7 @@ describe('UsersController (e2e)', () => {
   });
 
   it('13 – PUT:/sa/users/:id/ban – return 204 & unban 2nd user', async () => {
-    const { fourthCreatedUser, thirdCreatedUser, secondCreatedUser } =
+    const {fourthCreatedUser, thirdCreatedUser, secondCreatedUser} =
       expect.getState();
     const unbanInputModel = {
       isBanned: false,
@@ -360,7 +360,7 @@ describe('UsersController (e2e)', () => {
 
     await request(server)
       .put(`/sa/users/${secondCreatedUser.id}/ban`)
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send(unbanInputModel)
       .expect(HttpStatus.NO_CONTENT);
 
@@ -378,7 +378,7 @@ describe('UsersController (e2e)', () => {
 
     const getUsers = await request(server)
       .get('/sa/users?banStatus=notBanned')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK);
 
     expect(getUsers.body).toEqual({
@@ -729,7 +729,7 @@ describe('Ban users for different blogs', () => {
 
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: firstUser.login,
         password: firstUser.password,
@@ -753,7 +753,7 @@ describe('Ban users for different blogs', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -762,10 +762,10 @@ describe('Ban users for different blogs', () => {
         items: [firstCreatedUser],
       });
 
-    expect.setState({ firstUser, firstCreatedUser });
+    expect.setState({firstUser, firstCreatedUser});
   });
   it('2 – POST:/sa/users – return 201 & create 2nd user', async () => {
-    const { firstCreatedUser } = expect.getState();
+    const {firstCreatedUser} = expect.getState();
     const secondUser = {
       login: 'lg-222222',
       password: 'qwerty2',
@@ -774,7 +774,7 @@ describe('Ban users for different blogs', () => {
 
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: secondUser.login,
         password: secondUser.password,
@@ -798,7 +798,7 @@ describe('Ban users for different blogs', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -807,10 +807,10 @@ describe('Ban users for different blogs', () => {
         items: [secondCreatedUser, firstCreatedUser],
       });
 
-    expect.setState({ secondUser, secondCreatedUser });
+    expect.setState({secondUser, secondCreatedUser});
   });
   it('3 – POST:/sa/users – return 201 & create 3rd user', async () => {
-    const { firstCreatedUser, secondCreatedUser } = expect.getState();
+    const {firstCreatedUser, secondCreatedUser} = expect.getState();
     const thirdUser = {
       login: 'lg-333333',
       password: 'qwerty3',
@@ -819,7 +819,7 @@ describe('Ban users for different blogs', () => {
 
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: thirdUser.login,
         password: thirdUser.password,
@@ -843,7 +843,7 @@ describe('Ban users for different blogs', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -852,10 +852,10 @@ describe('Ban users for different blogs', () => {
         items: [thirdCreatedUser, secondCreatedUser, firstCreatedUser],
       });
 
-    expect.setState({ thirdUser, thirdCreatedUser });
+    expect.setState({thirdUser, thirdCreatedUser});
   });
   it('4 – POST:/sa/users – return 201 & create 4th user', async () => {
-    const { firstCreatedUser, secondCreatedUser, thirdCreatedUser } =
+    const {firstCreatedUser, secondCreatedUser, thirdCreatedUser} =
       expect.getState();
     const fourthUser = {
       login: 'lg-444444',
@@ -865,7 +865,7 @@ describe('Ban users for different blogs', () => {
 
     const createResponse = await request(server)
       .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         login: fourthUser.login,
         password: fourthUser.password,
@@ -889,7 +889,7 @@ describe('Ban users for different blogs', () => {
 
     await request(server)
       .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -903,12 +903,12 @@ describe('Ban users for different blogs', () => {
         ],
       });
 
-    expect.setState({ fourthUser, fourthCreatedUser });
+    expect.setState({fourthUser, fourthCreatedUser});
   });
 
   // 1 юзер логинится, создает блог и пост
   it('5 – POST:/auth/login – return 200, 1st login and refreshToken', async () => {
-    const { firstUser } = expect.getState();
+    const {firstUser} = expect.getState();
     const loginResponse = await request(server).post('/auth/login').send({
       loginOrEmail: firstUser.login,
       password: firstUser.password,
@@ -916,8 +916,8 @@ describe('Ban users for different blogs', () => {
 
     expect(loginResponse).toBeDefined();
     expect(loginResponse.status).toBe(HttpStatus.OK);
-    expect(loginResponse.body).toEqual({ accessToken: expect.any(String) });
-    const { accessToken } = loginResponse.body;
+    expect(loginResponse.body).toEqual({accessToken: expect.any(String)});
+    const {accessToken} = loginResponse.body;
 
     const refreshToken = getRefreshTokenByResponse(loginResponse);
     const refreshTokenWithName =
@@ -932,11 +932,11 @@ describe('Ban users for different blogs', () => {
     });
   });
   it('6 – POST:/blogger/blogs – return 201 & create blog', async () => {
-    const { firstAccessToken } = expect.getState();
+    const {firstAccessToken} = expect.getState();
 
     const createBlogResponse = await request(server)
       .post('/blogger/blogs')
-      .auth(firstAccessToken, { type: 'bearer' })
+      .auth(firstAccessToken, {type: 'bearer'})
       .send({
         name: 'valid-blog',
         description: 'valid-description',
@@ -951,11 +951,11 @@ describe('Ban users for different blogs', () => {
     });
   });
   it('7 – POST:/blogger/blogs/:id/posts – return 201 & create post', async () => {
-    const { firstAccessToken, blogId } = expect.getState();
+    const {firstAccessToken, blogId} = expect.getState();
 
     const createPostResponse = await request(server)
       .post(`/blogger/blogs/${blogId}/posts`)
-      .auth(firstAccessToken, { type: 'bearer' })
+      .auth(firstAccessToken, {type: 'bearer'})
       .send({
         title: 'valid-title',
         shortDescription: 'valid-shortDescription',
@@ -972,11 +972,11 @@ describe('Ban users for different blogs', () => {
 
   // 1 юзер банит 2го для своего блога
   it('8 – PUT:/blogger/users/:id/ban – return 204 & ban 2nd user for blog', async () => {
-    const { secondCreatedUser, firstAccessToken, blogId } = expect.getState();
+    const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();
 
     const banUserResponse = await request(server)
       .put(`/blogger/users/${secondCreatedUser.id}/ban`)
-      .auth(firstAccessToken, { type: 'bearer' })
+      .auth(firstAccessToken, {type: 'bearer'})
       .send({
         isBanned: true,
         banReason: 'length_21-weqweqweqwq',
@@ -987,11 +987,11 @@ describe('Ban users for different blogs', () => {
     expect(banUserResponse.status).toEqual(HttpStatus.NO_CONTENT);
   });
   it('9 – GET:/blogger/users/blog/:id – return 200 & banned 2nd user for blog', async () => {
-    const { secondCreatedUser, firstAccessToken, blogId } = expect.getState();
+    const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();
 
     const getBannedUsersResponse = await request(server)
       .get(`/blogger/users/blog/${blogId}`)
-      .auth(firstAccessToken, { type: 'bearer' });
+      .auth(firstAccessToken, {type: 'bearer'});
 
     expect(getBannedUsersResponse).toBeDefined();
     expect(getBannedUsersResponse.status).toEqual(HttpStatus.OK);
@@ -1016,7 +1016,7 @@ describe('Ban users for different blogs', () => {
 
   // 2й юзер создает свой блог и не может написать коммент под постом
   it('10 – POST:/auth/login – return 200, 2nd user login', async () => {
-    const { secondUser } = expect.getState();
+    const {secondUser} = expect.getState();
 
     const loginResponse = await request(server).post('/auth/login').send({
       loginOrEmail: secondUser.login,
@@ -1025,8 +1025,8 @@ describe('Ban users for different blogs', () => {
 
     expect(loginResponse).toBeDefined();
     expect(loginResponse.status).toBe(HttpStatus.OK);
-    expect(loginResponse.body).toEqual({ accessToken: expect.any(String) });
-    const { accessToken } = loginResponse.body;
+    expect(loginResponse.body).toEqual({accessToken: expect.any(String)});
+    const {accessToken} = loginResponse.body;
 
     const refreshToken = getRefreshTokenByResponse(loginResponse);
     const refreshTokenWithName =
@@ -1041,22 +1041,22 @@ describe('Ban users for different blogs', () => {
     });
   });
   it("11 – POST:/posts/:id/comments – return 403 & 2nd user can't comment post", async () => {
-    const { secondAccessToken, postId } = expect.getState();
+    const {secondAccessToken, postId} = expect.getState();
 
     const createCommentCurrentPost = await request(server)
       .post(`/posts/${postId}/comments`)
-      .auth(secondAccessToken, { type: 'bearer' })
-      .send({ content: 'valid-comment------21' });
+      .auth(secondAccessToken, {type: 'bearer'})
+      .send({content: 'valid-comment------21'});
 
     expect(createCommentCurrentPost).toBeDefined();
     expect(createCommentCurrentPost.status).toEqual(HttpStatus.FORBIDDEN);
   });
   it('12 – POST:/blogger/blogs – return 201 & create blog', async () => {
-    const { secondAccessToken } = expect.getState();
+    const {secondAccessToken} = expect.getState();
 
     const createBlogResponse = await request(server)
       .post('/blogger/blogs')
-      .auth(secondAccessToken, { type: 'bearer' })
+      .auth(secondAccessToken, {type: 'bearer'})
       .send({
         name: 'valid-blog-2',
         description: 'valid-description-2',
@@ -1065,12 +1065,12 @@ describe('Ban users for different blogs', () => {
 
     expect(createBlogResponse).toBeDefined();
     expect(createBlogResponse.status).toEqual(HttpStatus.CREATED);
-    expect.setState({ secondBLog: createBlogResponse.body });
+    expect.setState({secondBLog: createBlogResponse.body});
   });
 
   // 3й юзер пишет коммент под постом
   it('13 – POST:/auth/login – return 200, 3rd user login', async () => {
-    const { thirdUser } = expect.getState();
+    const {thirdUser} = expect.getState();
 
     const loginResponse = await request(server).post('/auth/login').send({
       loginOrEmail: thirdUser.login,
@@ -1079,8 +1079,8 @@ describe('Ban users for different blogs', () => {
 
     expect(loginResponse).toBeDefined();
     expect(loginResponse.status).toBe(HttpStatus.OK);
-    expect(loginResponse.body).toEqual({ accessToken: expect.any(String) });
-    const { accessToken } = loginResponse.body;
+    expect(loginResponse.body).toEqual({accessToken: expect.any(String)});
+    const {accessToken} = loginResponse.body;
 
     const refreshToken = getRefreshTokenByResponse(loginResponse);
     const refreshTokenWithName =
@@ -1095,12 +1095,12 @@ describe('Ban users for different blogs', () => {
     });
   });
   it('14 – POST:/posts/:id/comments – return 201 & ', async () => {
-    const { thirdRefreshToken, postId } = expect.getState();
+    const {thirdRefreshToken, postId} = expect.getState();
 
     const createCommentCurrentPost = await request(server)
       .post(`/posts/${postId}/comments`)
-      .auth(thirdRefreshToken, { type: 'bearer' })
-      .send({ content: 'valid-comment------21' });
+      .auth(thirdRefreshToken, {type: 'bearer'})
+      .send({content: 'valid-comment------21'});
 
     expect(createCommentCurrentPost).toBeDefined();
     expect(createCommentCurrentPost.status).toEqual(HttpStatus.CREATED);
@@ -1108,12 +1108,12 @@ describe('Ban users for different blogs', () => {
 
   // 1й юзер смотрит все комменты своего блога
   it('15 – GET:/blogger/blogs/comments – return 201', async () => {
-    const { firstRefreshToken, thirdCreatedUser, createdPost, createdBLog } =
+    const {firstRefreshToken, thirdCreatedUser, createdPost, createdBLog} =
       expect.getState();
 
     const getCommentsCurrentBlog = await request(server)
       .get(`/blogger/blogs/comments`)
-      .auth(firstRefreshToken, { type: 'bearer' });
+      .auth(firstRefreshToken, {type: 'bearer'});
 
     expect(getCommentsCurrentBlog).toBeDefined();
     expect(getCommentsCurrentBlog.status).toEqual(HttpStatus.OK);
@@ -1149,11 +1149,11 @@ describe('Ban users for different blogs', () => {
 
   // 1й юзер смотрит забаненых юзеров своего блога
   it('16– GET:/blogger/users/blog/:id – return 201', async () => {
-    const { firstRefreshToken, blogId, secondCreatedUser } = expect.getState();
+    const {firstRefreshToken, blogId, secondCreatedUser} = expect.getState();
 
     const getCommentsCurrentBlog = await request(server)
       .get(`/blogger/users/blog/${blogId}`)
-      .auth(firstRefreshToken, { type: 'bearer' });
+      .auth(firstRefreshToken, {type: 'bearer'});
 
     expect(getCommentsCurrentBlog).toBeDefined();
     expect(getCommentsCurrentBlog.status).toEqual(HttpStatus.OK);
@@ -1178,11 +1178,11 @@ describe('Ban users for different blogs', () => {
 
   // 1й юзер разбанивает 2го для своего блога
   it('17 – PUT:/blogger/users/:id/ban – return 204 & ban 2nd user for blog', async () => {
-    const { secondCreatedUser, firstAccessToken, blogId } = expect.getState();
+    const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();
 
     const banUserResponse = await request(server)
       .put(`/blogger/users/${secondCreatedUser.id}/ban`)
-      .auth(firstAccessToken, { type: 'bearer' })
+      .auth(firstAccessToken, {type: 'bearer'})
       .send({
         isBanned: false,
         banReason: 'length_21-weqweqweqwq',
@@ -1194,11 +1194,11 @@ describe('Ban users for different blogs', () => {
   });
   // 1й юзер смотрит забаненых юзеров своего блога
   it('18 – GET:/blogger/users/blog/:id – return 201', async () => {
-    const { firstRefreshToken, blogId } = expect.getState();
+    const {firstRefreshToken, blogId} = expect.getState();
 
     const getCommentsCurrentBlog = await request(server)
       .get(`/blogger/users/blog/${blogId}`)
-      .auth(firstRefreshToken, { type: 'bearer' });
+      .auth(firstRefreshToken, {type: 'bearer'});
 
     expect(getCommentsCurrentBlog).toBeDefined();
     expect(getCommentsCurrentBlog.status).toEqual(HttpStatus.OK);
@@ -1213,12 +1213,12 @@ describe('Ban users for different blogs', () => {
 
   // админ банит 2й блог
   it('19 – PUT:/blogger/users/:id/ban – return 204', async () => {
-    const { secondBLog } = expect.getState();
+    const {secondBLog} = expect.getState();
 
     const banUserResponse = await request(server)
       .put(`/sa/blogs/${secondBLog.id}/ban`)
-      .auth('admin', 'qwerty', { type: 'basic' })
-      .send({ isBanned: true });
+      .auth('admin', 'qwerty', {type: 'basic'})
+      .send({isBanned: true});
 
     expect(banUserResponse).toBeDefined();
     expect(banUserResponse.status).toEqual(HttpStatus.NO_CONTENT);
@@ -1226,7 +1226,7 @@ describe('Ban users for different blogs', () => {
 
   // незареганый юзер видит 1й блог и не видит 2й
   it('20 – GET:/blogs – return 201', async () => {
-    const { blogId } = expect.getState();
+    const {blogId} = expect.getState();
 
     const getCommentsCurrentBlog = await request(server).get(`/blogs`);
 

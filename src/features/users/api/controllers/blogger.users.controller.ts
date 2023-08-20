@@ -12,13 +12,16 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
-import { BannedUsersPaginationInput } from '../../../../infrastructure/utils/common.models';
-import { UsersQueryRepository } from '../../infrastructure/users.query.repository';
-import { BanUserCurrentBlogInputModel } from '../models/ban.user.current.blog.input.model';
-import { BanUserForCurrentBlogCommand } from '../../application/blogger.users.use.cases/ban.user.for.current.blog.use.case';
-import { BearerAuthGuard } from '../../../../infrastructure/guards/bearer-auth.guard';
-import { BlogsQueryRepository } from '../../../blogs/infrastructure/blogs.query.repository';
+import {CommandBus} from '@nestjs/cqrs';
+import {BannedUsersPaginationInput} from '../../../../infrastructure/utils/common.models';
+import {UsersQueryRepository} from '../../infrastructure/users.query.repository';
+import {BanUserCurrentBlogInputModel} from '../models/input/ban.user.current.blog.input.model';
+import {
+  BanUserForCurrentBlogCommand
+} from '../../application/blogger.users.use.cases/ban.user.for.current.blog.use.case';
+import {BearerAuthGuard} from '../../../../infrastructure/guards/bearer-auth.guard';
+import {BlogsQueryRepository} from '../../../blogs/infrastructure/blogs.query.repository';
+import {BannedUsersForBlogQueryRepository} from "../../infrastructure/banned.users.for.blog.query.repository";
 
 @Controller('blogger/users')
 @UseGuards(BearerAuthGuard)
@@ -27,6 +30,7 @@ export class BloggerUsersController {
     private commandBus: CommandBus,
     private usersQueryRepository: UsersQueryRepository,
     private blogsQueryRepository: BlogsQueryRepository,
+    private bannedUsersForBlogQueryRepository: BannedUsersForBlogQueryRepository,
   ) {}
 
   @Get('blog/:id')
@@ -42,7 +46,7 @@ export class BloggerUsersController {
     if (req.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     } else {
-      return this.usersQueryRepository.getBannedUsersCurrentBlog(blogId, query);
+      return this.bannedUsersForBlogQueryRepository.getBannedUsersCurrentBlog(blogId, query);
     }
   }
 

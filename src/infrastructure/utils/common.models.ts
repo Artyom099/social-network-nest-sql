@@ -1,7 +1,7 @@
-import { BanStatus, SortBy, SortDirection } from './constants';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { isNil } from '@nestjs/common/utils/shared.utils';
+import {BanStatus, SortBy, SortDirection} from './constants';
+import {IsBoolean, IsOptional, IsString} from 'class-validator';
+import {Transform} from 'class-transformer';
+import {isNil} from '@nestjs/common/utils/shared.utils';
 
 export class DefaultPaginationInput {
   @IsString()
@@ -29,10 +29,13 @@ export class DefaultPaginationInput {
   sort() {
     return { [this.sortBy]: this.sortDirection };
   }
+  orderBy() {
+    return `${this.sortBy} ${this.sortDirection}`;
+  }
   skip(): number {
     return (this.pageNumber - 1) * this.pageSize;
   }
-  pagesCount(totalCount): number {
+  pagesCount(totalCount: number): number {
     return Math.ceil(totalCount / this.pageSize);
   }
 }

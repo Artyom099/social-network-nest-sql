@@ -1,6 +1,7 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { EmailManager } from '../../../../infrastructure/services/email.manager';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {EmailManager} from '../../../../infrastructure/services/email.manager';
+import {UsersRepository} from '../../../users/infrastructure/users.repository';
+import {randomUUID} from "crypto";
 
 export class SendRecoveryCodeCommand {
   constructor(public email: string) {}
@@ -16,11 +17,12 @@ export class SendRecoveryCodeUseCase
   ) {}
 
   async execute(command: SendRecoveryCodeCommand): Promise<string | null> {
-    const user = await this.usersRepository.getUserDocumentByLoginOrEmail(
+    const user = await this.usersRepository.getUserByLoginOrEmail(
       command.email,
     );
     if (!user) return null;
-    const recoveryCode = user.updateRecoveryCode();
+    const recoveryCode = randomUUID();
+    //todo - delete Save
     await this.usersRepository.save(user);
     try {
       //await

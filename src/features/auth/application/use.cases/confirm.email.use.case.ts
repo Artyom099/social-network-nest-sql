@@ -1,5 +1,5 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {UsersRepository} from '../../../users/infrastructure/users.repository';
 
 export class ConfirmEmailCommand {
   constructor(public code: string) {}
@@ -12,16 +12,11 @@ export class ConfirmEmailUseCase
   constructor(private usersRepository: UsersRepository) {}
 
   async execute(command: ConfirmEmailCommand): Promise<boolean> {
-    const user = await this.usersRepository.getUserDocumentByConfirmationCode(
-      command.code,
-    );
-    if (!user || !user.confirmEmail(command.code)) {
+    const user = await this.usersRepository.getUserByConfirmationCode(command.code);
+    if (user.isConfirmed && user.confirmationCode === command.code && user.expirationDate > new Date()) {
       return false;
     } else {
-      await this.usersRepository.save(user);
-      await this.usersRepository.getUserDocumentByConfirmationCode(
-        command.code,
-      );
+      await this.usersRepository.confirmEmail();
       return true;
     }
   }

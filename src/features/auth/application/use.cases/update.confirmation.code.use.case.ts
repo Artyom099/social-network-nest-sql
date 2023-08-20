@@ -1,6 +1,7 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { EmailManager } from '../../../../infrastructure/services/email.manager';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {EmailManager} from '../../../../infrastructure/services/email.manager';
+import {UsersRepository} from '../../../users/infrastructure/users.repository';
+import {randomUUID} from "crypto";
 
 export class UpdateConfirmationCodeCommand {
   constructor(public email: string) {}
@@ -18,21 +19,14 @@ export class UpdateConfirmationCodeUseCase
   async execute(
     command: UpdateConfirmationCodeCommand,
   ): Promise<string | null> {
-    const user = await this.usersRepository.getUserDocumentByLoginOrEmail(
-      command.email,
-    );
+    const user = await this.usersRepository.getUserByLoginOrEmail(command.email);
     if (!user) return null;
-    //обновили у него ConfirmationCode
-    const newCode = user.updateConfirmationCode();
-    //записали это обновление в БД
-    await this.usersRepository.save(user);
+    const newCode = randomUUID();
+    await this.usersRepository.updateConfirmationCode(newCode);
 
     try {
       // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
-      await this.emailManager.sendEmailConfirmationMessage(
-        command.email,
-        newCode,
-      );
+      await this.emailManager.sendEmailConfirmationMessage(command.email, newCode);
     } catch (error) {
       return null;
     }

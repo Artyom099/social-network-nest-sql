@@ -1,7 +1,7 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import * as bcrypt from 'bcrypt';
-import { AuthService } from '../auth.service';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import {AuthService} from '../auth.service';
+import {UsersRepository} from '../../../users/infrastructure/users.repository';
 
 export class UpdatePasswordCommand {
   constructor(public code: string, public password: string) {}
@@ -17,15 +17,11 @@ export class UpdatePasswordUseCase
   ) {}
 
   async execute(command: UpdatePasswordCommand) {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await this.authService.generateHash(command.password, salt);
-
-    const user = await this.usersRepository.getUserDocumentByRecoveryCode(
-      command.code,
-    );
+    const user = await this.usersRepository.getUserByRecoveryCode(command.code);
     if (!user) return null;
 
-    user.updateSaltAndHash(salt, hash);
-    await this.usersRepository.save(user);
+    const salt = await bcrypt.genSalt(10);
+    const hash = await this.authService.generateHash(command.password, salt);
+    await this.usersRepository.updateSaltAndHash(salt, hash);
   }
 }

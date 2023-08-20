@@ -1,8 +1,10 @@
-import { UsersService } from '../../../users/application/users.service';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateUserInputModel } from '../../../users/api/models/create.user.input.model';
-import { UserViewModel } from '../../../users/api/models/user.view.model';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import {UsersService} from '../../../users/application/users.service';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {CreateUserInputModel} from '../../../users/api/models/input/create.user.input.model';
+import {UserViewModel} from '../../../users/api/models/view/user.view.model';
+import {UsersRepository} from '../../../users/infrastructure/users.repository';
+import add from "date-fns/add";
+import {randomUUID} from "crypto";
 
 export class RegisterUserCommand {
   constructor(public InputModel: CreateUserInputModel) {}
@@ -19,17 +21,16 @@ export class RegisterUserUseCase
 
   async execute(command: RegisterUserCommand): Promise<UserViewModel> {
     const { InputModel } = command;
-    const { salt, hash } = await this.usersService.generateSaltAndHash(
-      InputModel.password,
-    );
-    // создание умного юзера через репозиторий
-    const user = await this.usersRepository.createUserBySelf(
+    const { salt, hash } = await this.usersService.generateSaltAndHash(InputModel.password);
+
+    const createUserDTO = {
       InputModel,
       salt,
       hash,
-    );
-    // сохранение умного юзера через репозиторий
-    await this.usersRepository.save(user);
-    return user.getViewModel();
+      expirationDate: add(new Date(), { minutes: 20 }),
+      confirmationCode: randomUUID(),
+      isConfirmed: false,
+    }
+    return this.usersRepository.createUserBySelfSql(createUserDTO);
   }
 }

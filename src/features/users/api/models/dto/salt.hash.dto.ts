@@ -1,4 +1,4 @@
-export type SaltHashModel = {
+export type SaltHashDto = {
   salt: string;
   hash: string;
 };

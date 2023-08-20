@@ -1,7 +1,7 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BanUserCurrentBlogInputModel } from '../../api/models/ban.user.current.blog.input.model';
-import { UsersRepository } from '../../infrastructure/users.repository';
-import { BannedUsersForBlogRepository } from '../../infrastructure/banned.users.for.blog.repository';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {BanUserCurrentBlogInputModel} from '../../api/models/input/ban.user.current.blog.input.model';
+import {UsersRepository} from '../../infrastructure/users.repository';
+import {BannedUsersForBlogRepository} from '../../infrastructure/banned.users.for.blog.repository';
 
 export class BanUserForCurrentBlogCommand {
   constructor(
@@ -21,7 +21,7 @@ export class BanUserForCurrentBlogUseCase
 
   async execute(command: BanUserForCurrentBlogCommand) {
     const { userId, inputModel } = command;
-    const user = await this.usersRepository.getUserDocumentById(userId);
+    const user = await this.usersRepository.getUserById(userId);
     if (!user) return null;
 
     const bannedUser =
@@ -33,13 +33,13 @@ export class BanUserForCurrentBlogUseCase
       const newBannedUser =
         await this.bannedUsersForBlogRepository.addUserToBanInBlog(
           userId,
-          user.accountData.login,
+          user.login,
           inputModel,
         );
       return this.bannedUsersForBlogRepository.save(newBannedUser);
     }
     if (bannedUser && !inputModel.isBanned) {
-      await bannedUser.unbanUserForCurrentBlog();
+      bannedUser.unbanUserForCurrentBlog();
       return this.bannedUsersForBlogRepository.save(bannedUser);
     }
     return;
