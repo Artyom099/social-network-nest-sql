@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import {AuthService} from '../application/auth.service';
 import {DevicesService} from '../../devices/application/devices.service';
-
 import {CookieGuard} from '../../../infrastructure/guards/cookie.guard';
 import {BearerAuthGuard} from '../../../infrastructure/guards/bearer-auth.guard';
 import {RegisterUserCommand} from '../application/use.cases/register.user.use.case';
@@ -27,6 +26,8 @@ import {AuthInputModel} from './models/auth.input.model';
 import {EmailInputModel} from './models/email.input.model';
 import {SetNewPasswordInputModel} from './models/set.new.password.input.model';
 import {UsersRepository} from '../../users/infrastructure/users.repository';
+import {ResendConfirmationCommand} from "../application/use.cases/resend.confirmation.use.case";
+import {CreateDeviceDTO} from "../../devices/api/models/create.device.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -64,23 +65,20 @@ export class AuthController {
       InputModel.password,
     );
     if (!token) throw new UnauthorizedException();
-    const payload = await this.authService.getTokenPayload(token.refreshToken);
-    const user = await this.usersRepository.getUserById(payload.userId);
 
+    const user = await this.usersRepository.getUserByLoginOrEmail(InputModel.loginOrEmail);
     if (user?.banInfo.isBanned) {
       throw new UnauthorizedException();
     } else {
-      const title = req.headers['host'];
       const payload = await this.authService.getTokenPayload(token.refreshToken);
-      const lastActiveDate = new Date(payload.iat * 1000);
-      //todo - заменить на createSessionDTO
-      await this.securityService.createSession(
-        req.ip,
-        title,
-        lastActiveDate,
-        payload.deviceId,
-        payload.userId,
-      );
+      const createDeviceDTO: CreateDeviceDTO = {
+        ip: req.ip,
+        title: req.headers['host'],
+        lastActiveDate: new Date(payload.iat * 1000),
+        deviceId: payload.deviceId,
+        userId: payload.userId,
+      }
+      await this.securityService.createSession(createDeviceDTO);
       res.cookie('refreshToken', token.refreshToken, { httpOnly: true, secure: true });
       return { accessToken: token.accessToken };
     }
@@ -138,9 +136,7 @@ export class AuthController {
   //todo -> для моих тестов статус OK, по документации NO_CONTENT
   async passwordRecovery(@Body() InputModel: EmailInputModel) {
     return {
-      recoveryCode: await this.commandBus.execute(
-        new SendRecoveryCodeCommand(InputModel.email),
-      ),
+      recoveryCode: await this.commandBus.execute(new SendRecoveryCodeCommand(InputModel.email))
     };
   }
 
@@ -176,11 +172,10 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationEmail(@Body() body: { email: string }) {
     const user = await this.usersRepository.getUserByLoginOrEmail(body.email);
-    console.log(user)
     if (!user || user.isConfirmed) {
       throw new BadRequestException('email not exist or confirm=>email');
     } else {
-      return this.commandBus.execute(new ConfirmEmailCommand(body.email));
+      return this.commandBus.execute(new ResendConfirmationCommand(body.email));
     }
   }
 }

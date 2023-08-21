@@ -37,8 +37,6 @@ export class UsersRepository {
     where "login" like $1 or "email" like $1
     `, [ `%${logOrMail}%` ])
 
-    console.log({repo: user})
-    console.log(user.length)
     return user.length ? {
       id: user[0].id,
       login: user[0].login,
@@ -47,6 +45,9 @@ export class UsersRepository {
       hash: user[0].passwordHash,
       createdAt: user[0].createdAt,
       isConfirmed: user[0].isConfirmed,
+      confirmationCode: user[0].confirmationCode,
+      passwordSalt: user[0].passwordSalt,
+      passwordHash: user[0].passwordHash,
       banInfo: {
         isBanned: user[0].isBanned,
         banDate: user[0].banDate,
@@ -82,14 +83,17 @@ export class UsersRepository {
     `, [code])
 
     return user.length ? {
-      id: user.id,
-      login: user.login,
-      email: user.email,
-      createdAt: user.createdAt,
+      id: user[0].id,
+      login: user[0].login,
+      email: user[0].email,
+      createdAt: user[0].createdAt,
+      isConfirmed: user[0].isConfirmed,
+      confirmationCode: user[0].confirmationCode,
+      expirationDate: user[0].expirationDate,
       banInfo: {
-        isBanned: user.isBanned,
-        banDate: user.banDate,
-        banReason: user.banReason,
+        isBanned: user[0].isBanned,
+        banDate: user[0].banDate,
+        banReason: user[0].banReason,
       },
     } : null
   }
@@ -125,10 +129,10 @@ export class UsersRepository {
       id: user.id,
       login: user.login,
       email: user.email,
-      createdAt: user.createdAt ? user.createdAt.toISOString() : null,
+      createdAt: user.createdAt,
       banInfo: {
         isBanned: user.isBanned,
-        banDate: user.banDate ? user.banDate.toISOString() : null,
+        banDate: user.banDate,
         banReason: user.banReason,
       },
     };
@@ -155,17 +159,16 @@ export class UsersRepository {
     ])
 
     const [user] = await this.dataSource.query(`
-    select "Id" as "id", "Login" as "login", "Email" as "email", "CreatedAt" as "createdAt",
-    "IsBanned" as "isBanned", "BanDate" as "banDate", "BanReason" as "banReason"
+    select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
     from "Users"
-    where "Login" = $1
+    where "login" = $1
     `, [dto.InputModel.login])
 
     return {
       id: user.id,
       login: user.login,
       email: user.email,
-      createdAt: user.createdAt.toISOString(),
+      createdAt: user.createdAt,
     };
   }
 

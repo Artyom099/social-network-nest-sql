@@ -179,6 +179,7 @@ describe('AuthController (e2e)', () => {
       password: 'qwerty2',
       email: 'artgolubev@bk.ru',
     };
+
     await request(server)
       .post('/auth/registration')
       .send({
@@ -192,20 +193,17 @@ describe('AuthController (e2e)', () => {
   });
   it('10 – POST:/auth/registration-email-resending – return 204 if user exist & send confirmation code', async () => {
     const { secondUser } = expect.getState();
+
     await request(server)
       .post('/auth/registration-email-resending')
-      .send({
-        email: secondUser.email,
-      })
+      .send({ email: secondUser.email })
       .expect(HttpStatus.NO_CONTENT);
   });
 
   it("11 – POST:/auth/registration-confirmation – return 400 if confirmation code doesn't exist", async () => {
     await request(server)
       .post('/auth/registration-confirmation')
-      .send({
-        code: 'invalid code',
-      })
+      .send({ code: 'invalid code' })
       .expect(HttpStatus.BAD_REQUEST, {
         errorsMessages: [
           {
@@ -225,8 +223,12 @@ describe('AuthController (e2e)', () => {
 
   // логиню первого пользователя
   it('13 – POST:/auth/login – return 200 and login 1st user', async () => {
+    console.log('13----13')
     const { firstUser } = expect.getState();
-    const loginResponse = await request(server).post('/auth/login').send({
+
+    const loginResponse = await request(server)
+      .post('/auth/login')
+      .send({
       loginOrEmail: firstUser.login,
       password: firstUser.password,
     });
@@ -315,7 +317,7 @@ describe('AuthController (e2e)', () => {
     expect(recoveryResponse.status).toBe(HttpStatus.OK);
     expect.setState({ recoveryCode: recoveryResponse.body.recoveryCode });
 
-    // console.log({ recoveryCode_body: recoveryResponse.body });
+    console.log({ recoveryCode_body: recoveryResponse.body.recoveryCode });
   });
 
   it('19 – POST:/auth/new-password – return 400 with incorrect recoveryCode', async () => {

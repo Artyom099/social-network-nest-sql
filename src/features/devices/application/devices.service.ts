@@ -1,20 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { DevicesRepository } from '../infrastructure/devices.repository';
-import { Device } from '../devices.schema';
+import {Injectable} from '@nestjs/common';
+import {DevicesRepository} from '../infrastructure/devices.repository';
+import {Device} from '../devices.schema';
 
 import {DeviceViewModel} from "../api/models/device.view.model";
+import {CreateDeviceDTO} from "../api/models/create.device.dto";
 
 @Injectable()
 export class DevicesService {
   constructor(private securityRepository: DevicesRepository) {}
 
-  async createSession(
-    ip: string,
-    title: string,
-    lastActiveDate: Date,
-    deviceId: string,
-    userId: string,
-  ): Promise<DeviceViewModel> {
+  async createSession(createDeviceDTO: CreateDeviceDTO): Promise<DeviceViewModel> {
+    const {ip, title, lastActiveDate, deviceId, userId} = createDeviceDTO
     const session = Device.create(ip, title, lastActiveDate, deviceId, userId);
     return this.securityRepository.createSession(session);
   }

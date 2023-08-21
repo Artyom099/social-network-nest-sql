@@ -1,11 +1,11 @@
-import { EmailAdapter } from '../adapters/email.adapter';
-import { Injectable } from '@nestjs/common';
+import {EmailAdapter} from '../adapters/email.adapter';
+import {Injectable} from '@nestjs/common';
 
 @Injectable()
 export class EmailManager {
   constructor(private emailAdapter: EmailAdapter) {}
 
-  async sendEmailConfirmationMessage(email: string, code: string) {
+  async sendEmailConfirmationCode(email: string, code: string) {
     const subject = 'Confirm your email';
     const message =
       ' <h1>Thank for your registration</h1>\n' +

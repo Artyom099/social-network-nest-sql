@@ -18,10 +18,9 @@ export class SendRecoveryCodeUseCase
 
   async execute(command: SendRecoveryCodeCommand): Promise<string | null> {
     const user = await this.usersRepository.getUserByLoginOrEmail(command.email);
-    if (!user) return null;
-
     const recoveryCode = randomUUID();
     await this.usersRepository.updateRecoveryCode(user.id, recoveryCode);
+
     try {
       await this.emailManager.sendEmailRecoveryCode(command.email, recoveryCode);
     } catch (e) {

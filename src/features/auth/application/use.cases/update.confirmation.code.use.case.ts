@@ -25,7 +25,7 @@ export class UpdateConfirmationCodeUseCase
     const newCode = randomUUID();
     await this.usersRepository.updateConfirmationCode(user.id, newCode);
     try {
-      await this.emailManager.sendEmailConfirmationMessage(command.email, newCode);
+      await this.emailManager.sendEmailConfirmationCode(command.email, newCode);
     } catch (error) {
       return null;
     }
