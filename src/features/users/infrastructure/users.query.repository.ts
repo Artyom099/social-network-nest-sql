@@ -44,17 +44,15 @@ export class UsersQueryRepository {
     from "Users"
     where "login" like $1 or "email" like $2
     and "isBanned" = $3 or $3 is null
-    order by $4
-    limit $5
-    offset $6
+    order by "${query.sortBy}" ${query.sortDirection}
+    limit $4
+    offset $5
     `
 
-    //todo - desc не срабатывает, сортирует по дефолту - начать с этого
     const sortedUsers = await this.dataSource.query(queryString, [
       `%${query.searchLoginTerm}%`,
       `%${query.searchEmailTerm}%`,
       query.banStatus,
-      `"${query.sortBy}" "${query.sortDirection}"`,
       query.pageSize,
       query.skip()
     ])
@@ -72,9 +70,6 @@ export class UsersQueryRepository {
         },
       };
     });
-
-    console.log(query.sortBy, query.sortDirection)
-    console.log(sortedUsers)
 
     return {
       pagesCount: query.pagesCount(totalCount.count), // общее количество страниц

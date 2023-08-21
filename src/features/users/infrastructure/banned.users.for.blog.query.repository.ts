@@ -64,12 +64,11 @@ export class BannedUsersForBlogQueryRepository {
     select "userId" as "id", "login", "blogId", "isBanned", "banDate", "banReason"
     from "BannedUsersForBlog"
     where "isBanned" = true and "blogId" = $1
-    order by $2
-    limit $3 
-    offset $4
+    order by "${query.sortBy}" ${query.sortDirection}
+    limit $2 
+    offset $3
     `, [
       blogId,
-      `"${query.sortBy}" "${query.sortDirection}"`,
       query.pageSize,
       query.skip()
     ])
