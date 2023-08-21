@@ -1,16 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { DefaultPaginationInput } from '../../../infrastructure/utils/common.models';
-import { LikeStatus } from '../../../infrastructure/utils/constants';
-import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from '../posts.schema';
-import { Model } from 'mongoose';
-import { User, UserDocument } from '../../users/schemas/users.schema';
-import {
-  NewestLikesViewModel,
-  PostViewModel,
-} from '../api/models/post.view.model';
-import { ExtendedLikesInfoDBModel } from '../api/models/post.db.model';
-import { PagingViewModel } from '../../../infrastructure/types/paging.view.model';
+import {Injectable} from '@nestjs/common';
+import {DefaultPaginationInput} from '../../../infrastructure/utils/common.models';
+import {LikeStatus} from '../../../infrastructure/utils/constants';
+import {InjectModel} from '@nestjs/mongoose';
+import {Post, PostDocument} from '../posts.schema';
+import {Model} from 'mongoose';
+import {User, UserDocument} from '../../users/schemas/users.schema';
+import {NewestLikesViewModel, PostViewModel,} from '../api/models/post.view.model';
+import {ExtendedLikesInfoDBModel} from '../api/models/post.db.model';
+import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -80,7 +77,7 @@ export class PostsQueryRepository {
     const sortedPosts = await this.postModel
       .find(filter)
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();
@@ -148,7 +145,7 @@ export class PostsQueryRepository {
     const sortedPosts = await this.postModel
       .find(filter)
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();
@@ -217,7 +214,7 @@ export class PostsQueryRepository {
     const sortedPosts = await this.postModel
       .find(filter)
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();

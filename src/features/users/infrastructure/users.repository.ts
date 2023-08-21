@@ -29,10 +29,10 @@ export class UsersRepository {
       id: user.id,
       login: user.login,
       email: user.email,
-      createdAt: user.createdAt.toISOString(),
+      createdAt: user.createdAt,
       banInfo: {
         isBanned: user.isBanned,
-        banDate: user.banDate ? user.banDate.toISOString() : null,
+        banDate: user.banDate,
         banReason: user.banReason,
       },
     } : null
@@ -174,23 +174,26 @@ export class UsersRepository {
     };
   }
 
-  async banUser(banReason: string) {
+  async banUser(banReason: string, id: string) {
     return this.dataSource.query(`
     update "Users"
     set "banReason" = $1, "isBanned" = true, "banDate" = $2
-    `, [banReason, new Date()])
+    where "id" = $3
+    `, [banReason, new Date(), id])
   }
-  async unbanUser() {
+  async unbanUser(id: string) {
     return this.dataSource.query(`
     update "Users"
     set "isBanned" = false
-    `)
+    where "id" = $1
+    `, [id])
   }
-  async confirmEmail() {
+  async confirmEmail(id: string) {
     return this.dataSource.query(`
     update "Users"
     set "isConfirmed" = true
-    `)
+    where "id" = $3
+    `, [id])
   }
   async updateSaltAndHash(salt: string, hash: string) {
     return this.dataSource.query(`

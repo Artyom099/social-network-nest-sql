@@ -14,7 +14,7 @@ export class DefaultPaginationInput {
   @Transform(({ value }) => {
     return value === SortDirection.asc ? SortDirection.asc : SortDirection.desc;
   })
-  sortDirection: 'asc' | 'desc' = 'desc';
+  sortDirection: 'asc' | 'desc' = SortDirection.desc;
   @IsOptional()
   @Transform(({ value }) => {
     return value < 1 || value % 1 !== 0 ? 1 : Number(value);
@@ -29,14 +29,17 @@ export class DefaultPaginationInput {
   sort() {
     return { [this.sortBy]: this.sortDirection };
   }
-  orderBy() {
-    return `${this.sortBy} ${this.sortDirection}`;
-  }
-  skip(): number {
+  offset(): number {
     return (this.pageNumber - 1) * this.pageSize;
   }
   pagesCount(totalCount: number): number {
     return Math.ceil(totalCount / this.pageSize);
+  }
+  pagesCountU(totalCount: { count: string }): number {
+    return Math.ceil(parseInt(totalCount.count) / this.pageSize);
+  }
+  totalCountU(tCount: { count: string }): number {
+    return parseInt(tCount.count, 10)
   }
 }
 
@@ -45,7 +48,7 @@ export class BlogsPaginationInput extends DefaultPaginationInput {
     return !isNil(value) ? value : '';
   })
   @IsOptional()
-  searchNameTerm: string;
+  searchNameTerm: string = '';
 }
 
 export class UsersPaginationInput extends DefaultPaginationInput {
@@ -58,21 +61,17 @@ export class UsersPaginationInput extends DefaultPaginationInput {
       ? false
       : null;
   })
-  banStatus: boolean | null;
+  banStatus: boolean | null = null;
+  @IsOptional()
+  @Transform(({ value }): string => {
+    return value ? value : '';
+  })
+  searchLoginTerm: string = '';
   @IsOptional()
   @Transform(({ value }) => {
     return !isNil(value) ? value : '';
   })
-  searchLoginTerm: string;
-  @IsOptional()
-  @Transform(({ value }) => {
-    return !isNil(value) ? value : '';
-  })
-  searchEmailTerm: string;
-
-  sortUsers() {
-    return { ['accountData.' + this.sortBy]: this.sortDirection };
-  }
+  searchEmailTerm: string = '';
 }
 
 export class BannedUsersPaginationInput extends DefaultPaginationInput {
@@ -80,7 +79,7 @@ export class BannedUsersPaginationInput extends DefaultPaginationInput {
   @Transform(({ value }) => {
     return !isNil(value) ? value : '';
   })
-  searchLoginTerm: string;
+  searchLoginTerm: string = '';
 
   sortBannedUsers() {
     return { [this.sortBy]: this.sortDirection };

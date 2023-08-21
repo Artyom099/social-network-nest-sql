@@ -16,7 +16,7 @@ export class ConfirmEmailUseCase
     if (user.isConfirmed && user.confirmationCode === command.code && user.expirationDate > new Date()) {
       return false;
     } else {
-      await this.usersRepository.confirmEmail();
+      await this.usersRepository.confirmEmail(user.id);
       return true;
     }
   }

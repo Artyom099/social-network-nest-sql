@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { BlogsPaginationInput } from '../../../infrastructure/utils/common.models';
-import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDocument } from '../blogs.schema';
-import { Model } from 'mongoose';
-import { SABlogViewModel } from '../api/models/sa.blog.view.model';
-import { BlogViewModel } from '../api/models/blog.view.model';
-import { PagingViewModel } from '../../../infrastructure/types/paging.view.model';
+import {Injectable} from '@nestjs/common';
+import {BlogsPaginationInput} from '../../../infrastructure/utils/common.models';
+import {InjectModel} from '@nestjs/mongoose';
+import {Blog, BlogDocument} from '../blogs.schema';
+import {Model} from 'mongoose';
+import {SABlogViewModel} from '../api/models/sa.blog.view.model';
+import {BlogViewModel} from '../api/models/blog.view.model';
+import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -25,7 +25,7 @@ export class BlogsQueryRepository {
     const items = await this.blogModel
       .find(filter, { _id: 0 })
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();
@@ -76,7 +76,7 @@ export class BlogsQueryRepository {
     const items = await this.blogModel
       .find(filter, { _id: 0, blogOwnerInfo: 0, banInfo: 0 })
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();
@@ -104,7 +104,7 @@ export class BlogsQueryRepository {
     const items = await this.blogModel
       .find(filter, { _id: 0, blogOwnerInfo: 0, banInfo: 0 })
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();

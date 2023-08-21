@@ -13,6 +13,6 @@ export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     const user = await this.usersRepository.getUserById(command.userId);
     if (!user) return null;
     
-    await this.usersRepository.unbanUser();
+    await this.usersRepository.unbanUser(command.userId);
   }
 }

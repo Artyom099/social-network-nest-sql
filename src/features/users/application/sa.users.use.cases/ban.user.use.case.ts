@@ -14,6 +14,6 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
     const user = await this.usersRepository.getUserById(command.userId);
     if (!user) return null;
 
-    await this.usersRepository.banUser(command.inputModel.banReason);
+    await this.usersRepository.banUser(command.inputModel.banReason, command.userId);
   }
 }

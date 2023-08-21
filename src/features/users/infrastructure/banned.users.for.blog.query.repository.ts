@@ -24,7 +24,7 @@ export class BannedUsersForBlogQueryRepository {
     const totalCount = await this.BannedUserForBlogModel.countDocuments(filter);
     const sortedUsers = await this.BannedUserForBlogModel.find(filter)
       .sort(query.sortBannedUsers())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();
@@ -70,7 +70,7 @@ export class BannedUsersForBlogQueryRepository {
     `, [
       blogId,
       query.pageSize,
-      query.skip()
+      query.offset()
     ])
 
     const items = sortedUsers.map((u) => {

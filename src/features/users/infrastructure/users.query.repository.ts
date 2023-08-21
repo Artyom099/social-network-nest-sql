@@ -31,18 +31,18 @@ export class UsersQueryRepository {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
     from "Users"
-    where "login" like $1 or "email" like $2
+    where ("login" like $1 or "email" like $2)
     and "isBanned" = $3 or $3 is null
     `, [
       `%${query.searchLoginTerm}%`,
       `%${query.searchEmailTerm}%`,
-      query.banStatus
+      query.banStatus,
     ])
 
     const queryString = `
     select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
     from "Users"
-    where "login" like $1 or "email" like $2
+    where ("login" like $1 or "email" like $2)
     and "isBanned" = $3 or $3 is null
     order by "${query.sortBy}" ${query.sortDirection}
     limit $4
@@ -54,7 +54,7 @@ export class UsersQueryRepository {
       `%${query.searchEmailTerm}%`,
       query.banStatus,
       query.pageSize,
-      query.skip()
+      query.offset()
     ])
 
     const items = sortedUsers.map((u) => {
@@ -72,10 +72,10 @@ export class UsersQueryRepository {
     });
 
     return {
-      pagesCount: query.pagesCount(totalCount.count), // общее количество страниц
+      pagesCount: query.pagesCountU(totalCount), // общее количество страниц
       page: query.pageNumber, // текущая страница
       pageSize: query.pageSize, // количество пользователей на странице
-      totalCount: parseInt(totalCount.count, 10), // общее количество пользователей
+      totalCount: query.totalCountU(totalCount), // общее количество пользователей
       items,
     };
   }

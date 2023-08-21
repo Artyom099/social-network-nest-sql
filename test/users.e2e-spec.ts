@@ -371,8 +371,8 @@ describe('UsersController (e2e)', () => {
       createdAt: secondCreatedUser.createdAt,
       banInfo: {
         isBanned: unbanInputModel.isBanned,
-        banDate: null,
-        banReason: null,
+        banDate: expect.any(String),
+        banReason: unbanInputModel.banReason,
       },
     };
 

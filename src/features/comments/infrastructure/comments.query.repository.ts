@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { DefaultPaginationInput } from '../../../infrastructure/utils/common.models';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Comment, CommentDocument } from '../comments.schema';
-import { LikeStatus } from '../../../infrastructure/utils/constants';
-import { User, UserDocument } from '../../users/schemas/users.schema';
-import { Blog, BlogDocument } from '../../blogs/blogs.schema';
-import { CommentViewModel } from '../api/models/comment.view.model';
-import { PagingViewModel } from '../../../infrastructure/types/paging.view.model';
+import {Injectable} from '@nestjs/common';
+import {DefaultPaginationInput} from '../../../infrastructure/utils/common.models';
+import {InjectModel} from '@nestjs/mongoose';
+import {Model} from 'mongoose';
+import {Comment, CommentDocument} from '../comments.schema';
+import {LikeStatus} from '../../../infrastructure/utils/constants';
+import {User, UserDocument} from '../../users/schemas/users.schema';
+import {Blog, BlogDocument} from '../../blogs/blogs.schema';
+import {CommentViewModel} from '../api/models/comment.view.model';
+import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -72,7 +72,7 @@ export class CommentsQueryRepository {
     const sortedComments = await this.commentModel
       .find(filter)
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();
@@ -135,7 +135,7 @@ export class CommentsQueryRepository {
     const sortedComments = await this.commentModel
       .find()
       .sort(query.sort())
-      .skip(query.skip())
+      .skip(query.offset())
       .limit(query.pageSize)
       .lean()
       .exec();
