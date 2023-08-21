@@ -1,12 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {HttpStatus, INestApplication} from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { appSettings } from '../src/infrastructure/settings/app.settings';
-import {
-  getRefreshTokenByResponse,
-  getRefreshTokenByResponseWithTokenName,
-} from '../src/infrastructure/utils/utils';
+import {AppModule} from '../src/app.module';
+import {appSettings} from '../src/infrastructure/settings/app.settings';
+import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName,} from '../src/infrastructure/utils/utils';
 
 const sleep = (seconds: number) =>
   new Promise((r) => setTimeout(r, seconds * 1000));
@@ -15,6 +12,7 @@ describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let server: any;
   //let repo;
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -123,6 +121,7 @@ describe('AuthController (e2e)', () => {
   });
   it('6 – POST:/auth/registration-email-resending – return 400 if email already confirm', async () => {
     const { firstUser } = expect.getState();
+
     await request(server)
       .post('/auth/registration-email-resending')
       .send({ email: firstUser.email })

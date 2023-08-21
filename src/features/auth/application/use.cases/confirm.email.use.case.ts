@@ -13,6 +13,7 @@ export class ConfirmEmailUseCase
 
   async execute(command: ConfirmEmailCommand): Promise<boolean> {
     const user = await this.usersRepository.getUserByConfirmationCode(command.code);
+    console.log(user.isConfirmed )
     if (user.isConfirmed && user.confirmationCode === command.code && user.expirationDate > new Date()) {
       return false;
     } else {

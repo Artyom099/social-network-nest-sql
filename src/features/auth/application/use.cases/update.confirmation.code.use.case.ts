@@ -21,11 +21,10 @@ export class UpdateConfirmationCodeUseCase
   ): Promise<string | null> {
     const user = await this.usersRepository.getUserByLoginOrEmail(command.email);
     if (!user) return null;
-    const newCode = randomUUID();
-    await this.usersRepository.updateConfirmationCode(newCode);
 
+    const newCode = randomUUID();
+    await this.usersRepository.updateConfirmationCode(user.id, newCode);
     try {
-      // убрал await, чтобы работал rateLimitMiddleware (10 секунд)
       await this.emailManager.sendEmailConfirmationMessage(command.email, newCode);
     } catch (error) {
       return null;

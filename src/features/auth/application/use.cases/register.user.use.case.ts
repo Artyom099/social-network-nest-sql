@@ -31,6 +31,6 @@ export class RegisterUserUseCase
       confirmationCode: randomUUID(),
       isConfirmed: false,
     }
-    return this.usersRepository.createUserBySelfSql(createUserDTO);
+    return this.usersRepository.createUserBySelf(createUserDTO);
   }
 }

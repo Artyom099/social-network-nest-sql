@@ -15,7 +15,6 @@ import {AuthService} from '../application/auth.service';
 import {DevicesService} from '../../devices/application/devices.service';
 
 import {CookieGuard} from '../../../infrastructure/guards/cookie.guard';
-import {JwtService} from '@nestjs/jwt';
 import {BearerAuthGuard} from '../../../infrastructure/guards/bearer-auth.guard';
 import {RegisterUserCommand} from '../application/use.cases/register.user.use.case';
 import {CommandBus} from '@nestjs/cqrs';
@@ -32,7 +31,6 @@ import {UsersRepository} from '../../users/infrastructure/users.repository';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private jwtService: JwtService,
     private authService: AuthService,
     private securityService: DevicesService,
     private usersRepository: UsersRepository,
@@ -73,9 +71,7 @@ export class AuthController {
       throw new UnauthorizedException();
     } else {
       const title = req.headers['host'];
-      const payload = await this.authService.getTokenPayload(
-        token.refreshToken,
-      );
+      const payload = await this.authService.getTokenPayload(token.refreshToken);
       const lastActiveDate = new Date(payload.iat * 1000);
       //todo - заменить на createSessionDTO
       await this.securityService.createSession(
@@ -115,7 +111,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req) {
     const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
-    await this.securityService.deleteCurrentSession(payload.deviceId);
+    return this.securityService.deleteCurrentSession(payload.deviceId);
   }
 
   @Post('new-password')
@@ -127,7 +123,7 @@ export class AuthController {
     if (!isUserConfirm) {
       throw new BadRequestException();
     } else {
-      await this.commandBus.execute(
+      return this.commandBus.execute(
         new UpdatePasswordCommand(
           InputModel.recoveryCode,
           InputModel.newPassword,
@@ -159,7 +155,7 @@ export class AuthController {
     if (loginExist) {
       throw new BadRequestException('login exist=>login');
     } else {
-      await this.commandBus.execute(new RegisterUserCommand(inputModel));
+      return this.commandBus.execute(new RegisterUserCommand(inputModel));
     }
   }
 
@@ -180,6 +176,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationEmail(@Body() body: { email: string }) {
     const user = await this.usersRepository.getUserByLoginOrEmail(body.email);
+    console.log(user)
     if (!user || user.isConfirmed) {
       throw new BadRequestException('email not exist or confirm=>email');
     } else {

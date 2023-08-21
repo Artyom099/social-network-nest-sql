@@ -1,6 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {InjectModel} from '@nestjs/mongoose';
-import {User, UserModelType} from '../schemas/users.schema';
 import {InjectDataSource} from "@nestjs/typeorm";
 import {DataSource} from "typeorm";
 import {UserViewModel} from "../api/models/view/user.view.model";
@@ -10,13 +8,8 @@ import {CreateUserDTO} from "../api/models/dto/create.user.dto";
 @Injectable()
 export class UsersRepository {
   constructor(
-    @InjectModel(User.name) private userModel: UserModelType,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
-  async save(model: any) {
-    return model.save();
-  }
-
 
   async getUserById(id: string): Promise<SAUserViewModel | null> {
     const user = await this.dataSource.query(`
@@ -42,20 +35,22 @@ export class UsersRepository {
     select *
     from "Users"
     where "login" like $1 or "email" like $1
-    `, [`%${logOrMail}%`])
+    `, [ `%${logOrMail}%` ])
 
+    console.log({repo: user})
+    console.log(user.length)
     return user.length ? {
-      id: user.id,
-      login: user.login,
-      email: user.email,
-      salt: user.passwordSalt,
-      hash: user.passwordHash,
-      createdAt: user.createdAt.toISOString(),
-      isConfirmed: user.isConfirmed,
+      id: user[0].id,
+      login: user[0].login,
+      email: user[0].email,
+      salt: user[0].passwordSalt,
+      hash: user[0].passwordHash,
+      createdAt: user[0].createdAt,
+      isConfirmed: user[0].isConfirmed,
       banInfo: {
-        isBanned: user.isBanned,
-        banDate: user.banDate ? user.banDate.toISOString() : null,
-        banReason: user.banReason,
+        isBanned: user[0].isBanned,
+        banDate: user[0].banDate,
+        banReason: user[0].banReason,
       },
     } : null
 
@@ -71,10 +66,10 @@ export class UsersRepository {
       id: user.id,
       login: user.login,
       email: user.email,
-      createdAt: user.createdAt.toISOString(),
+      createdAt: user.createdAt,
       banInfo: {
         isBanned: user.isBanned,
-        banDate: user.banDate ? user.banDate.toISOString() : null,
+        banDate: user.banDate,
         banReason: user.banReason,
       },
     } :null
@@ -90,10 +85,10 @@ export class UsersRepository {
       id: user.id,
       login: user.login,
       email: user.email,
-      createdAt: user.createdAt.toISOString(),
+      createdAt: user.createdAt,
       banInfo: {
         isBanned: user.isBanned,
-        banDate: user.banDate ? user.banDate.toISOString() : null,
+        banDate: user.banDate,
         banReason: user.banReason,
       },
     } : null
@@ -138,7 +133,7 @@ export class UsersRepository {
       },
     };
   }
-  async createUserBySelfSql(dto: CreateUserDTO): Promise<UserViewModel> {
+  async createUserBySelf(dto: CreateUserDTO): Promise<UserViewModel> {
     await this.dataSource.query(`
     insert into "Users"
     ("login", "email", "passwordSalt", "passwordHash", "createdAt", "isBanned", "banDate", 
@@ -174,7 +169,7 @@ export class UsersRepository {
     };
   }
 
-  async banUser(banReason: string, id: string) {
+  async banUser(id: string, banReason: string) {
     return this.dataSource.query(`
     update "Users"
     set "banReason" = $1, "isBanned" = true, "banDate" = $2
@@ -192,20 +187,29 @@ export class UsersRepository {
     return this.dataSource.query(`
     update "Users"
     set "isConfirmed" = true
-    where "id" = $3
+    where "id" = $1
     `, [id])
   }
-  async updateSaltAndHash(salt: string, hash: string) {
+  async updateSaltAndHash(id: string, salt: string, hash: string) {
     return this.dataSource.query(`
     update "Users"
     set "passwordSalt" = $1, "passwordHash" = $2
-    `, [salt, hash])
+    where "id" = $3
+    `, [salt, hash, id])
   }
-  async updateConfirmationCode(code: string) {
+  async updateRecoveryCode(id: string, code: string) {
+    return this.dataSource.query(`
+    update "Users"
+    set "recoveryCode" = $1
+    where "id" = $2
+    `, [code, id])
+  }
+  async updateConfirmationCode(id: string, code: string) {
     return this.dataSource.query(`
     update "Users"
     set "confirmationCode" = $1
-    `, [code])
+    where "id" = $2
+    `, [code, id])
   }
 
   async deleteUser(id: string) {

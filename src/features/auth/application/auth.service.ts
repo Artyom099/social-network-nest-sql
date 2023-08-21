@@ -12,6 +12,8 @@ export class AuthService {
     private usersRepository: UsersRepository,
   ) {}
 
+  //todo - разнести контроллер на use cases
+
   async checkCredentials(
     loginOrEmail: string,
     password: string,

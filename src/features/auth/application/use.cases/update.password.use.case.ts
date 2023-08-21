@@ -22,6 +22,6 @@ export class UpdatePasswordUseCase
 
     const salt = await bcrypt.genSalt(10);
     const hash = await this.authService.generateHash(command.password, salt);
-    await this.usersRepository.updateSaltAndHash(salt, hash);
+    await this.usersRepository.updateSaltAndHash(user.id, salt, hash);
   }
 }

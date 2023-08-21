@@ -1,8 +1,5 @@
 import {Injectable} from '@nestjs/common';
 import {UsersPaginationInput,} from '../../../infrastructure/utils/common.models';
-import {User, UserDocument} from '../schemas/users.schema';
-import {Model} from 'mongoose';
-import {InjectModel} from '@nestjs/mongoose';
 import {SAUserViewModel} from '../api/models/view/sa.user.view.model';
 import {UserViewModel} from '../api/models/view/user.view.model';
 import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
@@ -12,10 +9,8 @@ import {DataSource} from "typeorm";
 @Injectable()
 export class UsersQueryRepository {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectDataSource() private dataSource: DataSource,
-  ) {
-  }
+  ) {}
 
   async getUserById(id: string): Promise<UserViewModel | null> {
     const user = await this.dataSource.query(`
@@ -26,7 +21,6 @@ export class UsersQueryRepository {
 
     return user.length ? user[0] : null
   }
-
   async getSortedUsersToSA(query: UsersPaginationInput): Promise<PagingViewModel<SAUserViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
