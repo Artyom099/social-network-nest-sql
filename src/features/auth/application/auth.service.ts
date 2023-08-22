@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import {randomUUID} from 'crypto';
 import {jwtConstants} from '../../../infrastructure/utils/settings';
 import {UsersRepository} from '../../users/infrastructure/users.repository';
+import {TokenPayloadModel} from '../api/models/token.payload.model';
 
 @Injectable()
 export class AuthService {
@@ -39,14 +40,14 @@ export class AuthService {
     }
   }
 
-  async updateJWT(userId: string, deviceId: string) {
-    const payload = { userId, deviceId };
+  async updateJWT(payload: TokenPayloadModel) {
+    const newPayload = { userId: payload.userId, deviceId: payload.deviceId };
     return {
-      accessToken: await this.jwtService.signAsync(payload, {
+      accessToken: await this.jwtService.signAsync(newPayload, {
         secret: jwtConstants.accessSecret,
         expiresIn: '5m',
       }),
-      refreshToken: await this.jwtService.signAsync(payload, {
+      refreshToken: await this.jwtService.signAsync(newPayload, {
         secret: jwtConstants.refreshSecret,
         expiresIn: '20s',
       }),

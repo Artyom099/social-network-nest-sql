@@ -89,16 +89,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Req() req, @Res({ passthrough: true }) res) {
     const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
-    const token = await this.authService.updateJWT(
-      payload.userId,
-      payload.deviceId,
-    );
+    const token = await this.authService.updateJWT(payload);
     const newPayload = await this.authService.getTokenPayload(token.refreshToken);
-    const lastActiveDate = new Date(newPayload.iat * 1000);
-    await this.devicesService.updateLastActiveDate(
-      payload.deviceId,
-      lastActiveDate,
-    );
+    const lastActiveDate= new Date(newPayload.iat * 1000);
+    await this.devicesService.updateLastActiveDate(payload.deviceId, lastActiveDate);
 
     res.cookie('refreshToken', token.refreshToken, { httpOnly: true, secure: true });
     return { accessToken: token.accessToken };
@@ -116,16 +110,12 @@ export class AuthController {
   // @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async setNewPassword(@Body() InputModel: SetNewPasswordInputModel) {
-    const isUserConfirm =
-      await this.usersRepository.getUserByRecoveryCode(InputModel.recoveryCode);
+    const isUserConfirm = await this.usersRepository.getUserByRecoveryCode(InputModel.recoveryCode);
     if (!isUserConfirm) {
       throw new BadRequestException();
     } else {
       return this.commandBus.execute(
-        new UpdatePasswordCommand(
-          InputModel.recoveryCode,
-          InputModel.newPassword,
-        ),
+        new UpdatePasswordCommand(InputModel.recoveryCode, InputModel.newPassword)
       );
     }
   }
