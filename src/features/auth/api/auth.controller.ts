@@ -79,6 +79,7 @@ export class AuthController {
         userId: payload.userId,
       }
       await this.devicesService.createSession(createDeviceDTO);
+
       res.cookie('refreshToken', token.refreshToken, { httpOnly: true, secure: true });
       return { accessToken: token.accessToken };
     }
