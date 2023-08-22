@@ -12,7 +12,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
 
   async execute(command: ConfirmEmailCommand): Promise<boolean> {
     const user = await this.usersRepository.getUserByConfirmationCode(command.code);
-    if (!user || user.isConfirmed && user.confirmationCode !== command.code && user.expirationDate < new Date()) {
+    if (!user || user.isConfirmed || user.confirmationCode !== command.code || user.expirationDate < new Date()) {
       return false;
     } else {
       await this.usersRepository.confirmEmail(user.id);

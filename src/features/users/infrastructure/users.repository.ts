@@ -175,14 +175,14 @@ export class UsersRepository {
   async banUser(id: string, banReason: string) {
     return this.dataSource.query(`
     update "Users"
-    set "banReason" = $1, "isBanned" = true, "banDate" = $2
+    set "isBanned" = true, "banReason" = $1,  "banDate" = $2
     where "id" = $3
     `, [banReason, new Date(), id])
   }
   async unbanUser(id: string) {
     return this.dataSource.query(`
     update "Users"
-    set "isBanned" = false
+    set "isBanned" = false, "banReason" = null,  "banDate" = null
     where "id" = $1
     `, [id])
   }
