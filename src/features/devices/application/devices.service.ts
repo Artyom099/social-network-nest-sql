@@ -2,8 +2,8 @@ import {Injectable} from '@nestjs/common';
 import {DevicesRepository} from '../infrastructure/devices.repository';
 import {Device} from '../devices.schema';
 
-import {DeviceViewModel} from "../api/models/device.view.model";
-import {CreateDeviceDTO} from "../api/models/create.device.dto";
+import {DeviceViewModel} from '../api/models/device.view.model';
+import {CreateDeviceDTO} from '../api/models/create.device.dto';
 
 @Injectable()
 export class DevicesService {
@@ -14,7 +14,7 @@ export class DevicesService {
     const session = Device.create(ip, title, lastActiveDate, deviceId, userId);
     return this.securityRepository.createSession(session);
   }
-  async updateLastActiveDate(deviceId: string, date: string) {
+  async updateLastActiveDate(deviceId: string, date: Date) {
     return this.securityRepository.updateLastActiveDate(deviceId, date);
   }
 

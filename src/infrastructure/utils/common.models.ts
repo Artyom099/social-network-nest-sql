@@ -64,7 +64,7 @@ export class UsersPaginationInput extends DefaultPaginationInput {
   banStatus: boolean | null = null;
   @IsOptional()
   @Transform(({ value }): string => {
-    return value ? value : '';
+    return !isNil(value) ? value : '';
   })
   searchLoginTerm: string = '';
   @IsOptional()
@@ -80,8 +80,4 @@ export class BannedUsersPaginationInput extends DefaultPaginationInput {
     return !isNil(value) ? value : '';
   })
   searchLoginTerm: string = '';
-
-  sortBannedUsers() {
-    return { [this.sortBy]: this.sortDirection };
-  }
 }

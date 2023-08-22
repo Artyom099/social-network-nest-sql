@@ -1178,6 +1178,7 @@ describe('Ban users for different blogs', () => {
 
   // 1й юзер разбанивает 2го для своего блога
   it('17 – PUT:/blogger/users/:id/ban – return 204 & ban 2nd user for blog', async () => {
+    console.log('17--------17');
     const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();
 
     const banUserResponse = await request(server)

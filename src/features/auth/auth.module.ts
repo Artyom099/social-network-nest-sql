@@ -35,8 +35,8 @@ import {UsersRepository} from '../users/infrastructure/users.repository';
 import {BannedUsersForBlogRepository} from '../users/infrastructure/banned.users.for.blog.repository';
 import {BlogsQueryRepository} from '../blogs/infrastructure/blogs.query.repository';
 import {Blog, BlogSchema} from '../blogs/blogs.schema';
-import {BannedUsersForBlogQueryRepository} from "../users/infrastructure/banned.users.for.blog.query.repository";
-import {ResendConfirmationUseCase} from "./application/use.cases/resend.confirmation.use.case";
+import {BannedUsersForBlogQueryRepository} from '../users/infrastructure/banned.users.for.blog.query.repository';
+import {ResendConfirmationUseCase} from './application/use.cases/resend.confirmation.use.case';
 
 const useCases = [
   BanUserUseCase,
@@ -88,6 +88,7 @@ const useCases = [
     UsersService,
     UsersRepository,
     UsersQueryRepository,
+
     BannedUsersForBlogRepository,
     BannedUsersForBlogQueryRepository,
 
@@ -101,6 +102,7 @@ const useCases = [
     UsersRepository,
     UsersQueryRepository,
     BannedUsersForBlogRepository,
+    BannedUsersForBlogQueryRepository,
   ],
 })
 export class AuthModule {}

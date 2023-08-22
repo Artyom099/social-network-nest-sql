@@ -1,9 +1,9 @@
 import {Injectable} from '@nestjs/common';
-import {InjectDataSource} from "@nestjs/typeorm";
-import {DataSource} from "typeorm";
-import {UserViewModel} from "../api/models/view/user.view.model";
-import {SAUserViewModel} from "../api/models/view/sa.user.view.model";
-import {CreateUserDTO} from "../api/models/dto/create.user.dto";
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
+import {UserViewModel} from '../api/models/view/user.view.model';
+import {SAUserViewModel} from '../api/models/view/sa.user.view.model';
+import {CreateUserDTO} from '../api/models/dto/create.user.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -19,14 +19,14 @@ export class UsersRepository {
     `, [id])
 
     return user.length ? {
-      id: user.id,
-      login: user.login,
-      email: user.email,
-      createdAt: user.createdAt,
+      id: user[0].id,
+      login: user[0].login,
+      email: user[0].email,
+      createdAt: user[0].createdAt,
       banInfo: {
-        isBanned: user.isBanned,
-        banDate: user.banDate,
-        banReason: user.banReason,
+        isBanned: user[0].isBanned,
+        banDate: user[0].banDate,
+        banReason: user[0].banReason,
       },
     } : null
   }
@@ -64,14 +64,14 @@ export class UsersRepository {
     `, [code])
 
     return user.length ? {
-      id: user.id,
-      login: user.login,
-      email: user.email,
-      createdAt: user.createdAt,
+      id: user[0].id,
+      login: user[0].login,
+      email: user[0].email,
+      createdAt: user[0].createdAt,
       banInfo: {
-        isBanned: user.isBanned,
-        banDate: user.banDate,
-        banReason: user.banReason,
+        isBanned: user[0].isBanned,
+        banDate: user[0].banDate,
+        banReason: user[0].banReason,
       },
     } :null
   }

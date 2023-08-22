@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { DeviceDBModel } from '../api/models/device.db.model';
-import { InjectModel } from '@nestjs/mongoose';
-import { Device, DeviceDocument } from '../devices.schema';
-import { Model } from 'mongoose';
-import {DeviceViewModel} from "../api/models/device.view.model";
+import {Injectable} from '@nestjs/common';
+import {DeviceDBModel} from '../api/models/device.db.model';
+import {InjectModel} from '@nestjs/mongoose';
+import {Device, DeviceDocument} from '../devices.schema';
+import {Model} from 'mongoose';
+import {DeviceViewModel} from '../api/models/device.view.model';
 
 @Injectable()
 export class DevicesRepository {
@@ -20,7 +20,7 @@ export class DevicesRepository {
       deviceId: session.deviceId,
     };
   }
-  async updateLastActiveDate(deviceId: string, date: string) {
+  async updateLastActiveDate(deviceId: string, date: Date) {
     return this.sessionModel.updateOne(
       { deviceId },
       { $set: { lastActiveDate: date } },

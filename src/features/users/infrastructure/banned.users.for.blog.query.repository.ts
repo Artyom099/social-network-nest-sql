@@ -1,56 +1,27 @@
-import {Injectable} from "@nestjs/common";
-import {InjectDataSource} from "@nestjs/typeorm";
-import {DataSource} from "typeorm";
-import {BannedUsersPaginationInput} from "../../../infrastructure/utils/common.models";
-import {PagingViewModel} from "../../../infrastructure/types/paging.view.model";
-import {BannedUserForBlogViewModel} from "../api/models/view/banned.user.for.blog.view.model";
-import {InjectModel} from "@nestjs/mongoose";
-import {BannedUserForBlog, BannedUserForBlogModelType} from "../schemas/banned.users.for.blog.schema";
+import {Injectable} from '@nestjs/common';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
+import {BannedUsersPaginationInput} from '../../../infrastructure/utils/common.models';
+import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
+import {BannedUserForBlogViewModel} from '../api/models/view/banned.user.for.blog.view.model';
 
 @Injectable()
 export class BannedUsersForBlogQueryRepository {
   constructor(
     @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(BannedUserForBlog.name)
-    private BannedUserForBlogModel: BannedUserForBlogModelType,
-  ) {
+  ) {}
+
+  async getBannedUserForBlog(id: string, blogId: string) {
+    const user = await this.dataSource.query(`
+    select "userId" as "id", "login", "blogId", "isBanned", "banDate", "banReason"
+    from "BannedUsersForBlog"
+    where "userId" = $1 and "blogId" = $2 and "isBanned" = true
+    `, [id, blogId])
+
+    return user.length ? user[0] : null
   }
 
-  async getBannedUsersCurrentBlog2(
-    blogId: string,
-    query: BannedUsersPaginationInput,
-  ): Promise<PagingViewModel<BannedUserForBlogViewModel[]>> {
-    const filter = {blogId, 'banInfo.isBanned': true};
-    const totalCount = await this.BannedUserForBlogModel.countDocuments(filter);
-    const sortedUsers = await this.BannedUserForBlogModel.find(filter)
-      .sort(query.sortBannedUsers())
-      .skip(query.offset())
-      .limit(query.pageSize)
-      .lean()
-      .exec();
-
-    const items = sortedUsers.map((u) => {
-      return {
-        id: u.id,
-        login: u.login,
-        banInfo: {
-          isBanned: u.banInfo.isBanned,
-          banDate: u.banInfo.banDate ? u.banInfo.banDate.toISOString() : null,
-          banReason: u.banInfo.banReason,
-        },
-      };
-    });
-
-    return {
-      pagesCount: query.pagesCount(totalCount), // общее количество страниц
-      page: query.pageNumber, // текущая страница
-      pageSize: query.pageSize, // количество пользователей на странице
-      totalCount, // общее количество пользователей
-      items,
-    };
-  }
-
-  async getBannedUsersCurrentBlog(
+  async getBannedUsersForBlog(
     blogId: string,
     query: BannedUsersPaginationInput,
   ): Promise<PagingViewModel<BannedUserForBlogViewModel[]>> {
@@ -79,17 +50,17 @@ export class BannedUsersForBlogQueryRepository {
         login: u.login,
         banInfo: {
           isBanned: u.isBanned,
-          banDate: u.banDate ? u.banDate.toISOString() : null,
+          banDate: u.banDate,
           banReason: u.banReason,
         },
       };
     });
 
     return {
-      pagesCount: query.pagesCount(totalCount), // общее количество страниц
+      pagesCount: query.pagesCountU(totalCount), // общее количество страниц
       page: query.pageNumber, // текущая страница
       pageSize: query.pageSize, // количество пользователей на странице
-      totalCount: parseInt(totalCount.count, 10), // общее количество пользователей
+      totalCount: query.totalCountU(totalCount), // общее количество пользователей
       items,
     };
   }

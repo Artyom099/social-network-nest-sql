@@ -13,19 +13,20 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { PostsService } from '../application/posts.service';
-import { DefaultPaginationInput } from '../../../infrastructure/utils/common.models';
-import { PostsQueryRepository } from '../infrastucture/posts.query.repository';
-import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query.repository';
-import { BearerAuthGuard } from '../../../infrastructure/guards/bearer-auth.guard';
-import { CommentInputModel } from '../../comments/api/models/comment.input.model';
-import { CheckUserIdGuard } from '../../../infrastructure/guards/check-userId.guard';
-import { UsersQueryRepository } from '../../users/infrastructure/users.query.repository';
-import { CommandBus } from '@nestjs/cqrs';
-import { CreateCommentCommand } from '../../comments/application/use.cases/create.comment.use.case';
-import { LikeStatusInputModel } from '../../comments/api/models/like.status.input.model';
-import { BannedUsersForBlogRepository } from '../../users/infrastructure/banned.users.for.blog.repository';
-import { BlogsQueryRepository } from '../../blogs/infrastructure/blogs.query.repository';
+import {PostsService} from '../application/posts.service';
+import {DefaultPaginationInput} from '../../../infrastructure/utils/common.models';
+import {PostsQueryRepository} from '../infrastucture/posts.query.repository';
+import {CommentsQueryRepository} from '../../comments/infrastructure/comments.query.repository';
+import {BearerAuthGuard} from '../../../infrastructure/guards/bearer-auth.guard';
+import {CommentInputModel} from '../../comments/api/models/comment.input.model';
+import {CheckUserIdGuard} from '../../../infrastructure/guards/check-userId.guard';
+import {UsersQueryRepository} from '../../users/infrastructure/users.query.repository';
+import {CommandBus} from '@nestjs/cqrs';
+import {CreateCommentCommand} from '../../comments/application/use.cases/create.comment.use.case';
+import {LikeStatusInputModel} from '../../comments/api/models/like.status.input.model';
+import {BannedUsersForBlogRepository} from '../../users/infrastructure/banned.users.for.blog.repository';
+import {BlogsQueryRepository} from '../../blogs/infrastructure/blogs.query.repository';
+import {BannedUsersForBlogQueryRepository} from '../../users/infrastructure/banned.users.for.blog.query.repository';
 
 @Controller('posts')
 export class PostsController {
@@ -36,6 +37,7 @@ export class PostsController {
     private usersQueryRepository: UsersQueryRepository,
     private commentsQueryRepository: CommentsQueryRepository,
     private bannedUsersForBlogRepository: BannedUsersForBlogRepository,
+    private bannedUsersForBlogQueryRepository: BannedUsersForBlogQueryRepository,
 
     private commandBus: CommandBus,
   ) {}
@@ -95,10 +97,7 @@ export class PostsController {
     if (!post || !user) throw new NotFoundException('user or post not found');
 
     const isUserBannedForBlog =
-      await this.bannedUsersForBlogRepository.getBannedUserCurrentBlog(
-        user.id,
-        post.blogId,
-      );
+      await this.bannedUsersForBlogQueryRepository.getBannedUserForBlog(user.id, post.blogId);
     if (isUserBannedForBlog) {
       //todo -1 какой статус отдавать, если юзер забанен в блоге и пишет коммент?
       throw new ForbiddenException();

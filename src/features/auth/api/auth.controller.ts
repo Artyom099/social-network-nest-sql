@@ -26,14 +26,14 @@ import {AuthInputModel} from './models/auth.input.model';
 import {EmailInputModel} from './models/email.input.model';
 import {SetNewPasswordInputModel} from './models/set.new.password.input.model';
 import {UsersRepository} from '../../users/infrastructure/users.repository';
-import {ResendConfirmationCommand} from "../application/use.cases/resend.confirmation.use.case";
-import {CreateDeviceDTO} from "../../devices/api/models/create.device.dto";
+import {ResendConfirmationCommand} from '../application/use.cases/resend.confirmation.use.case';
+import {CreateDeviceDTO} from '../../devices/api/models/create.device.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private securityService: DevicesService,
+    private devicesService: DevicesService,
     private usersRepository: UsersRepository,
     private usersQueryRepository: UsersQueryRepository,
 
@@ -78,7 +78,7 @@ export class AuthController {
         deviceId: payload.deviceId,
         userId: payload.userId,
       }
-      await this.securityService.createSession(createDeviceDTO);
+      await this.devicesService.createSession(createDeviceDTO);
       res.cookie('refreshToken', token.refreshToken, { httpOnly: true, secure: true });
       return { accessToken: token.accessToken };
     }
@@ -94,8 +94,8 @@ export class AuthController {
       payload.deviceId,
     );
     const newPayload = await this.authService.getTokenPayload(token.refreshToken);
-    const lastActiveDate = new Date(newPayload.iat * 1000).toISOString();
-    await this.securityService.updateLastActiveDate(
+    const lastActiveDate = new Date(newPayload.iat * 1000);
+    await this.devicesService.updateLastActiveDate(
       payload.deviceId,
       lastActiveDate,
     );
@@ -109,7 +109,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req) {
     const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
-    return this.securityService.deleteCurrentSession(payload.deviceId);
+    return this.devicesService.deleteCurrentSession(payload.deviceId);
   }
 
   @Post('new-password')

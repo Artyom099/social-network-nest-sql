@@ -21,7 +21,7 @@ import {
 } from '../../application/blogger.users.use.cases/ban.user.for.current.blog.use.case';
 import {BearerAuthGuard} from '../../../../infrastructure/guards/bearer-auth.guard';
 import {BlogsQueryRepository} from '../../../blogs/infrastructure/blogs.query.repository';
-import {BannedUsersForBlogQueryRepository} from "../../infrastructure/banned.users.for.blog.query.repository";
+import {BannedUsersForBlogQueryRepository} from '../../infrastructure/banned.users.for.blog.query.repository';
 
 @Controller('blogger/users')
 @UseGuards(BearerAuthGuard)
@@ -46,7 +46,7 @@ export class BloggerUsersController {
     if (req.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     } else {
-      return this.bannedUsersForBlogQueryRepository.getBannedUsersCurrentBlog(blogId, query);
+      return this.bannedUsersForBlogQueryRepository.getBannedUsersForBlog(blogId, query);
     }
   }
 
