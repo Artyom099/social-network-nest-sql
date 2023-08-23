@@ -1,4 +1,4 @@
-import {UsersService} from '../../../users/application/users.service';
+import {HashService} from '../../../../infrastructure/services/hash.service';
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {CreateUserInputModel} from '../../../users/api/models/input/create.user.input.model';
 import {UserViewModel} from '../../../users/api/models/view/user.view.model';
@@ -15,7 +15,7 @@ export class RegisterUserCommand {
 export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand> {
   constructor(
     private emailManager: EmailManager,
-    private usersService: UsersService,
+    private usersService: HashService,
     private usersRepository: UsersRepository,
   ) {}
 

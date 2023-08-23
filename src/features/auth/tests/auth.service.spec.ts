@@ -1,9 +1,9 @@
-import { AuthService } from '../application/auth.service';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import {TokensService} from '../../../infrastructure/services/tokens.service';
+import {MongoMemoryServer} from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { EmailAdapter } from '../../../infrastructure/adapters/email.adapter';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../../../app.module';
+import {EmailAdapter} from '../../../infrastructure/adapters/email.adapter';
+import {Test} from '@nestjs/testing';
+import {AppModule} from '../../../app.module';
 
 describe('AuthService – integration test', () => {
   let mongoServer: MongoMemoryServer;
@@ -25,7 +25,7 @@ describe('AuthService – integration test', () => {
       .useValue(emailAdapterMock)
       .compile();
 
-    authService = app.get(AuthService);
+    authService = app.get(TokensService);
     // await mongoose.connect(mongoUri);
   });
   afterAll(async () => {

@@ -1,10 +1,10 @@
-import {UsersService} from '../users.service';
+import {HashService} from '../../../../infrastructure/services/hash.service';
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {CreateUserInputModel} from '../../api/models/input/create.user.input.model';
 import {SAUserViewModel} from '../../api/models/view/sa.user.view.model';
 import {UsersRepository} from '../../infrastructure/users.repository';
-import add from "date-fns/add";
-import {randomUUID} from "crypto";
+import add from 'date-fns/add';
+import {randomUUID} from 'crypto';
 
 export class CreateUserByAdminCommand {
   constructor(public InputModel: CreateUserInputModel) {}
@@ -15,7 +15,7 @@ export class CreateUserByAdminUseCase
   implements ICommandHandler<CreateUserByAdminCommand>
 {
   constructor(
-    private usersService: UsersService,
+    private usersService: HashService,
     private usersRepository: UsersRepository,
   ) {}
 

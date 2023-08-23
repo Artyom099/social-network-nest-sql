@@ -6,7 +6,7 @@ import {User, UserDocument} from '../users/schemas/users.schema';
 import {Post, PostDocument} from '../posts/posts.schema';
 import {Comment, CommentDocument} from '../comments/comments.schema';
 import {Device, DeviceDocument} from '../devices/devices.schema';
-import {Request, RequestDocument,} from '../../infrastructure/services/ip.schema';
+import {Request, RequestDocument,} from '../../infrastructure/utils/ip.schema';
 import {BannedUserForBlog, BannedUserForBlogModelType,} from '../users/schemas/banned.users.for.blog.schema';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';

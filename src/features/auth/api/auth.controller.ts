@@ -11,7 +11,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import {AuthService} from '../application/auth.service';
+import {TokensService} from '../../../infrastructure/services/tokens.service';
 import {DevicesService} from '../../devices/application/devices.service';
 import {CookieGuard} from '../../../infrastructure/guards/cookie.guard';
 import {BearerAuthGuard} from '../../../infrastructure/guards/bearer-auth.guard';
@@ -34,7 +34,7 @@ import {CheckCredentialsCommand} from '../application/use.cases/check.credential
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
+    private tokensService: TokensService,
     private devicesService: DevicesService,
     private usersRepository: UsersRepository,
     private usersQueryRepository: UsersQueryRepository,
@@ -72,7 +72,7 @@ export class AuthController {
     if (user?.banInfo.isBanned) {
       throw new UnauthorizedException();
     } else {
-      const payload = await this.authService.getTokenPayload(token.refreshToken);
+      const payload = await this.tokensService.getTokenPayload(token.refreshToken);
       const createDeviceDTO: CreateDeviceDTO = {
         ip: req.ip,
         title: req.headers.host,
@@ -91,10 +91,9 @@ export class AuthController {
   @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Req() req, @Res({ passthrough: true }) res) {
-    //todo - убить текущий токен
-    const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
-    const token = await this.authService.updateJWT(payload);
-    const newPayload = await this.authService.getTokenPayload(token.refreshToken);
+    const payload = await this.tokensService.getTokenPayload(req.cookies.refreshToken);
+    const token = await this.tokensService.updateJWT(payload);
+    const newPayload = await this.tokensService.getTokenPayload(token.refreshToken);
     const lastActiveDate= new Date(newPayload.iat * 1000);
     await this.devicesService.updateLastActiveDate(payload.deviceId, lastActiveDate);
 
@@ -106,8 +105,7 @@ export class AuthController {
   @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req) {
-    //todo - убить текущий токен
-    const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
+    const payload = await this.tokensService.getTokenPayload(req.cookies.refreshToken);
     return this.devicesService.deleteCurrentDevice(payload.deviceId);
   }
 

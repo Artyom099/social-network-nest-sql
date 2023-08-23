@@ -23,7 +23,7 @@ import {Comment, CommentSchema} from './features/comments/comments.schema';
 import {config} from 'dotenv';
 import {ConfigModule} from '@nestjs/config';
 import {AuthModule} from './features/auth/auth.module';
-import {Request, RequestSchema} from './infrastructure/services/ip.schema';
+import {Request, RequestSchema} from './infrastructure/utils/ip.schema';
 import {Device, DeviceSchema} from './features/devices/devices.schema';
 import {CqrsModule} from '@nestjs/cqrs';
 import {BindBlogUseCase} from './features/blogs/application/sa.use.cases/bind.blog.use.case';

@@ -1,7 +1,8 @@
 import {UsersRepository} from '../../../users/infrastructure/users.repository';
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {randomUUID} from 'crypto';
-import {AuthService} from '../auth.service';
+import {TokensService} from '../../../../infrastructure/services/tokens.service';
+import {HashService} from '../../../../infrastructure/services/hash.service';
 
 export class CheckCredentialsCommand {
   constructor(
@@ -13,7 +14,8 @@ export class CheckCredentialsCommand {
 @CommandHandler(CheckCredentialsCommand)
 export class CheckCredentialsUseCase implements ICommandHandler<CheckCredentialsCommand> {
   constructor(
-    private authService: AuthService,
+    private hashService: HashService,
+    private tokensService: TokensService,
     private usersRepository: UsersRepository,
   ) {}
 
@@ -22,12 +24,12 @@ export class CheckCredentialsUseCase implements ICommandHandler<CheckCredentials
     const user = await this.usersRepository.getUserByLoginOrEmail(loginOrEmail);
     if (!user) return null;
 
-    const hash = await this.authService.generateHash(password, user.passwordSalt);
+    const hash = await this.hashService.generateHash(password, user.passwordSalt);
     if (user.passwordHash !== hash) {
       return null;
     } else {
       const payload = { userId: user.id, deviceId: randomUUID() };
-      return this.authService.createTokens(payload)
+      return this.tokensService.createJWT(payload)
     }
   }
 }
