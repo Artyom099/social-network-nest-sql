@@ -10,12 +10,13 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { DevicesService } from '../application/devices.service';
-import { AuthService } from '../../auth/application/auth.service';
-import { DevicesQueryRepository } from '../infrastructure/devices.query.repository';
-import { CookieGuard } from '../../../infrastructure/guards/cookie.guard';
+import {DevicesService} from '../application/devices.service';
+import {AuthService} from '../../auth/application/auth.service';
+import {DevicesQueryRepository} from '../infrastructure/devices.query.repository';
+import {CookieGuard} from '../../../infrastructure/guards/cookie.guard';
 
 @Controller('security')
+@UseGuards(CookieGuard)
 export class DevicesController {
   constructor(
     private authService: AuthService,
@@ -24,44 +25,32 @@ export class DevicesController {
   ) {}
 
   @Get('devices')
-  @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.OK)
-  async getActiveSessions(@Req() req) {
-    const payload = await this.authService.getTokenPayload(
-      req.cookies.refreshToken,
-    );
-    return this.devicesQueryRepository.getSessions(payload.userId);
+  async getDevices(@Req() req) {
+    const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
+    return this.devicesQueryRepository.getDevices(payload.userId);
   }
 
   @Delete('devices')
-  @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteOtherSessions(@Req() req) {
-    const payload = await this.authService.getTokenPayload(
-      req.cookies.refreshToken,
-    );
-    if (payload)
-      return this.devicesService.deleteOtherSessions(payload.deviceId);
+  async deleteOtherDevices(@Req() req) {
+    const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
+    return this.devicesService.deleteOtherDevices(payload.deviceId, payload.userId);
   }
 
   @Delete('devices/:id')
-  @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteCurrentSession(@Req() req, @Param('id') deviceId: string) {
-    const currentSession = await this.devicesQueryRepository.getSession(
-      deviceId,
-    );
-    if (!currentSession) throw new NotFoundException();
+  async deleteCurrentDevice(@Req() req, @Param('id') deviceId: string) {
+    const currentDevice = await this.devicesQueryRepository.getDevice(deviceId);
+    if (!currentDevice) throw new NotFoundException();
 
     const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
-    const activeSessions = await this.devicesQueryRepository.getSessions(
-      payload.userId,
-    );
+    const activeDevices = await this.devicesQueryRepository.getDevices(payload.userId);
 
-    if (!activeSessions.find((s) => s.deviceId === currentSession.deviceId)) {
+    if (!activeDevices.find((s) => s.deviceId === currentDevice.deviceId)) {
       throw new ForbiddenException();
     } else {
-      return this.devicesService.deleteCurrentSession(deviceId);
+      return this.devicesService.deleteCurrentDevice(deviceId);
     }
   }
 }

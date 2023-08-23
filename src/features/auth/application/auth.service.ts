@@ -13,8 +13,7 @@ export class AuthService {
     private usersRepository: UsersRepository,
   ) {}
 
-  //todo - разнести контроллер на use cases
-
+  //todo - вынести в отдельный use case
   async checkCredentials(
     loginOrEmail: string,
     password: string,
@@ -30,7 +29,7 @@ export class AuthService {
       return {
         accessToken: await this.jwtService.signAsync(payload, {
           secret: jwtConstants.accessSecret,
-          expiresIn: '5m',
+          expiresIn: '10s',
         }),
         refreshToken: await this.jwtService.signAsync(payload, {
           secret: jwtConstants.refreshSecret,
@@ -40,12 +39,15 @@ export class AuthService {
     }
   }
 
+  //todo - вынести в отдельный сервис
+
+  //async createTokens() {}
   async updateJWT(payload: TokenPayloadModel) {
     const newPayload = { userId: payload.userId, deviceId: payload.deviceId };
     return {
       accessToken: await this.jwtService.signAsync(newPayload, {
         secret: jwtConstants.accessSecret,
-        expiresIn: '5m',
+        expiresIn: '10s',
       }),
       refreshToken: await this.jwtService.signAsync(newPayload, {
         secret: jwtConstants.refreshSecret,
@@ -53,7 +55,6 @@ export class AuthService {
       }),
     };
   }
-
   async getTokenPayload(token: string): Promise<any | null> {
     try {
       // { userId: '1682507411257', deviceId: '1682507411257', iat: 1682507422, exp: 1682511022 }
@@ -63,6 +64,7 @@ export class AuthService {
     }
   }
 
+  //todo - вынести в отдельный сервис
   async generateHash(password: string, salt: string) {
     return bcrypt.hash(password, salt);
   }

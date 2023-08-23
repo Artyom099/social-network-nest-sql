@@ -1,6 +1,5 @@
 import {Injectable} from '@nestjs/common';
 import {DevicesRepository} from '../infrastructure/devices.repository';
-import {Device} from '../devices.schema';
 
 import {DeviceViewModel} from '../api/models/device.view.model';
 import {CreateDeviceDTO} from '../api/models/create.device.dto';
@@ -9,22 +8,20 @@ import {CreateDeviceDTO} from '../api/models/create.device.dto';
 export class DevicesService {
   constructor(private securityRepository: DevicesRepository) {}
 
-  async createSession(createDeviceDTO: CreateDeviceDTO): Promise<DeviceViewModel> {
-    const {ip, title, lastActiveDate, deviceId, userId} = createDeviceDTO
-    const session = Device.create(ip, title, lastActiveDate, deviceId, userId);
-    return this.securityRepository.createSession(session);
+  async createDevise(createDeviceDTO: CreateDeviceDTO): Promise<DeviceViewModel> {
+    return this.securityRepository.createDevice(createDeviceDTO);
   }
   async updateLastActiveDate(deviceId: string, date: Date) {
     return this.securityRepository.updateLastActiveDate(deviceId, date);
   }
 
-  async deleteCurrentSession(deviceId: string) {
-    return this.securityRepository.deleteCurrentSession(deviceId);
+  async deleteCurrentDevice(deviceId: string) {
+    return this.securityRepository.deleteCurrentDevice(deviceId);
   }
-  async deleteOtherSessions(deviceId: string) {
-    return this.securityRepository.deleteOtherSessions(deviceId);
+  async deleteOtherDevices(deviceId: string, userId: string) {
+    return this.securityRepository.deleteOtherDevices(deviceId, userId);
   }
-  async deleteAllSessions(userId: string) {
-    return this.securityRepository.deleteAllSessions(userId);
+  async deleteAllDevices(userId: string) {
+    return this.securityRepository.deleteAllDevices(userId);
   }
 }

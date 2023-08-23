@@ -3,8 +3,8 @@ import {UsersPaginationInput,} from '../../../infrastructure/utils/common.models
 import {SAUserViewModel} from '../api/models/view/sa.user.view.model';
 import {UserViewModel} from '../api/models/view/user.view.model';
 import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
-import {InjectDataSource} from "@nestjs/typeorm";
-import {DataSource} from "typeorm";
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -21,27 +21,28 @@ export class UsersQueryRepository {
 
     return user.length ? user[0] : null
   }
-  async getSortedUsersToSA(query: UsersPaginationInput): Promise<PagingViewModel<SAUserViewModel[]>> {
-    const [totalCount] = await this.dataSource.query(`
-    select count(*)
-    from "Users"
-    where ("login" like $1 or "email" like $2)
-    and "isBanned" = $3 or $3 is null
-    `, [
-      `%${query.searchLoginTerm}%`,
-      `%${query.searchEmailTerm}%`,
-      query.banStatus,
-    ])
 
-    const queryString = `
-    select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
-    from "Users"
-    where ("login" like $1 or "email" like $2)
-    and "isBanned" = $3 or $3 is null
-    order by "${query.sortBy}" ${query.sortDirection}
-    limit $4
-    offset $5
-    `
+  async getSortedUsersToSA(query: UsersPaginationInput): Promise<PagingViewModel<SAUserViewModel[]>> {
+  const [totalCount] = await this.dataSource.query(`
+  select count(*)
+  from "Users"
+  where ("login" ilike $1 or "email" ilike $2)
+  and ("isBanned" = $3 or $3 is null)
+  `, [
+    `%${query.searchLoginTerm}%`,
+    `%${query.searchEmailTerm}%`,
+    query.banStatus,
+  ])
+
+  const queryString = `
+  select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
+  from "Users"
+  where ("login" ilike $1 or "email" ilike $2)
+  and ("isBanned" = $3 or $3 is null)
+  order by "${query.sortBy}" ${query.sortDirection}
+  limit $4
+  offset $5
+  `
 
     const sortedUsers = await this.dataSource.query(queryString, [
       `%${query.searchLoginTerm}%`,
@@ -56,10 +57,10 @@ export class UsersQueryRepository {
         id: u.id,
         login: u.login,
         email: u.email,
-        createdAt: u.createdAt.toISOString(),
+        createdAt: u.createdAt,
         banInfo: {
           isBanned: u.isBanned,
-          banDate: u.banDate ? u.banDate.toISOString() : null,
+          banDate: u.banDate,
           banReason: u.banReason,
         },
       };
@@ -72,5 +73,6 @@ export class UsersQueryRepository {
       totalCount: query.totalCountU(totalCount), // общее количество пользователей
       items,
     };
+
   }
 }

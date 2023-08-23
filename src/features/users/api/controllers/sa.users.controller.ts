@@ -70,7 +70,7 @@ export class SaUsersController {
 
     if (inputModel.isBanned) {
       await this.commandBus.execute(new BanUserCommand(userId, inputModel));
-      await this.devicesService.deleteAllSessions(userId);
+      await this.devicesService.deleteAllDevices(userId);
     } else {
       await this.commandBus.execute(new UnbanUserCommand(userId));
     }

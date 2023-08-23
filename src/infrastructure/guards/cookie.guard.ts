@@ -1,13 +1,8 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
-import { DevicesQueryRepository } from '../../features/devices/infrastructure/devices.query.repository';
-import { jwtConstants } from '../utils/settings';
+import {CanActivate, ExecutionContext, Injectable, UnauthorizedException,} from '@nestjs/common';
+import {JwtService} from '@nestjs/jwt';
+import {Request} from 'express';
+import {DevicesQueryRepository} from '../../features/devices/infrastructure/devices.query.repository';
+import {jwtConstants} from '../utils/settings';
 
 @Injectable()
 export class CookieGuard implements CanActivate {
@@ -22,22 +17,16 @@ export class CookieGuard implements CanActivate {
     if (!refreshToken) throw new UnauthorizedException();
 
     try {
-      const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: jwtConstants.refreshSecret,
-      });
-      const tokenIssuedAt = new Date(payload.iat * 1000).toISOString();
-      const lastActiveSession = await this.devicesQueryRepository.getSession(
-        payload.deviceId,
-      );
-      if (
-        !lastActiveSession ||
-        tokenIssuedAt !== lastActiveSession.lastActiveDate
-      ) {
-        throw new UnauthorizedException();
-      }
+      const payload = await this.jwtService.verifyAsync(refreshToken, {secret: jwtConstants.refreshSecret});
+      const tokenIssuedAt = new Date(payload.iat * 1000).toString();
+      const lastActiveSession = await this.devicesQueryRepository.getDevice(payload.deviceId);
 
-      request.userId = payload.userId;
-      return true;
+      if (!lastActiveSession || tokenIssuedAt !== lastActiveSession.lastActiveDate.toString()) {
+        return false;
+      } else {
+        request.userId = payload.userId;
+        return true;
+      }
     } catch (e) {
       throw new UnauthorizedException();
     }

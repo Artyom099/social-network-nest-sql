@@ -8,8 +8,8 @@ import {Comment, CommentDocument} from '../comments/comments.schema';
 import {Device, DeviceDocument} from '../devices/devices.schema';
 import {Request, RequestDocument,} from '../../infrastructure/services/ip.schema';
 import {BannedUserForBlog, BannedUserForBlogModelType,} from '../users/schemas/banned.users.for.blog.schema';
-import {InjectDataSource} from "@nestjs/typeorm";
-import {DataSource} from "typeorm";
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class TestRepository {
@@ -36,6 +36,7 @@ export class TestRepository {
       this.dataSource.query(`
       delete from "BannedUsersForBlog";
       delete from "Users";
+      delete from "Devices";
       `)
     ]);
   }

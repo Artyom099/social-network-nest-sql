@@ -1,41 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Device, DeviceDocument } from '../devices.schema';
-import { Model } from 'mongoose';
+import {Injectable} from '@nestjs/common';
+import {InjectModel} from '@nestjs/mongoose';
+import {Device, DeviceDocument} from '../devices.schema';
+import {Model} from 'mongoose';
 
-import {DeviceViewModel} from "../api/models/device.view.model";
+import {DeviceViewModel} from '../api/models/device.view.model';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class DevicesQueryRepository {
   constructor(
+    @InjectDataSource() private dataSource: DataSource,
     @InjectModel(Device.name) private devicesModel: Model<DeviceDocument>,
   ) {}
 
-  async getSession(deviceId: string): Promise<DeviceViewModel | null> {
-    const device = await this.devicesModel.findOne({ deviceId }).exec();
-    if (!device) {
-      return null;
-    } else {
-      return {
-        ip: device.ip,
-        title: device.title,
-        lastActiveDate: device.lastActiveDate.toISOString(),
-        deviceId: device.deviceId,
-      };
-    }
+  async getDevice(deviceId: string): Promise<DeviceViewModel | null> {
+    const device = await this.dataSource.query(`
+    select "ip", "title", "lastActiveDate", "deviceId"
+    from "Devices"
+    where "deviceId" = $1
+    `, [deviceId])
+
+    return device.length ? device[0] : null
   }
 
-  async getSessions(userId: string): Promise<DeviceViewModel[]> {
-    const devices = await this.devicesModel
-      .find({ userId }, { projection: { _id: 0, userId: 0 } })
-      .exec();
-    return devices.map((d) => {
-      return {
-        ip: d.ip,
-        title: d.title,
-        lastActiveDate: d.lastActiveDate.toISOString(),
-        deviceId: d.deviceId,
-      };
-    });
+  async getDevices(userId: string): Promise<DeviceViewModel[]> {
+    return this.dataSource.query(`
+    select "ip", "title", "lastActiveDate", "deviceId"
+    from "Devices"
+    where "userId" = $1
+    `, [userId])
   }
 }
