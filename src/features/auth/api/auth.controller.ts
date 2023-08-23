@@ -29,6 +29,7 @@ import {UsersRepository} from '../../users/infrastructure/users.repository';
 import {ResendConfirmationCommand} from '../application/use.cases/resend.confirmation.use.case';
 import {CreateDeviceDTO} from '../../devices/api/models/create.device.dto';
 import {RateLimitGuard} from '../../../infrastructure/guards/rate.limit.guard';
+import {CheckCredentialsCommand} from '../application/use.cases/check.credentials.use.case';
 
 @Controller('auth')
 export class AuthController {
@@ -61,10 +62,10 @@ export class AuthController {
     @Res({ passthrough: true }) res,
     @Body() InputModel: AuthInputModel,
   ) {
-    const token = await this.authService.checkCredentials(
+    const token = await this.commandBus.execute(new CheckCredentialsCommand(
       InputModel.loginOrEmail,
       InputModel.password,
-    );
+    ));
     if (!token) throw new UnauthorizedException();
 
     const user = await this.usersRepository.getUserByLoginOrEmail(InputModel.loginOrEmail);
@@ -90,6 +91,7 @@ export class AuthController {
   @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Req() req, @Res({ passthrough: true }) res) {
+    //todo - убить текущий токен
     const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
     const token = await this.authService.updateJWT(payload);
     const newPayload = await this.authService.getTokenPayload(token.refreshToken);
@@ -104,6 +106,7 @@ export class AuthController {
   @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req) {
+    //todo - убить текущий токен
     const payload = await this.authService.getTokenPayload(req.cookies.refreshToken);
     return this.devicesService.deleteCurrentDevice(payload.deviceId);
   }

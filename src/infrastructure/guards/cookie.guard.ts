@@ -22,11 +22,12 @@ export class CookieGuard implements CanActivate {
       const lastActiveSession = await this.devicesQueryRepository.getDevice(payload.deviceId);
 
       if (!lastActiveSession || tokenIssuedAt !== lastActiveSession.lastActiveDate.toString()) {
-        return false;
+        throw new UnauthorizedException();
       } else {
         request.userId = payload.userId;
         return true;
       }
+
     } catch (e) {
       throw new UnauthorizedException();
     }

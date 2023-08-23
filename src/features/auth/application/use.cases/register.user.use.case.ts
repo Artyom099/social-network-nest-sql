@@ -32,7 +32,8 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
       isConfirmed: false,
     }
     try {
-      await this.emailManager.sendEmailConfirmationCode(InputModel.email, createUserDTO.confirmationCode);
+      //await
+      this.emailManager.sendEmailConfirmationCode(InputModel.email, createUserDTO.confirmationCode);
     } catch (error) {
       return null;
     }

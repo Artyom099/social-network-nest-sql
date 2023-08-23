@@ -37,6 +37,7 @@ import {BlogsQueryRepository} from '../blogs/infrastructure/blogs.query.reposito
 import {Blog, BlogSchema} from '../blogs/blogs.schema';
 import {BannedUsersForBlogQueryRepository} from '../users/infrastructure/banned.users.for.blog.query.repository';
 import {ResendConfirmationUseCase} from './application/use.cases/resend.confirmation.use.case';
+import {CheckCredentialsUseCase} from './application/use.cases/check.credentials.use.case';
 
 const useCases = [
   BanUserUseCase,
@@ -46,6 +47,7 @@ const useCases = [
   RegisterUserUseCase,
   UpdatePasswordUseCase,
   SendRecoveryCodeUseCase,
+  CheckCredentialsUseCase,
   CreateUserByAdminUseCase,
   ResendConfirmationUseCase,
   BanUserForCurrentBlogUseCase,
