@@ -30,6 +30,7 @@ import {ResendConfirmationCommand} from '../application/use.cases/resend.confirm
 import {CreateDeviceDTO} from '../../devices/api/models/create.device.dto';
 import {RateLimitGuard} from '../../../infrastructure/guards/rate.limit.guard';
 import {CheckCredentialsCommand} from '../application/use.cases/check.credentials.use.case';
+import {RefreshTokenCommand} from '../application/use.cases/refresh.token.use.case';
 
 @Controller('auth')
 export class AuthController {
@@ -68,6 +69,8 @@ export class AuthController {
     ));
     if (!token) throw new UnauthorizedException();
 
+    //todo - move to IsUserBannedUseCase??
+    // или можно проверять на бан в CheckCredentialsUseCase?
     const user = await this.usersRepository.getUserByLoginOrEmail(InputModel.loginOrEmail);
     if (user?.banInfo.isBanned) {
       throw new UnauthorizedException();
@@ -91,11 +94,10 @@ export class AuthController {
   @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Req() req, @Res({ passthrough: true }) res) {
-    const payload = await this.tokensService.getTokenPayload(req.cookies.refreshToken);
-    const token = await this.tokensService.updateJWT(payload);
-    const newPayload = await this.tokensService.getTokenPayload(token.refreshToken);
-    const lastActiveDate= new Date(newPayload.iat * 1000);
-    await this.devicesService.updateLastActiveDate(payload.deviceId, lastActiveDate);
+    const { deviceId, lastActiveDate, token } =
+    await this.commandBus.execute(new RefreshTokenCommand(req.cookies.refreshToken))
+
+    await this.devicesService.updateLastActiveDate(deviceId, lastActiveDate);
 
     res.cookie('refreshToken', token.refreshToken, { httpOnly: true, secure: true });
     return { accessToken: token.accessToken };
