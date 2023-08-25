@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "social-network-nest",
+  "name": "social-network-nest-sql",
   "builds": [
     {
       "src": "src/main.ts",
