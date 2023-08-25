@@ -30,7 +30,7 @@ export class SABlogsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getBlogs(@Query() query: BlogsPaginationInput) {
-    return this.blogsQueryRepository.getSortedBlogsSA(query);
+    return this.blogsQueryRepository.getBlogsSA(query);
   }
 
   @Put(':id/bind-with-user/:userId')

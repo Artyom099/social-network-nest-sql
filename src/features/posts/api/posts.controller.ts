@@ -24,7 +24,6 @@ import {UsersQueryRepository} from '../../users/infrastructure/users.query.repos
 import {CommandBus} from '@nestjs/cqrs';
 import {CreateCommentCommand} from '../../comments/application/use.cases/create.comment.use.case';
 import {LikeStatusInputModel} from '../../comments/api/models/like.status.input.model';
-import {BannedUsersForBlogRepository} from '../../users/infrastructure/banned.users.for.blog.repository';
 import {BlogsQueryRepository} from '../../blogs/infrastructure/blogs.query.repository';
 import {BannedUsersForBlogQueryRepository} from '../../users/infrastructure/banned.users.for.blog.query.repository';
 
@@ -36,7 +35,6 @@ export class PostsController {
     private postsQueryRepository: PostsQueryRepository,
     private usersQueryRepository: UsersQueryRepository,
     private commentsQueryRepository: CommentsQueryRepository,
-    private bannedUsersForBlogRepository: BannedUsersForBlogRepository,
     private bannedUsersForBlogQueryRepository: BannedUsersForBlogQueryRepository,
 
     private commandBus: CommandBus,
@@ -46,7 +44,7 @@ export class PostsController {
   @UseGuards(CheckUserIdGuard)
   @HttpCode(HttpStatus.OK)
   async getPosts(@Req() req, @Query() query: DefaultPaginationInput) {
-    return this.postsQueryRepository.getSortedPosts(req.userId, query);
+    return this.postsQueryRepository.getPosts(req.userId, query);
   }
 
   @Get(':id')

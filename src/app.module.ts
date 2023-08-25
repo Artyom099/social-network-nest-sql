@@ -37,6 +37,7 @@ import {UpdateBlogUseCase} from './features/blogs/application/blogger.use.cases/
 import {BlogExistsConstraint} from './features/users/api/models/input/ban.user.current.blog.input.model';
 import {BannedUserForBlog, BannedUserForBlogSchema,} from './features/users/schemas/banned.users.for.blog.schema';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import {UpdateCommentLikesUseCase} from './features/comments/application/use.cases/update.comment.likes.use.case';
 
 config();
 
@@ -47,6 +48,7 @@ const useCases = [
   CreatePostUseCase,
   CreateCommentUseCase,
   UpdateBlogUseCase,
+  UpdateCommentLikesUseCase,
 ];
 
 @Module({

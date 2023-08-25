@@ -35,10 +35,11 @@ export class DefaultPaginationInput {
   pagesCount(totalCount: number): number {
     return Math.ceil(totalCount / this.pageSize);
   }
-  pagesCountU(totalCount: { count: string }): number {
-    return Math.ceil(parseInt(totalCount.count) / this.pageSize);
+
+  pagesCountSql(totalCount: { count: string }): number {
+    return Math.ceil(parseInt(totalCount.count, 10) / this.pageSize);
   }
-  totalCountU(tCount: { count: string }): number {
+  totalCountSql(tCount: { count: string }): number {
     return parseInt(tCount.count, 10)
   }
 }

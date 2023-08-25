@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { PostsRepository } from '../infrastucture/posts.repository';
-import { PostInputModel } from '../api/models/post.input.model';
-import { LikeStatus } from '../../../infrastructure/utils/constants';
-import { UsersQueryRepository } from '../../users/infrastructure/users.query.repository';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import {Injectable} from '@nestjs/common';
+import {PostsRepository} from '../infrastucture/posts.repository';
+import {PostInputModel} from '../api/models/post.input.model';
+import {LikeStatus} from '../../../infrastructure/utils/constants';
+import {UsersQueryRepository} from '../../users/infrastructure/users.query.repository';
+import {UsersRepository} from '../../users/infrastructure/users.repository';
 
 @Injectable()
 export class PostsService {
@@ -13,6 +13,7 @@ export class PostsService {
     protected usersQueryRepository: UsersQueryRepository,
   ) {}
 
+  //todo - переписать на use cases
   async updatePost(postId: string, InputModel: PostInputModel) {
     return this.postsRepository.updatePost(postId, InputModel);
   }
@@ -26,13 +27,14 @@ export class PostsService {
   ) {
     const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) return null;
-    const addedAt = new Date();
-    return this.postsRepository.updatePostLikes(
-      postId,
+
+    const updatePostLikesModel = {
+      id: postId,
       userId,
-      likeStatus,
-      addedAt,
-      user.login,
-    );
+      newLikeStatus: likeStatus,
+      addedAt: new Date(),
+      login: user.login,
+    }
+    return this.postsRepository.updatePostLikes(updatePostLikesModel);
   }
 }

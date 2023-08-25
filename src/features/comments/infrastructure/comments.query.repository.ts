@@ -7,7 +7,7 @@ import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {User, UserDocument} from '../../users/schemas/users.schema';
 import {Blog, BlogDocument} from '../../blogs/blogs.schema';
 import {CommentViewModel} from '../api/models/comment.view.model';
-import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
+import {PagingViewModel} from '../../../infrastructure/models/paging.view.model';
 
 @Injectable()
 export class CommentsQueryRepository {

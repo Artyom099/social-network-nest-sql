@@ -1,10 +1,9 @@
-import { HydratedDocument } from 'mongoose';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { LikeStatus } from '../../infrastructure/utils/constants';
-import { randomUUID } from 'crypto';
-import { SABlogViewModel } from '../blogs/api/models/sa.blog.view.model';
-import { PostDBModel } from './api/models/post.db.model';
-import { PostInputModel } from './api/models/post.input.model';
+import {HydratedDocument} from 'mongoose';
+import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
+import {LikeStatus} from '../../infrastructure/utils/constants';
+import {randomUUID} from 'crypto';
+import {SABlogViewModel} from '../blogs/api/models/sa.blog.view.model';
+import {PostInputModel} from './api/models/post.input.model';
 
 @Schema({ _id: false, versionKey: false })
 class ExtendedLikesInfo {
@@ -41,12 +40,10 @@ export class Post {
   @Prop({ type: [ExtendedLikesInfoSchema], required: true })
   extendedLikesInfo: ExtendedLikesInfo[];
 
-  //todo - заменить createdAt на Date
-
   static create(
     bLog: SABlogViewModel,
     InputModel: PostInputModel,
-  ): PostDBModel {
+  ) {
     const post = new Post();
     post.id = randomUUID();
     post.title = InputModel.title;

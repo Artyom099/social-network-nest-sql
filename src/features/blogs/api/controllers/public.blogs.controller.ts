@@ -1,21 +1,8 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  NotFoundException,
-  Param,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import { BlogsQueryRepository } from '../../infrastructure/blogs.query.repository';
-import {
-  BlogsPaginationInput,
-  DefaultPaginationInput,
-} from '../../../../infrastructure/utils/common.models';
-import { CheckUserIdGuard } from '../../../../infrastructure/guards/check-userId.guard';
-import { PostsQueryRepository } from '../../../posts/infrastucture/posts.query.repository';
+import {Controller, Get, HttpCode, HttpStatus, NotFoundException, Param, Query, Req, UseGuards,} from '@nestjs/common';
+import {BlogsQueryRepository} from '../../infrastructure/blogs.query.repository';
+import {BlogsPaginationInput, DefaultPaginationInput,} from '../../../../infrastructure/utils/common.models';
+import {CheckUserIdGuard} from '../../../../infrastructure/guards/check-userId.guard';
+import {PostsQueryRepository} from '../../../posts/infrastucture/posts.query.repository';
 
 @Controller('blogs')
 export class PublicBlogsController {
@@ -27,7 +14,7 @@ export class PublicBlogsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getBlogs(@Query() query: BlogsPaginationInput) {
-    return this.blogsQueryRepository.getSortedBlogs(query);
+    return this.blogsQueryRepository.getBlogs(query);
   }
 
   @Get(':id')
@@ -53,7 +40,7 @@ export class PublicBlogsController {
     if (!foundBlog) {
       throw new NotFoundException('blog not found');
     } else {
-      return this.postsQueryRepository.getSortedPostsCurrentBlog(
+      return this.postsQueryRepository.getPostsCurrentBlog(
         req.userId,
         blogId,
         query,

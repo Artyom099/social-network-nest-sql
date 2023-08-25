@@ -1,9 +1,9 @@
-import { BlogsRepository } from '../../infrastructure/blogs.repository';
-import { Blog } from '../../blogs.schema';
-import { BlogInputModel } from '../../api/models/blog.input.model';
-import { UsersQueryRepository } from '../../../users/infrastructure/users.query.repository';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogViewModel } from '../../api/models/blog.view.model';
+import {BlogsRepository} from '../../infrastructure/blogs.repository';
+import {BlogInputModel} from '../../api/models/blog.input.model';
+import {UsersQueryRepository} from '../../../users/infrastructure/users.query.repository';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {BlogViewModel} from '../../api/models/blog.view.model';
+import {randomUUID} from 'crypto';
 
 export class CreateBlogCommand {
   constructor(public userId: string, public inputModel: BlogInputModel) {}
@@ -21,7 +21,16 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
     const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) return null;
 
-    const createdBlog = Blog.create(inputModel, user);
-    return this.blogsRepository.createBlog(createdBlog);
+    const createBlogModel = {
+      id: randomUUID(),
+      inputModel,
+      createdAt: new Date(),
+      isMembership: false,
+      userId: user.id,
+      userLogin: user.login,
+      isBanned: false,
+      banDate: null,
+    };
+    return this.blogsRepository.createBlog(createBlogModel);
   }
 }

@@ -7,9 +7,7 @@ import {CreateUserDTO} from '../api/models/dto/create.user.dto';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async getUserById(id: string): Promise<SAUserViewModel | null> {
     const user = await this.dataSource.query(`

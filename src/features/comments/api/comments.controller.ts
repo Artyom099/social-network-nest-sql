@@ -20,6 +20,8 @@ import {CommentsQueryRepository} from '../infrastructure/comments.query.reposito
 import {CommentViewModel} from './models/comment.view.model';
 import {LikeStatusInputModel} from './models/like.status.input.model';
 import {UsersRepository} from '../../users/infrastructure/users.repository';
+import {CommandBus} from '@nestjs/cqrs';
+import {UpdateCommentLikesCommand} from '../application/use.cases/update.comment.likes.use.case';
 
 @Controller('comments')
 export class CommentsController {
@@ -27,6 +29,8 @@ export class CommentsController {
     private commentsService: CommentsService,
     private commentsQueryRepository: CommentsQueryRepository,
     private usersRepository: UsersRepository,
+
+    private commandBus: CommandBus,
   ) {}
 
   @Get(':id')
@@ -37,19 +41,19 @@ export class CommentsController {
     @Param('id') commentId: string,
   ): Promise<CommentViewModel | null> {
     // если юзер забанен, мы не можем получить его коммент
-    const foundComment = await this.commentsQueryRepository.getComment(
+    const comment = await this.commentsQueryRepository.getComment(
       commentId,
       req.userId,
     );
-    if (!foundComment) throw new NotFoundException();
+    if (!comment) throw new NotFoundException();
 
     const user = await this.usersRepository.getUserById(
-      foundComment.commentatorInfo.userId,
+      comment.commentatorInfo.userId,
     );
     if (user?.banInfo.isBanned) {
       throw new NotFoundException();
     } else {
-      return foundComment;
+      return comment;
     }
   }
 
@@ -61,31 +65,30 @@ export class CommentsController {
     @Param('id') commentId: string,
     @Body() InputModel: CommentInputModel,
   ) {
-    const foundComment = await this.commentsQueryRepository.getComment(
+    const comment = await this.commentsQueryRepository.getComment(
       commentId,
       req.userId,
     );
-    if (!foundComment) {
-      throw new NotFoundException();
-    }
-    if (req.userId !== foundComment.commentatorInfo.userId) {
+    if (!comment) throw new NotFoundException();
+    if (req.userId !== comment.commentatorInfo.userId) {
       throw new ForbiddenException();
     }
-    return this.commentsService.updateComment(commentId, InputModel.content);
+    return this.commandBus.execute(new UpdateCommentLikesCommand(
+      commentId,
+      InputModel.content
+    ));
   }
 
   @Delete(':id')
   @UseGuards(BearerAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteComment(@Req() req, @Param('id') commentId: string) {
-    const foundComment = await this.commentsQueryRepository.getComment(
+    const comment = await this.commentsQueryRepository.getComment(
       commentId,
       req.userId,
     );
-    if (!foundComment) {
-      throw new NotFoundException();
-    }
-    if (req.userId !== foundComment.commentatorInfo.userId) {
+    if (!comment) throw new NotFoundException();
+    if (req.userId !== comment.commentatorInfo.userId) {
       throw new ForbiddenException();
     }
     return this.commentsService.deleteComment(commentId);
@@ -99,10 +102,10 @@ export class CommentsController {
     @Param('id') commentId: string,
     @Body() InputModel: LikeStatusInputModel,
   ) {
-    const foundComment = await this.commentsQueryRepository.getComment(
+    const comment = await this.commentsQueryRepository.getComment(
       commentId,
     );
-    if (!foundComment) {
+    if (!comment) {
       throw new NotFoundException();
     } else {
       return this.commentsService.updateCommentLikes(

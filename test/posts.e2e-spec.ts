@@ -1,13 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {HttpStatus, INestApplication} from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { LikeStatus } from '../src/infrastructure/utils/constants';
-import { appSettings } from '../src/infrastructure/settings/app.settings';
-import {
-  getRefreshTokenByResponse,
-  getRefreshTokenByResponseWithTokenName,
-} from '../src/infrastructure/utils/utils';
+import {AppModule} from '../src/app.module';
+import {LikeStatus} from '../src/infrastructure/utils/constants';
+import {appSettings} from '../src/infrastructure/settings/app.settings';
+import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName,} from '../src/infrastructure/utils/utils';
 
 describe('PostsController (e2e)', () => {
   let app: INestApplication;
@@ -283,6 +280,7 @@ describe('PostsController (e2e)', () => {
 
   it('9 – GET:/posts – return 200 and 1st post', async () => {
     const { firstAccessToken, firstPost, firstCreatedBlog } = expect.getState();
+    console.log('9-------9');
 
     const getPosts = await request(server)
       .get('/posts')

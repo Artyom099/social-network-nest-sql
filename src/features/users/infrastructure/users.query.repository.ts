@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {UsersPaginationInput,} from '../../../infrastructure/utils/common.models';
 import {SAUserViewModel} from '../api/models/view/sa.user.view.model';
 import {UserViewModel} from '../api/models/view/user.view.model';
-import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
+import {PagingViewModel} from '../../../infrastructure/models/paging.view.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 
@@ -49,7 +49,7 @@ export class UsersQueryRepository {
       `%${query.searchEmailTerm}%`,
       query.banStatus,
       query.pageSize,
-      query.offset()
+      query.offset(),
     ])
 
     const items = sortedUsers.map((u) => {
@@ -67,10 +67,10 @@ export class UsersQueryRepository {
     });
 
     return {
-      pagesCount: query.pagesCountU(totalCount), // общее количество страниц
+      pagesCount: query.pagesCountSql(totalCount), // общее количество страниц
       page: query.pageNumber, // текущая страница
       pageSize: query.pageSize, // количество пользователей на странице
-      totalCount: query.totalCountU(totalCount), // общее количество пользователей
+      totalCount: query.totalCountSql(totalCount), // общее количество пользователей
       items,
     };
 

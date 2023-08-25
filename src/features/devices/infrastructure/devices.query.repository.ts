@@ -1,18 +1,11 @@
 import {Injectable} from '@nestjs/common';
-import {InjectModel} from '@nestjs/mongoose';
-import {Device, DeviceDocument} from '../devices.schema';
-import {Model} from 'mongoose';
-
 import {DeviceViewModel} from '../api/models/device.view.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 
 @Injectable()
 export class DevicesQueryRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Device.name) private devicesModel: Model<DeviceDocument>,
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async getDevice(deviceId: string): Promise<DeviceViewModel | null> {
     const device = await this.dataSource.query(`

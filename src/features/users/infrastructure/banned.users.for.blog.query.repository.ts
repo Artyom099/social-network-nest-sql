@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 import {BannedUsersPaginationInput} from '../../../infrastructure/utils/common.models';
-import {PagingViewModel} from '../../../infrastructure/types/paging.view.model';
+import {PagingViewModel} from '../../../infrastructure/models/paging.view.model';
 import {BannedUserForBlogViewModel} from '../api/models/view/banned.user.for.blog.view.model';
 
 @Injectable()
@@ -57,10 +57,10 @@ export class BannedUsersForBlogQueryRepository {
     });
 
     return {
-      pagesCount: query.pagesCountU(totalCount), // общее количество страниц
+      pagesCount: query.pagesCountSql(totalCount), // общее количество страниц
       page: query.pageNumber, // текущая страница
       pageSize: query.pageSize, // количество пользователей на странице
-      totalCount: query.totalCountU(totalCount), // общее количество пользователей
+      totalCount: query.totalCountSql(totalCount), // общее количество пользователей
       items,
     };
   }

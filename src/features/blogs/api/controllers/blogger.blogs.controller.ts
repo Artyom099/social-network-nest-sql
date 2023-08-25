@@ -14,22 +14,19 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { BlogInputModel } from '../models/blog.input.model';
-import { BlogsService } from '../../application/blogs.service';
-import {
-  BlogsPaginationInput,
-  DefaultPaginationInput,
-} from '../../../../infrastructure/utils/common.models';
-import { PostsService } from '../../../posts/application/posts.service';
-import { PostInputModel } from '../../../posts/api/models/post.input.model';
-import { BlogsQueryRepository } from '../../infrastructure/blogs.query.repository';
-import { PostsQueryRepository } from '../../../posts/infrastucture/posts.query.repository';
-import { CreateBlogCommand } from '../../application/blogger.use.cases/create.blog.use.case';
-import { BearerAuthGuard } from '../../../../infrastructure/guards/bearer-auth.guard';
-import { CommandBus } from '@nestjs/cqrs';
-import { CreatePostCommand } from '../../../posts/application/blogger.use.cases/create.post.use.case';
-import { UpdateBlogCommand } from '../../application/blogger.use.cases/update.blog.use.case';
-import { CommentsQueryRepository } from '../../../comments/infrastructure/comments.query.repository';
+import {BlogInputModel} from '../models/blog.input.model';
+import {BlogsService} from '../../application/blogs.service';
+import {BlogsPaginationInput, DefaultPaginationInput,} from '../../../../infrastructure/utils/common.models';
+import {PostsService} from '../../../posts/application/posts.service';
+import {PostInputModel} from '../../../posts/api/models/post.input.model';
+import {BlogsQueryRepository} from '../../infrastructure/blogs.query.repository';
+import {PostsQueryRepository} from '../../../posts/infrastucture/posts.query.repository';
+import {CreateBlogCommand} from '../../application/blogger.use.cases/create.blog.use.case';
+import {BearerAuthGuard} from '../../../../infrastructure/guards/bearer-auth.guard';
+import {CommandBus} from '@nestjs/cqrs';
+import {CreatePostCommand} from '../../../posts/application/blogger.use.cases/create.post.use.case';
+import {UpdateBlogCommand} from '../../application/blogger.use.cases/update.blog.use.case';
+import {CommentsQueryRepository} from '../../../comments/infrastructure/comments.query.repository';
 
 @Controller('blogger/blogs')
 @UseGuards(BearerAuthGuard)
@@ -48,7 +45,7 @@ export class BloggerBlogsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getBlogs(@Req() req, @Query() query: BlogsPaginationInput) {
-    return this.blogsQueryRepository.getSortedBlogsCurrentBlogger(
+    return this.blogsQueryRepository.getBlogsCurrentBlogger(
       req.userId,
       query,
     );
@@ -107,7 +104,7 @@ export class BloggerBlogsController {
     if (!foundBlog) {
       throw new NotFoundException('blog not found');
     } else {
-      return this.postsQueryRepository.getSortedPostsCurrentBlogForBlogger(
+      return this.postsQueryRepository.getPostsCurrentBlogForBlogger(
         req.userId,
         blogId,
         query,

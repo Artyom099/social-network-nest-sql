@@ -1,9 +1,9 @@
-import { PostInputModel } from '../../api/models/post.input.model';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsRepository } from '../../infrastucture/posts.repository';
-import { Post } from '../../posts.schema';
-import { SABlogViewModel } from '../../../blogs/api/models/sa.blog.view.model';
-import { PostViewModel } from '../../api/models/post.view.model';
+import {PostInputModel} from '../../api/models/post.input.model';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
+import {PostsRepository} from '../../infrastucture/posts.repository';
+import {SABlogViewModel} from '../../../blogs/api/models/sa.blog.view.model';
+import {PostViewModel} from '../../api/models/post.view.model';
+import {randomUUID} from 'crypto';
 
 export class CreatePostCommand {
   constructor(
@@ -17,8 +17,17 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
   constructor(private postsRepository: PostsRepository) {}
 
   async execute(command: CreatePostCommand): Promise<PostViewModel> {
-    const { bLog, inputModel } = command;
-    const createdPost = Post.create(bLog, inputModel);
-    return this.postsRepository.createPost(createdPost);
+    const createdPostModel = {
+      id: randomUUID(),
+      title: command.inputModel.title,
+      shortDescription: command.inputModel.shortDescription,
+      content: command.inputModel.content,
+      blogId: command.bLog.id,
+      blogName: command.bLog.name,
+      createdAt: new Date(),
+      extendedLikesInfo: [],
+    }
+
+    return this.postsRepository.createPost(createdPostModel);
   }
 }

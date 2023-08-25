@@ -1,4 +1,4 @@
-import { LikeStatus } from '../../../../infrastructure/utils/constants';
+import {LikeStatus} from '../../../../infrastructure/utils/constants';
 
 export type PostDBModel = {
   id: string;
@@ -7,7 +7,7 @@ export type PostDBModel = {
   content: string;
   blogId: string;
   blogName: string;
-  createdAt: string;
+  createdAt: Date;
   extendedLikesInfo: ExtendedLikesInfoDBModel[];
 };
 export type ExtendedLikesInfoDBModel = {
