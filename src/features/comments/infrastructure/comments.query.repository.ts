@@ -1,13 +1,13 @@
 import {Injectable} from '@nestjs/common';
-import {DefaultPaginationInput} from '../../../infrastructure/utils/common.models';
+import {DefaultPaginationInput} from '../../../infrastructure/models/pagination.input.models';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
 import {Comment, CommentDocument} from '../comments.schema';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {User, UserDocument} from '../../users/schemas/users.schema';
 import {Blog, BlogDocument} from '../../blogs/blogs.schema';
-import {CommentViewModel} from '../api/models/comment.view.model';
-import {PagingViewModel} from '../../../infrastructure/models/paging.view.model';
+import {CommentViewModel} from '../api/models/view/comment.view.model';
+import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -65,7 +65,7 @@ export class CommentsQueryRepository {
     currentUserId: string | null,
     postId: string,
     query: DefaultPaginationInput,
-  ): Promise<PagingViewModel<CommentViewModel[]>> {
+  ): Promise<PaginationViewModel<CommentViewModel[]>> {
     const filter = { postId };
 
     const totalCount = await this.commentModel.countDocuments(filter);
@@ -126,7 +126,7 @@ export class CommentsQueryRepository {
   async getCommentsCurrentBlogger(
     currentUserId: string,
     query: DefaultPaginationInput,
-  ): Promise<PagingViewModel<CommentViewModel[]>> {
+  ): Promise<PaginationViewModel<CommentViewModel[]>> {
     const blogFilter = { 'blogOwnerInfo.userId': currentUserId };
     const sortedBlogs = await this.blogModel.find(blogFilter).lean().exec();
     const blogsId = sortedBlogs.map((b) => b.id);

@@ -1,8 +1,8 @@
 import {BlogsRepository} from '../../infrastructure/blogs.repository';
-import {BlogInputModel} from '../../api/models/blog.input.model';
+import {BlogInputModel} from '../../api/models/input/blog.input.model';
 import {UsersQueryRepository} from '../../../users/infrastructure/users.query.repository';
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
-import {BlogViewModel} from '../../api/models/blog.view.model';
+import {BlogViewModel} from '../../api/models/view/blog.view.model';
 import {randomUUID} from 'crypto';
 
 export class CreateBlogCommand {

@@ -1,11 +1,11 @@
 import {Injectable} from '@nestjs/common';
-import {BlogsPaginationInput} from '../../../infrastructure/utils/common.models';
+import {BlogsPaginationInput} from '../../../infrastructure/models/pagination.input.models';
 import {InjectModel} from '@nestjs/mongoose';
 import {Blog, BlogDocument} from '../blogs.schema';
 import {Model} from 'mongoose';
-import {SABlogViewModel} from '../api/models/sa.blog.view.model';
-import {BlogViewModel} from '../api/models/blog.view.model';
-import {PagingViewModel} from '../../../infrastructure/models/paging.view.model';
+import {SABlogViewModel} from '../api/models/view/sa.blog.view.model';
+import {BlogViewModel} from '../api/models/view/blog.view.model';
+import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 
@@ -19,7 +19,7 @@ export class BlogsQueryRepository {
   async getBlogSA2(id: string): Promise<SABlogViewModel | null> {
     return this.blogModel.findOne({ id }, { _id: 0 });
   }
-  async getBlogsSA2(query: BlogsPaginationInput): Promise<PagingViewModel<SABlogViewModel[]>> {
+  async getBlogsSA2(query: BlogsPaginationInput): Promise<PaginationViewModel<SABlogViewModel[]>> {
     const filter = {
       name: { $regex: query.searchNameTerm ?? '', $options: 'i' },
     };
@@ -46,7 +46,7 @@ export class BlogsQueryRepository {
       { _id: 0, blogOwnerInfo: 0, banInfo: 0 },
     );
   }
-  async getBlogs2(query: BlogsPaginationInput): Promise<PagingViewModel<BlogViewModel[]>> {
+  async getBlogs2(query: BlogsPaginationInput): Promise<PaginationViewModel<BlogViewModel[]>> {
     const filter = {
       'banInfo.isBanned': false,
       name: { $regex: query.searchNameTerm ?? '', $options: 'i' },
@@ -71,7 +71,7 @@ export class BlogsQueryRepository {
   async getBlogsCurrentBlogger2(
     userId: string,
     query: BlogsPaginationInput,
-  ): Promise<PagingViewModel<BlogViewModel[]>> {
+  ): Promise<PaginationViewModel<BlogViewModel[]>> {
     const filter = {
       'banInfo.isBanned': false,
       'blogOwnerInfo.userId': userId,
@@ -122,7 +122,7 @@ export class BlogsQueryRepository {
       },
     } : null
   }
-  async getBlogsSA(query: BlogsPaginationInput): Promise<PagingViewModel<SABlogViewModel[]>> {
+  async getBlogsSA(query: BlogsPaginationInput): Promise<PaginationViewModel<SABlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
     from "Blogs"
@@ -187,7 +187,7 @@ export class BlogsQueryRepository {
       isMembership: blog.isMembership,
     } : null
   }
-  async getBlogs(query: BlogsPaginationInput): Promise<PagingViewModel<SABlogViewModel[]>> {
+  async getBlogs(query: BlogsPaginationInput): Promise<PaginationViewModel<SABlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
     from "Blogs"
@@ -231,7 +231,7 @@ export class BlogsQueryRepository {
   async getBlogsCurrentBlogger(
     userId: string,
     query: BlogsPaginationInput,
-  ): Promise<PagingViewModel<BlogViewModel[]>> {
+  ): Promise<PaginationViewModel<BlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
     from "Blogs"

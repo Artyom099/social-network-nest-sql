@@ -1,8 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { LikeStatus } from '../../infrastructure/utils/constants';
-import { HydratedDocument } from 'mongoose';
-import { randomUUID } from 'crypto';
-import { CreateCommentModel } from './api/models/create.comment.model';
+import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
+import {LikeStatus} from '../../infrastructure/utils/constants';
+import {HydratedDocument} from 'mongoose';
+import {randomUUID} from 'crypto';
+import {CreateCommentModel} from './api/models/dto/create.comment.model';
 
 @Schema({ _id: false, versionKey: false })
 class CommentatorInfo {

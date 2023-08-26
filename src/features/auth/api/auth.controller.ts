@@ -22,9 +22,9 @@ import {ConfirmEmailCommand} from '../application/use.cases/confirm.email.use.ca
 import {SendRecoveryCodeCommand} from '../application/use.cases/send.recovery.code.use.case';
 import {UpdatePasswordCommand} from '../application/use.cases/update.password.use.case';
 import {UsersQueryRepository} from '../../users/infrastructure/users.query.repository';
-import {AuthInputModel} from './models/auth.input.model';
-import {EmailInputModel} from './models/email.input.model';
-import {SetNewPasswordInputModel} from './models/set.new.password.input.model';
+import {AuthInputModel} from './models/input/auth.input.model';
+import {EmailInputModel} from './models/input/email.input.model';
+import {SetNewPasswordInputModel} from './models/input/set.new.password.input.model';
 import {UsersRepository} from '../../users/infrastructure/users.repository';
 import {ResendConfirmationCommand} from '../application/use.cases/resend.confirmation.use.case';
 import {CreateDeviceDTO} from '../../devices/api/models/create.device.dto';

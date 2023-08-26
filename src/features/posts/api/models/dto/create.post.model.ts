@@ -1,6 +1,6 @@
-import {LikeStatus} from '../../../../infrastructure/utils/constants';
+import {LikeStatus} from '../../../../../infrastructure/utils/constants';
 
-export type PostDBModel = {
+export type CreatePostModel = {
   id: string;
   title: string;
   shortDescription: string;

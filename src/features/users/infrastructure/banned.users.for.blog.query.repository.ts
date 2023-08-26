@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
-import {BannedUsersPaginationInput} from '../../../infrastructure/utils/common.models';
-import {PagingViewModel} from '../../../infrastructure/models/paging.view.model';
+import {BannedUsersPaginationInput} from '../../../infrastructure/models/pagination.input.models';
+import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
 import {BannedUserForBlogViewModel} from '../api/models/view/banned.user.for.blog.view.model';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class BannedUsersForBlogQueryRepository {
   async getBannedUsersForBlog(
     blogId: string,
     query: BannedUsersPaginationInput,
-  ): Promise<PagingViewModel<BannedUserForBlogViewModel[]>> {
+  ): Promise<PaginationViewModel<BannedUserForBlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
       select count(*)
       from "BannedUsersForBlog"

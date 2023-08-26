@@ -2,11 +2,11 @@ import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
 import {Blog, BlogDocument} from '../blogs.schema';
 import {Model} from 'mongoose';
-import {BlogViewModel} from '../api/models/blog.view.model';
-import {BlogInputModel} from '../api/models/blog.input.model';
+import {BlogViewModel} from '../api/models/view/blog.view.model';
+import {BlogInputModel} from '../api/models/input/blog.input.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
-import {CreateBlogModel} from '../api/models/create.blog.model';
+import {CreateBlogModel} from '../api/models/dto/create.blog.model';
 
 @Injectable()
 export class BlogsRepository {

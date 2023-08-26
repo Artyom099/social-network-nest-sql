@@ -13,12 +13,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import {CommentInputModel} from './models/comment.input.model';
+import {CommentInputModel} from './models/input/comment.input.model';
 import {BearerAuthGuard} from '../../../infrastructure/guards/bearer-auth.guard';
 import {CheckUserIdGuard} from '../../../infrastructure/guards/check-userId.guard';
 import {CommentsQueryRepository} from '../infrastructure/comments.query.repository';
-import {CommentViewModel} from './models/comment.view.model';
-import {LikeStatusInputModel} from './models/like.status.input.model';
+import {CommentViewModel} from './models/view/comment.view.model';
+import {LikeStatusInputModel} from './models/input/like.status.input.model';
 import {UsersRepository} from '../../users/infrastructure/users.repository';
 import {CommandBus} from '@nestjs/cqrs';
 import {UpdateCommentLikesCommand} from '../application/use.cases/update.comment.likes.use.case';

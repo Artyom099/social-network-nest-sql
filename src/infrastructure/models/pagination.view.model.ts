@@ -1,4 +1,4 @@
-export type PagingViewModel<T> = {
+export type PaginationViewModel<T> = {
   pagesCount: number;
   page: number;
   pageSize: number;

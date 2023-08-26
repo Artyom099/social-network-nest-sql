@@ -1,15 +1,15 @@
 import {Injectable} from '@nestjs/common';
-import {PostInputModel} from '../api/models/post.input.model';
+import {PostInputModel} from '../api/models/input/post.input.model';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {InjectModel} from '@nestjs/mongoose';
 import {Post, PostDocument} from '../posts.schema';
 import {Model} from 'mongoose';
-import {PostViewModel} from '../api/models/post.view.model';
-import {PostDBModel} from '../api/models/post.db.model';
+import {PostViewModel} from '../api/models/view/post.view.model';
+import {CreatePostModel} from '../api/models/dto/create.post.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 import {id} from 'date-fns/locale';
-import {UpdatePostLikesModel} from '../api/models/update.post.likes.model';
+import {UpdatePostLikesModel} from '../api/models/dto/update.post.likes.model';
 
 @Injectable()
 export class PostsRepository {
@@ -18,7 +18,7 @@ export class PostsRepository {
     @InjectModel(Post.name) private postModel: Model<PostDocument>
   ) {}
 
-  async createPost2(post: PostDBModel) {
+  async createPost2(post: CreatePostModel) {
     await this.postModel.create(post);
     return {
       // id: newPost._id.toString(),
@@ -88,7 +88,7 @@ export class PostsRepository {
   }
 
   // SQL
-  async createPost(dto: PostDBModel): Promise<PostViewModel> {
+  async createPost(dto: CreatePostModel): Promise<PostViewModel> {
     await this.dataSource.query(`
     insert into "Posts"
     ("id", "title", "shortDescription", "content", "blogId", "blogName", "createdAt")
