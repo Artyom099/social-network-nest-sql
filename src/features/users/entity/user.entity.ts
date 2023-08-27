@@ -1,10 +1,8 @@
-import {Column, Entity, OneToMany, OneToOne, PrimaryColumn} from 'typeorm';
-import {BannedUserForBlog} from './banned.user.for.blog.entity';
-import {Device} from '../../devices/device.entity';
+import {Column, Entity, PrimaryColumn} from 'typeorm';
 
 @Entity()
-export class User {
-  @PrimaryColumn()
+export class Users {
+  @PrimaryColumn({nullable: false})
   id: string;
   @Column()
   login: string;
@@ -18,22 +16,22 @@ export class User {
   createdAt: Date;
   @Column()
   isBanned: boolean;
-  @Column()
+  @Column({nullable: true})
   banDate: Date;
-  @Column()
+  @Column({nullable: true})
   banReason: string;
   @Column()
   confirmationCode: string;
-  @Column()
+  @Column({nullable: true})
   expirationDate: Date;
   @Column()
   isConfirmed: boolean;
-  @Column()
+  @Column({nullable: true})
   recoveryCode: string;
 
-  @OneToOne(() => BannedUserForBlog, b => b.user)
-  bannedUserForBlog: BannedUserForBlog
-
-  @OneToMany(() => Device, d => d.user)
-  devices: Device[];
+  // @OneToOne(() => BannedUsersForBlog, b => b.user)
+  // bannedUsersForBlog: BannedUsersForBlog
+  //
+  // @OneToMany(() => Devices, d => d.user)
+  // devices: Devices[];
 }

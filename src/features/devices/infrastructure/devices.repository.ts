@@ -1,36 +1,31 @@
 import {Injectable} from '@nestjs/common';
-import {DeviceDBModel} from '../api/models/device.db.model';
-import {InjectModel} from '@nestjs/mongoose';
-import {Device3, DeviceDocument} from '../devices.schema';
-import {Model} from 'mongoose';
 import {DeviceViewModel} from '../api/models/device.view.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
+import {CreateDeviceDTO} from '../api/models/create.device.dto';
 
 @Injectable()
 export class DevicesRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Device3.name) private sessionModel: Model<DeviceDocument>,
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async createDevice(session: DeviceDBModel): Promise<DeviceViewModel> {
+  async createDevice(dto: CreateDeviceDTO): Promise<DeviceViewModel> {
     return this.dataSource.query(`
-    insert into "Devices"
+    insert into "devices"
     ("ip", "title", "lastActiveDate", "deviceId", "userId")
     values ($1, $2, $3, $4, $5)
     `, [
-      session.ip,
-      session.title,
-      session.lastActiveDate,
-      session.deviceId,
-      session.userId,
+      // dto.id,
+      dto.ip,
+      dto.title,
+      dto.lastActiveDate,
+      dto.deviceId,
+      dto.userId,
     ])
   }
 
   async updateLastActiveDate(deviceId: string, date: Date) {
     return this.dataSource.query(`
-    update "Devices"
+    update "devices"
     set "lastActiveDate" = $1
     where "deviceId" = $2
     `, [date, deviceId])
@@ -38,19 +33,19 @@ export class DevicesRepository {
 
   async deleteCurrentDevice(deviceId: string) {
     return this.dataSource.query(`
-    delete from "Devices"
+    delete from "devices"
     where "deviceId" = $1
     `, [deviceId])
   }
   async deleteOtherDevices(deviceId: string, userId: string) {
     return this.dataSource.query(`
-    delete from "Devices"
+    delete from "devices"
     where "deviceId" != $1 and "userId" = $2
     `, [deviceId, userId])
   }
   async deleteAllDevices(userId: string) {
     return this.dataSource.query(`
-    delete from "Devices"
+    delete from "devices"
     where "userId" = $1
     `, [userId])
   }

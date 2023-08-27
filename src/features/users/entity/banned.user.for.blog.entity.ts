@@ -1,14 +1,13 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryColumn} from 'typeorm';
-import {User} from './user.entity';
+import {Column, Entity, PrimaryColumn} from 'typeorm';
 
 @Entity()
-export class BannedUserForBlog {
-  @OneToOne(() => User, u => u.bannedUserForBlog)
-  @JoinColumn()
-  user: User;
-
+export class BannedUsersForBlog {
+  // @OneToOne(() => Users, u => u.bannedUsersForBlog)
+  // @JoinColumn()
+  // user: Users;
   @PrimaryColumn()
   userId: string;
+
   @Column()
   login: string;
   @Column()

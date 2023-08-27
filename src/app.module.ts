@@ -39,11 +39,11 @@ import {BannedUserForBlog3, BannedUserForBlogSchema,} from './features/users/ent
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {UpdateCommentLikesUseCase} from './features/comments/application/use.cases/update.comment.likes.use.case';
 import process from 'process';
-import {User} from './features/users/entity/user.entity';
-import {BannedUserForBlog} from './features/users/entity/banned.user.for.blog.entity';
-import {Device} from './features/devices/device.entity';
-import {Blog} from './features/blogs/blog.entity';
-import {Post} from './features/posts/post.entity';
+import {Users} from './features/users/entity/user.entity';
+import {BannedUsersForBlog} from './features/users/entity/banned.user.for.blog.entity';
+import {Devices} from './features/devices/device.entity';
+import {Blogs} from './features/blogs/blog.entity';
+import {Posts} from './features/posts/post.entity';
 
 config();
 
@@ -74,17 +74,17 @@ const useCases = [
     ]),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.PG_REMOTE_URL,
+      // url: process.env.PG_REMOTE_URL,
       host: '127.0.0.1',
-      // port: 4000,
-      // username: 'postgres',
-      // password: 'vgy78uhb',
-      // database: 'postgres',
+      port: 4000,
+      username: 'postgres',
+      password: 'vgy78uhb',
+      database: 'postgres',
       autoLoadEntities: true,
       synchronize: true,
-      ssl: true,
+      // ssl: true,
     }),
-    TypeOrmModule.forFeature([User, BannedUserForBlog, Device, Blog, Post])
+    TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts])
   ],
   controllers: [
     AppController,

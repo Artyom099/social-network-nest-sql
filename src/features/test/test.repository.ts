@@ -22,12 +22,17 @@ export class TestRepository {
       this.postModel.deleteMany(),
       this.commentModel.deleteMany(),
 
+    // delete from "BannedUsersForBlog";
+    // delete from "Users";
+    // delete from "Devices";
+    // delete from "Blogs";
+    // delete from "Posts";
       this.dataSource.query(`
-      delete from "BannedUsersForBlog";
-      delete from "Users";
-      delete from "Devices";
-      delete from "Blogs";
-      delete from "Posts";
+      delete from "banned_users_for_blog";
+      delete from "users";
+      delete from "devices";
+      delete from "blogs";
+      delete from "posts";
       `)
     ]);
   }

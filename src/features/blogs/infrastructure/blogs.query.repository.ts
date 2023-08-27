@@ -16,92 +16,11 @@ export class BlogsQueryRepository {
     @InjectModel(Blog3.name) private blogModel: Model<BlogDocument>
   ) {}
 
-  async getBlogSA2(id: string): Promise<SABlogViewModel | null> {
-    return this.blogModel.findOne({ id }, { _id: 0 });
-  }
-  async getBlogsSA2(query: BlogsPaginationInput): Promise<PaginationViewModel<SABlogViewModel[]>> {
-    const filter = {
-      name: { $regex: query.searchNameTerm ?? '', $options: 'i' },
-    };
-    const totalCount = await this.blogModel.countDocuments(filter);
-    const items = await this.blogModel
-      .find(filter, { _id: 0 })
-      .sort(query.sort())
-      .skip(query.offset())
-      .limit(query.pageSize)
-      .lean()
-      .exec();
-
-    return {
-      pagesCount: query.pagesCount(totalCount), // общее количество страниц
-      page: query.pageNumber, // текущая страница
-      pageSize: query.pageSize, // количество блогов на странице
-      totalCount, // общее количество блогов
-      items,
-    };
-  }
-  async getBlog2(id: string): Promise<BlogViewModel | null> {
-    return this.blogModel.findOne(
-      { id, 'banInfo.isBanned': false },
-      { _id: 0, blogOwnerInfo: 0, banInfo: 0 },
-    );
-  }
-  async getBlogs2(query: BlogsPaginationInput): Promise<PaginationViewModel<BlogViewModel[]>> {
-    const filter = {
-      'banInfo.isBanned': false,
-      name: { $regex: query.searchNameTerm ?? '', $options: 'i' },
-    };
-    const totalCount = await this.blogModel.countDocuments(filter);
-    const items = await this.blogModel
-      .find(filter, { _id: 0, blogOwnerInfo: 0, banInfo: 0 })
-      .sort(query.sort())
-      .skip(query.offset())
-      .limit(query.pageSize)
-      .lean()
-      .exec();
-
-    return {
-      pagesCount: query.pagesCount(totalCount), // общее количество страниц
-      page: query.pageNumber, // текущая страница
-      pageSize: query.pageSize, // количество блогов на странице
-      totalCount, // общее количество блогов
-      items,
-    };
-  }
-  async getBlogsCurrentBlogger2(
-    userId: string,
-    query: BlogsPaginationInput,
-  ): Promise<PaginationViewModel<BlogViewModel[]>> {
-    const filter = {
-      'banInfo.isBanned': false,
-      'blogOwnerInfo.userId': userId,
-      name: { $regex: query.searchNameTerm ?? '', $options: 'i' },
-    };
-    const totalCount = await this.blogModel.countDocuments(filter);
-    const items = await this.blogModel
-      .find(filter, { _id: 0, blogOwnerInfo: 0, banInfo: 0 })
-      .sort(query.sort())
-      .skip(query.offset())
-      .limit(query.pageSize)
-      .lean()
-      .exec();
-
-    return {
-      pagesCount: query.pagesCount(totalCount), // общее количество страниц
-      page: query.pageNumber, // текущая страница
-      pageSize: query.pageSize, // количество блогов на странице
-      totalCount, // общее количество блогов
-      items,
-    };
-  }
-
-  // SQL
-
   //super admin
   async getBlogSA(id: string): Promise<SABlogViewModel | null> {
     const [blog] = await this.dataSource.query(`
     select *
-    from "Blogs"
+    from "blogs"
     where "id" = $1
     `, [id])
 
@@ -125,13 +44,13 @@ export class BlogsQueryRepository {
   async getBlogsSA(query: BlogsPaginationInput): Promise<PaginationViewModel<SABlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
-    from "Blogs"
+    from "blogs"
     where "name" ilike $1
     `, [`%${query.searchNameTerm}%`])
 
     const sortedBlogs = await this.dataSource.query(`
     select *
-    from "Blogs"
+    from "blogs"
     where "name" ilike $1
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2
@@ -174,7 +93,7 @@ export class BlogsQueryRepository {
   async getBlog(id: string): Promise<BlogViewModel | null> {
     const [blog] = await this.dataSource.query(`
     select *
-    from "Blogs"
+    from "blogs"
     where "id" = $1 and "isBanned" = false
     `, [id])
 
@@ -190,13 +109,13 @@ export class BlogsQueryRepository {
   async getBlogs(query: BlogsPaginationInput): Promise<PaginationViewModel<SABlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
-    from "Blogs"
+    from "blogs"
     where "name" ilike $1 and "isBanned" = false
     `, [`%${query.searchNameTerm}%`])
 
     const sortedBlogs = await this.dataSource.query(`
     select *
-    from "Blogs"
+    from "blogs"
     where "name" ilike $1 and "isBanned" = false
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2
@@ -234,13 +153,13 @@ export class BlogsQueryRepository {
   ): Promise<PaginationViewModel<BlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count(*)
-    from "Blogs"
+    from "blogs"
     where "name" ilike $1 and "isBanned" = false and "userId" = $2
     `, [`%${query.searchNameTerm}%`, userId])
 
     const sortedBlogs = await this.dataSource.query(`
     select *
-    from "Blogs"
+    from "blogs"
     where "name" ilike $1 and "isBanned" = false and "userId" = $2
     order by "${query.sortBy}" ${query.sortDirection}
     limit $3

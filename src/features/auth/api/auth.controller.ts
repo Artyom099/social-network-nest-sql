@@ -75,14 +75,15 @@ export class AuthController {
       throw new UnauthorizedException();
     } else {
       const payload = await this.tokensService.getTokenPayload(token.refreshToken);
-      const createDeviceDTO: CreateDeviceDTO = {
+      const dto: CreateDeviceDTO = {
+        // id: randomUUID(),
         ip: req.ip,
         title: req.headers.host,
         lastActiveDate: new Date(payload.iat * 1000),
         deviceId: payload.deviceId,
         userId: payload.userId,
       }
-      await this.devicesService.createDevise(createDeviceDTO);
+      await this.devicesService.createDevise(dto);
 
       res.cookie('refreshToken', token.refreshToken, { httpOnly: true, secure: true });
       return { accessToken: token.accessToken };

@@ -16,7 +16,7 @@ export class BannedUsersForBlogRepository {
     inputModel: BanUserCurrentBlogInputModel,
   ) {
     return this.dataSource.query(`
-    insert into "BannedUsersForBlog" 
+    insert into "banned_users_for_blog" 
     ("userId", "login", "createdAt", "blogId", "isBanned", "banDate", "banReason")
     values ($1, $2, $3, $4, $5, $6, $7)
     `, [
@@ -32,7 +32,7 @@ export class BannedUsersForBlogRepository {
 
   async unbanUserForBlog(id: string) {
     return this.dataSource.query(`
-    update "BannedUsersForBlog"
+    update "banned_users_for_blog"
     set "isBanned" = false
     where "userId" = $1
     `, [id])

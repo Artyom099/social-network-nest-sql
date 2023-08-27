@@ -24,6 +24,7 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
     const { salt, hash } = await this.usersService.generateSaltAndHash(InputModel.password);
 
     const createUserDTO = {
+      id: randomUUID(),
       InputModel,
       salt,
       hash,

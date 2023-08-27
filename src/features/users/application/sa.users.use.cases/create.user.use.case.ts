@@ -24,6 +24,7 @@ export class CreateUserByAdminUseCase
     const { salt, hash } = await this.usersService.generateSaltAndHash(InputModel.password);
 
     const createUserDTO = {
+      id: randomUUID(),
       InputModel,
       salt,
       hash,

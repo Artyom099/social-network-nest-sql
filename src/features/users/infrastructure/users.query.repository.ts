@@ -15,7 +15,7 @@ export class UsersQueryRepository {
   async getUserById(id: string): Promise<UserViewModel | null> {
     const user = await this.dataSource.query(`
     select "id", "login", "email", "createdAt"
-    from "Users"
+    from "users"
     where "id" = $1
     `, [id])
 
@@ -25,7 +25,7 @@ export class UsersQueryRepository {
   async getSortedUsersToSA(query: UsersPaginationInput): Promise<PaginationViewModel<SAUserViewModel[]>> {
   const [totalCount] = await this.dataSource.query(`
   select count(*)
-  from "Users"
+  from "users"
   where ("login" ilike $1 or "email" ilike $2)
   and ("isBanned" = $3 or $3 is null)
   `, [
@@ -36,7 +36,7 @@ export class UsersQueryRepository {
 
   const queryString = `
   select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
-  from "Users"
+  from "users"
   where ("login" ilike $1 or "email" ilike $2)
   and ("isBanned" = $3 or $3 is null)
   order by "${query.sortBy}" ${query.sortDirection}

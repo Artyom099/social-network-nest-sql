@@ -90,7 +90,7 @@ export class PostsRepository {
   // SQL
   async createPost(dto: CreatePostModel): Promise<PostViewModel> {
     await this.dataSource.query(`
-    insert into "Posts"
+    insert into "posts"
     ("id", "title", "shortDescription", "content", "blogId", "blogName", "createdAt")
     values ($1, $2, $3, $4, $5, $6, $7)
     `, [
@@ -105,7 +105,7 @@ export class PostsRepository {
 
     const [post] = await this.dataSource.query(`
     select *
-    from "Posts"
+    from "posts"
     where "id" = $1
     `, [dto.id])
 
@@ -127,7 +127,7 @@ export class PostsRepository {
   }
   async updatePost(id: string, inputModel: PostInputModel) {
     return this.dataSource.query(`
-    update "Posts"
+    update "posts"
     set "title" = $1, "shortDescription" = $2, "content" = $3
     where "id" = $4
     `, [
@@ -139,14 +139,14 @@ export class PostsRepository {
   }
   async deletePost(id: string) {
     return this.dataSource.query(`
-    delete from "Posts"
+    delete from "posts"
     where "id" = $1
     `, [id])
   }
 
   async updatePostLikes2(dto: UpdatePostLikesModel) {
     return this.dataSource.query(`
-    update "Posts"
+    update "posts"
     set
     `)
   }

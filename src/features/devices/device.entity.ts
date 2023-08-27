@@ -1,8 +1,7 @@
-import {Column, Entity, ManyToOne, PrimaryColumn} from 'typeorm';
-import {User} from '../users/entity/user.entity';
+import {Column, Entity, PrimaryColumn} from 'typeorm';
 
 @Entity()
-export class Device {
+export class Devices {
   @PrimaryColumn()
   deviceId: string;
   @Column()
@@ -12,8 +11,8 @@ export class Device {
   @Column()
   lastActiveDate: Date;
 
-  @ManyToOne(() => User, u => u.devices)
-  user: User;
+  // @ManyToOne(() => Users, u => u.devices)
+  // user: Users;
   @Column()
   userId: string;
 }

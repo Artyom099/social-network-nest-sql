@@ -283,7 +283,7 @@ export class PostsQueryRepository {
   ): Promise<PostViewModel | null> {
     const [post] = await this.dataSource.query(`
     select *
-    from "Posts"
+    from "posts"
     where "id" = $1
     `, [id])
 
@@ -310,14 +310,14 @@ export class PostsQueryRepository {
   ): Promise<PaginationViewModel<PostViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count (*)
-    from "Posts"
+    from "posts"
     `)
 
     // where "isBanned" = false
 
     const sortedPosts = await this.dataSource.query(`
     select *
-    from "Posts"
+    from "posts"
     order by "${query.sortBy}" ${query.sortDirection}
     limit $1
     offset $2
@@ -365,13 +365,13 @@ export class PostsQueryRepository {
   ): Promise<PaginationViewModel<PostViewModel[]>> {
     const totalCount = await this.dataSource.query(`
     select count (*)
-    from "Posts"
+    from "posts"
     where "isBanned" = false and "blogId" = $1
     `, [blogId])
 
     const sortedPosts = await this.dataSource.query(`
     select *
-    from "Posts"
+    from "posts"
     where "isBanned" = false and "blogId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2
@@ -416,14 +416,14 @@ export class PostsQueryRepository {
   ): Promise<PaginationViewModel<PostViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count (*)
-    from "Posts"
+    from "posts"
     where "blogId" = $1
     `, [blogId])
     // "isBanned" = false
 
     const sortedPosts = await this.dataSource.query(`
     select *
-    from "Posts"
+    from "posts"
     where "blogId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2

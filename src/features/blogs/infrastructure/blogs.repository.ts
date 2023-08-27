@@ -15,51 +15,10 @@ export class BlogsRepository {
     @InjectModel(Blog3.name) private blogModel: Model<BlogDocument>,
   ) {}
 
-  async createBlog2(blog: BlogViewModel): Promise<BlogViewModel> {
-    await this.blogModel.create(blog);
-    return {
-      id: blog.id,
-      // id: newBLog._id.toString(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
-      isMembership: blog.isMembership,
-    };
-  }
-  async updateBlog2(id: string, InputModel: BlogInputModel) {
-    await this.blogModel.updateOne(
-      { id },
-      {
-        name: InputModel.name,
-        description: InputModel.description,
-        websiteUrl: InputModel.websiteUrl,
-      },
-    );
-  }
-  async deleteBlog2(id: string) {
-    await this.blogModel.deleteOne({ id });
-  }
-  async updateBlogOwner2(id: string, userId: string, login: string) {
-    await this.blogModel.updateOne(
-      { id },
-      { 'blogOwnerInfo.userId': userId, 'blogOwnerInfo.userLogin': login },
-    );
-  }
-  async banBlog2(id: string) {
-    await this.blogModel.updateOne(
-      { id },
-      { 'banInfo.isBanned': true, 'banInfo.banDate': new Date().toISOString() },
-    );
-  }
-  async unbanBlog2(id: string) {
-    await this.blogModel.updateOne({ id }, { 'banInfo.isBanned': false });
-  }
-
   // SQL
   async createBlog(dto: CreateBlogModel): Promise<BlogViewModel> {
     await this.dataSource.query(`
-    insert into "Blogs"
+    insert into "blogs"
     ("id", "name", "description", "websiteUrl", "createdAt", "isMembership", 
       "userId", "userLogin", "isBanned", "banDate")
     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
@@ -78,7 +37,7 @@ export class BlogsRepository {
 
     const [blog] = await this.dataSource.query(`
     select *
-    from "Blogs"
+    from "blogs"
     where "id" = $1
     `, [dto.id])
 
@@ -94,7 +53,7 @@ export class BlogsRepository {
 
   async updateBlog(id: string, InputModel: BlogInputModel) {
     return this.dataSource.query(`
-    update "Blogs"
+    update "blogs"
     set "name" = $1, "description" = $2, "websiteUrl" = $3
     where "id" = $4
     `, [
@@ -106,14 +65,14 @@ export class BlogsRepository {
   }
   async deleteBlog(id: string) {
     return this.dataSource.query(`
-    delete from "Blogs"
+    delete from "blogs"
     where "id" = $1
     `, [id])
   }
 
   async updateBlogOwner(id: string, userId: string, login: string) {
     return this.dataSource.query(`
-    update "Blogs"
+    update "blogs"
     set "userId" = $1, "login" = $2, "websiteUrl" = $3
     where "id" = $4
     `, [
@@ -125,14 +84,14 @@ export class BlogsRepository {
 
   async banBlog(id: string) {
     return this.dataSource.query(`
-    update "Blogs"
+    update "blogs"
     set "isBanned" = true
     where "id" = $1
     `, [id])
   }
   async unbanBlog(id: string) {
     return this.dataSource.query(`
-    update "Blogs"
+    update "blogs"
     set "isBanned" = false
     where "id" = $1
     `, [id])

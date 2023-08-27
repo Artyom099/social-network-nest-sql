@@ -14,7 +14,7 @@ export class BannedUsersForBlogQueryRepository {
   async getBannedUserForBlog(id: string, blogId: string) {
     const user = await this.dataSource.query(`
     select "userId" as "id", "login", "blogId", "isBanned", "banDate", "banReason"
-    from "BannedUsersForBlog"
+    from "banned_users_for_blog"
     where "userId" = $1 and "blogId" = $2 and "isBanned" = true
     `, [id, blogId])
 
@@ -27,13 +27,13 @@ export class BannedUsersForBlogQueryRepository {
   ): Promise<PaginationViewModel<BannedUserForBlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
       select count(*)
-      from "BannedUsersForBlog"
+      from "banned_users_for_blog"
       where "isBanned" = true and "blogId" = $1
       `, [blogId])
 
     const sortedUsers = await this.dataSource.query(`
     select "userId" as "id", "login", "blogId", "isBanned", "banDate", "banReason"
-    from "BannedUsersForBlog"
+    from "banned_users_for_blog"
     where "isBanned" = true and "blogId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2 

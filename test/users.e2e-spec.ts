@@ -386,7 +386,7 @@ describe('UsersController (e2e)', () => {
       page: 1,
       pageSize: 10,
       totalCount: 3,
-      items: [fourthCreatedUser, thirdCreatedUser, secondBannedUser],
+      items: [fourthCreatedUser, thirdCreatedUser, secondCreatedUser],
     });
   });
 

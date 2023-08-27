@@ -1,7 +1,7 @@
 import {Column, Entity, PrimaryColumn} from 'typeorm';
 
 @Entity()
-export class Blog {
+export class Blogs {
   @PrimaryColumn()
   id: string;
   @Column()
@@ -14,12 +14,12 @@ export class Blog {
   createdAt: Date;
   @Column()
   isMembership: boolean;
-  @Column()
+  @Column({nullable: true})
   userId: string;
-  @Column()
+  @Column({nullable: true})
   userLogin: string;
   @Column()
   isBanned: boolean;
-  @Column()
+  @Column({nullable: true})
   banDate: Date;
 }
