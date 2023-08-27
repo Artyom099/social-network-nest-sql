@@ -43,9 +43,9 @@ class EmailConfirmation {
 }
 const EmailConfirmationSchema = SchemaFactory.createForClass(EmailConfirmation);
 
-export type UserDocument = HydratedDocument<User>;
+export type UserDocument = HydratedDocument<User3>;
 @Schema({ versionKey: false })
-export class User {
+export class User3 {
   @Prop({ required: true, type: String, unique: true, index: true })
   id: string;
   @Prop({ required: true, type: String })
@@ -181,17 +181,17 @@ export class User {
     this.banInfo.banDate = null;
   }
 }
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(User3);
 
 UserSchema.methods = {
-  getViewModel: User.prototype.getViewModel,
-  getSAViewModel: User.prototype.getSAViewModel,
-  confirmEmail: User.prototype.confirmEmail,
-  updateSaltAndHash: User.prototype.updateSaltAndHash,
-  updateRecoveryCode: User.prototype.updateRecoveryCode,
-  updateConfirmationCode: User.prototype.updateConfirmationCode,
-  banUser: User.prototype.banUser,
-  unbanUser: User.prototype.unbanUser,
+  getViewModel: User3.prototype.getViewModel,
+  getSAViewModel: User3.prototype.getSAViewModel,
+  confirmEmail: User3.prototype.confirmEmail,
+  updateSaltAndHash: User3.prototype.updateSaltAndHash,
+  updateRecoveryCode: User3.prototype.updateRecoveryCode,
+  updateConfirmationCode: User3.prototype.updateConfirmationCode,
+  banUser: User3.prototype.banUser,
+  unbanUser: User3.prototype.unbanUser,
 };
 export type UserModelStaticType = {
   createUserByAdmin: (
@@ -207,9 +207,9 @@ export type UserModelStaticType = {
     UserModel: UserModelType,
   ) => UserDocument;
 };
-export type UserModelType = Model<User> & UserModelStaticType;
+export type UserModelType = Model<User3> & UserModelStaticType;
 const userStaticMethods: UserModelStaticType = {
-  createUserByAdmin: User.createUserByAdmin,
-  createUserBySelf: User.createUserBySelf,
+  createUserByAdmin: User3.createUserByAdmin,
+  createUserBySelf: User3.createUserBySelf,
 };
 UserSchema.statics = userStaticMethods;

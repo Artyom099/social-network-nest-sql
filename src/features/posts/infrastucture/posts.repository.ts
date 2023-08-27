@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {PostInputModel} from '../api/models/input/post.input.model';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {InjectModel} from '@nestjs/mongoose';
-import {Post, PostDocument} from '../posts.schema';
+import {Post3, PostDocument} from '../posts.schema';
 import {Model} from 'mongoose';
 import {PostViewModel} from '../api/models/view/post.view.model';
 import {CreatePostModel} from '../api/models/dto/create.post.model';
@@ -15,7 +15,7 @@ import {UpdatePostLikesModel} from '../api/models/dto/update.post.likes.model';
 export class PostsRepository {
   constructor(
     @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Post.name) private postModel: Model<PostDocument>
+    @InjectModel(Post3.name) private postModel: Model<PostDocument>
   ) {}
 
   async createPost2(post: CreatePostModel) {

@@ -2,9 +2,9 @@ import {Injectable} from '@nestjs/common';
 import {DefaultPaginationInput} from '../../../infrastructure/models/pagination.input.models';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {InjectModel} from '@nestjs/mongoose';
-import {Post, PostDocument} from '../posts.schema';
+import {Post3, PostDocument} from '../posts.schema';
 import {Model} from 'mongoose';
-import {User, UserDocument} from '../../users/schemas/users.schema';
+import {User3, UserDocument} from '../../users/entity/users.schema';
 import {NewestLikesViewModel, PostViewModel,} from '../api/models/view/post.view.model';
 import {ExtendedLikesInfoDBModel} from '../api/models/dto/create.post.model';
 import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
@@ -15,8 +15,8 @@ import {DataSource} from 'typeorm';
 export class PostsQueryRepository {
   constructor(
     @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Post.name) private postModel: Model<PostDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Post3.name) private postModel: Model<PostDocument>,
+    @InjectModel(User3.name) private userModel: Model<UserDocument>,
   ) {}
 
   async getPost2(
@@ -308,7 +308,7 @@ export class PostsQueryRepository {
     currentUserId: string,
     query: DefaultPaginationInput,
   ): Promise<PaginationViewModel<PostViewModel[]>> {
-    const totalCount = await this.dataSource.query(`
+    const [totalCount] = await this.dataSource.query(`
     select count (*)
     from "Posts"
     `)
@@ -325,9 +325,6 @@ export class PostsQueryRepository {
       query.pageSize,
       query.offset(),
     ])
-
-    console.log({totalCount: totalCount});
-    // console.log({sortedPosts: sortedPosts});
 
     const items = sortedPosts.map((p) => {
       return {
@@ -346,6 +343,9 @@ export class PostsQueryRepository {
         }
       }
     })
+
+    console.log({totalCount: totalCount});
+    console.log({sortedPosts: sortedPosts});
     console.log({pagesCount: query.pagesCountSql(totalCount)});
     console.log({totalCount: query.totalCountSql(totalCount)});
 
@@ -414,7 +414,7 @@ export class PostsQueryRepository {
     blogId: string,
     query: DefaultPaginationInput,
   ): Promise<PaginationViewModel<PostViewModel[]>> {
-    const totalCount = await this.dataSource.query(`
+    const [totalCount] = await this.dataSource.query(`
     select count (*)
     from "Posts"
     where "blogId" = $1

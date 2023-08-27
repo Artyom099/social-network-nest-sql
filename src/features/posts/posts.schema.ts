@@ -19,10 +19,10 @@ class ExtendedLikesInfo {
 const ExtendedLikesInfoSchema =
   SchemaFactory.createForClass<ExtendedLikesInfo>(ExtendedLikesInfo);
 
-export type PostDocument = HydratedDocument<Post>;
+export type PostDocument = HydratedDocument<Post3>;
 
 @Schema({ versionKey: false })
-export class Post {
+export class Post3 {
   @Prop({ required: true })
   id: string;
   @Prop({ required: true })
@@ -44,7 +44,7 @@ export class Post {
     bLog: SABlogViewModel,
     InputModel: PostInputModel,
   ) {
-    const post = new Post();
+    const post = new Post3();
     post.id = randomUUID();
     post.title = InputModel.title;
     post.shortDescription = InputModel.shortDescription;
@@ -56,4 +56,4 @@ export class Post {
     return post;
   }
 }
-export const PostSchema = SchemaFactory.createForClass(Post);
+export const PostSchema = SchemaFactory.createForClass(Post3);

@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {DeviceDBModel} from '../api/models/device.db.model';
 import {InjectModel} from '@nestjs/mongoose';
-import {Device, DeviceDocument} from '../devices.schema';
+import {Device3, DeviceDocument} from '../devices.schema';
 import {Model} from 'mongoose';
 import {DeviceViewModel} from '../api/models/device.view.model';
 import {InjectDataSource} from '@nestjs/typeorm';
@@ -11,7 +11,7 @@ import {DataSource} from 'typeorm';
 export class DevicesRepository {
   constructor(
     @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Device.name) private sessionModel: Model<DeviceDocument>,
+    @InjectModel(Device3.name) private sessionModel: Model<DeviceDocument>,
   ) {}
 
   async createDevice(session: DeviceDBModel): Promise<DeviceViewModel> {

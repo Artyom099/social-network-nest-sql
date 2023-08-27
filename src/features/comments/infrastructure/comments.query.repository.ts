@@ -4,8 +4,8 @@ import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
 import {Comment, CommentDocument} from '../comments.schema';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
-import {User, UserDocument} from '../../users/schemas/users.schema';
-import {Blog, BlogDocument} from '../../blogs/blogs.schema';
+import {User3, UserDocument} from '../../users/entity/users.schema';
+import {Blog3, BlogDocument} from '../../blogs/blogs.schema';
 import {CommentViewModel} from '../api/models/view/comment.view.model';
 import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
 
@@ -13,8 +13,8 @@ import {PaginationViewModel} from '../../../infrastructure/models/pagination.vie
 export class CommentsQueryRepository {
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
-    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Blog3.name) private blogModel: Model<BlogDocument>,
+    @InjectModel(User3.name) private userModel: Model<UserDocument>,
   ) {}
 
   async getComment(

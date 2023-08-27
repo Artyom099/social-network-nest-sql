@@ -22,9 +22,9 @@ class BanInfo {
 }
 const BanInfoSchema = SchemaFactory.createForClass(BanInfo);
 
-export type BlogDocument = HydratedDocument<Blog>;
+export type BlogDocument = HydratedDocument<Blog3>;
 @Schema({ versionKey: false })
-export class Blog {
+export class Blog3 {
   @Prop({ required: true, type: String, unique: true, index: true })
   id: string;
   @Prop({ required: true, type: String })
@@ -43,7 +43,7 @@ export class Blog {
   banInfo: BanInfo;
 
   static create(InputModel: BlogInputModel, user: UserViewModel) {
-    const blog = new Blog();
+    const blog = new Blog3();
     blog.id = randomUUID();
     blog.name = InputModel.name;
     blog.description = InputModel.description;
@@ -55,4 +55,4 @@ export class Blog {
     return blog;
   }
 }
-export const BlogSchema = SchemaFactory.createForClass(Blog);
+export const BlogSchema = SchemaFactory.createForClass(Blog3);

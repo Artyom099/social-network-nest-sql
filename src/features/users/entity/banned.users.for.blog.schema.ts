@@ -13,9 +13,9 @@ class BanInfo {
 }
 const BanInfoSchema = SchemaFactory.createForClass(BanInfo);
 
-export type BannedUserForBlogDocument = HydratedDocument<BannedUserForBlog>;
+export type BannedUserForBlogDocument = HydratedDocument<BannedUserForBlog3>;
 @Schema({ versionKey: false })
-export class BannedUserForBlog {
+export class BannedUserForBlog3 {
   @Prop({ required: true, type: String })
   id: string;
   @Prop({ required: true, type: String })
@@ -59,11 +59,11 @@ export class BannedUserForBlog {
   }
 }
 export const BannedUserForBlogSchema =
-  SchemaFactory.createForClass(BannedUserForBlog);
+  SchemaFactory.createForClass(BannedUserForBlog3);
 
 BannedUserForBlogSchema.methods = {
-  banUserForCurrentBlog: BannedUserForBlog.prototype.banUserForCurrentBlog,
-  unbanUserForCurrentBlog: BannedUserForBlog.prototype.unbanUserForCurrentBlog,
+  banUserForCurrentBlog: BannedUserForBlog3.prototype.banUserForCurrentBlog,
+  unbanUserForCurrentBlog: BannedUserForBlog3.prototype.unbanUserForCurrentBlog,
 };
 export type BannedUserForBlogModelStaticType = {
   addUserToBanInBlog: (
@@ -73,9 +73,9 @@ export type BannedUserForBlogModelStaticType = {
     BannedUserForBlogModel: BannedUserForBlogModelType,
   ) => BannedUserForBlogDocument;
 };
-export type BannedUserForBlogModelType = Model<BannedUserForBlog> &
+export type BannedUserForBlogModelType = Model<BannedUserForBlog3> &
   BannedUserForBlogModelStaticType;
 const bannedUserForBlogStaticMethods: BannedUserForBlogModelStaticType = {
-  addUserToBanInBlog: BannedUserForBlog.addUserToBanInBlog,
+  addUserToBanInBlog: BannedUserForBlog3.addUserToBanInBlog,
 };
 BannedUserForBlogSchema.statics = bannedUserForBlogStaticMethods;
