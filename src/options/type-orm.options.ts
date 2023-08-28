@@ -10,9 +10,12 @@ export class TypeOrmOptions implements TypeOrmOptionsFactory {
 
   createTypeOrmOptions():  TypeOrmModuleOptions {
     const nodeEnv = this.configService.getOrThrow<string>('NODE_ENV')
+    console.log(nodeEnv);
     if  (nodeEnv && nodeEnv.toUpperCase() === 'DEVELOPMENT') {
+      console.log('dev');
       return this.getLocalDb()
     } else {
+      console.log('prod');
       return this.getRemoteDb();
     }
   }
@@ -31,9 +34,10 @@ export class TypeOrmOptions implements TypeOrmOptionsFactory {
   }
 
   private getRemoteDb(): TypeOrmModuleOptions{
+    console.log(this.configService.get("PG_REMOTE_URL"));
     return {
       type: 'postgres',
-      url: this.configService.get("PG_REMOTE_URL"),
+      url: this.configService.getOrThrow<string>("PG_REMOTE_URL"),
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,

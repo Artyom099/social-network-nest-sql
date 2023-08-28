@@ -15,13 +15,18 @@ import {ConfigService} from '@nestjs/config';
 //
 // const PORT = process.env.PORT || 3000;
 export const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule);
-  const configService: ConfigService = app.get(ConfigService)
-  const PORT = parseInt(configService.getOrThrow('PORT'), 10)
-  appSettings(app);
-  await app.listen(PORT, () => {
-    console.log(`App started at ${PORT} port`);
-  });
+  try {
+    const app = await NestFactory.create(AppModule);
+    const configService: ConfigService = app.get(ConfigService)
+    const PORT = parseInt(configService.getOrThrow('PORT'), 10)
+    appSettings(app);
+    await app.listen(PORT, () => {
+      console.log(`App started at ${PORT} port`);
+    });
+  } catch (e) {
+    console.log('cant start', e);
+  }
+
   // await getPgVersion();
 }
 bootstrap();
