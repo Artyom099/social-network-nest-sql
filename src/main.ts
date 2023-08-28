@@ -14,7 +14,7 @@ import {ConfigService} from '@nestjs/config';
 // }
 //
 // const PORT = process.env.PORT || 3000;
-async function bootstrap() {
+export const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   const configService: ConfigService = app.get(ConfigService)
   const PORT = parseInt(configService.getOrThrow('PORT'), 10)
