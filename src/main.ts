@@ -1,7 +1,7 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
 import {appSettings} from './infrastructure/settings/app.settings';
-import {ConfigService} from '@nestjs/config';
+
 //
 // const postgres = require('postgres');
 // require('dotenv').config();
@@ -17,12 +17,8 @@ import {ConfigService} from '@nestjs/config';
 export const bootstrap = async () => {
   try {
     const app = await NestFactory.create(AppModule);
-    const configService: ConfigService = app.get(ConfigService)
-    console.log(configService.get(''));
-    console.log(configService.get('port'));
-    console.log(configService.get('PORT'));
-    const PORT = parseInt(configService.getOrThrow<string>('PORT'), 10)
     appSettings(app);
+    const PORT = process.env.PORT || 3000;
     await app.listen(PORT, () => {
       console.log(`App started at ${PORT} port`);
     });
