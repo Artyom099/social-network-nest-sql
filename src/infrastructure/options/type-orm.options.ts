@@ -2,16 +2,14 @@ import {Injectable} from '@nestjs/common';
 import {TypeOrmModuleOptions, TypeOrmOptionsFactory} from '@nestjs/typeorm';
 import {ConfigService} from '@nestjs/config';
 
-
 @Injectable()
 export class TypeOrmOptions implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService) {
-  }
+  constructor(private configService: ConfigService) {}
 
   createTypeOrmOptions():  TypeOrmModuleOptions {
     const nodeEnv = this.configService.getOrThrow<string>('NODE_ENV')
     console.log(nodeEnv);
-    if  (nodeEnv && nodeEnv.toUpperCase() === 'DEVELOPMENT') {
+    if  (nodeEnv && nodeEnv.toUpperCase() === 'DEVELOPMENT' || nodeEnv.toUpperCase() === 'TEST') {
       console.log('dev');
       return this.getLocalDb()
     } else {
@@ -43,5 +41,4 @@ export class TypeOrmOptions implements TypeOrmOptionsFactory {
       ssl: true,
     }
   }
-
 }

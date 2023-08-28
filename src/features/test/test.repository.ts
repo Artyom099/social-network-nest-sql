@@ -17,22 +17,17 @@ export class TestRepository {
   ) {}
 
   async deleteAllData() {
-    await Promise.all([
+    return Promise.all([
       this.blogModel.deleteMany(),
       this.postModel.deleteMany(),
       this.commentModel.deleteMany(),
 
-    // delete from "BannedUsersForBlog";
-    // delete from "Users";
-    // delete from "Devices";
-    // delete from "Blogs";
-    // delete from "Posts";
       this.dataSource.query(`
       delete from "banned_users_for_blog";
-      delete from "users";
       delete from "devices";
-      delete from "blogs";
       delete from "posts";
+      delete from "blogs";
+      delete from "users";
       `)
     ]);
   }

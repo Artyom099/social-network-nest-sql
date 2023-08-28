@@ -41,7 +41,7 @@ import {BannedUsersForBlog} from './features/users/entity/banned.user.for.blog.e
 import {Devices} from './features/devices/device.entity';
 import {Blogs} from './features/blogs/blog.entity';
 import {Posts} from './features/posts/post.entity';
-import {TypeOrmOptions} from './options/type-orm.options';
+import {TypeOrmOptions} from './infrastructure/options/type-orm.options';
 
 const useCases = [
   CreateBlogUseCase,
