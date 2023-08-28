@@ -139,7 +139,7 @@ export class UsersRepository {
   async createUserBySelf(dto: CreateUserDTO): Promise<UserViewModel> {
     await this.dataSource.query(`
     insert into "users"
-    ("login", "email", "passwordSalt", "passwordHash", "createdAt", "isBanned", "banDate", 
+    ("id", "login", "email", "passwordSalt", "passwordHash", "createdAt", "isBanned", "banDate", 
     "banReason", "confirmationCode", "expirationDate", "isConfirmed", "recoveryCode")
     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     `, [
@@ -159,7 +159,7 @@ export class UsersRepository {
     ])
 
     const [user] = await this.dataSource.query(`
-    select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
+    select "id", "login", "email", "createdAt"
     from "users"
     where "login" = $1
     `, [dto.InputModel.login])

@@ -10,7 +10,6 @@ import {PostsRepository} from './features/posts/infrastucture/posts.repository';
 import {TestController} from './features/test/test.controller';
 import {TestRepository} from './features/test/test.repository';
 import {CommentsController} from './features/comments/api/comments.controller';
-import {CommentsService} from './features/comments/application/comments.service';
 import {CommentsRepository} from './features/comments/infrastructure/comments.repository';
 import {MongooseModule} from '@nestjs/mongoose';
 import {Blog3, BlogSchema} from './features/blogs/blogs.schema';
@@ -19,11 +18,11 @@ import {CommentsQueryRepository} from './features/comments/infrastructure/commen
 import {PostsQueryRepository} from './features/posts/infrastucture/posts.query.repository';
 import {BlogsQueryRepository} from './features/blogs/infrastructure/blogs.query.repository';
 import {Post3, PostSchema} from './features/posts/posts.schema';
-import {Comment, CommentSchema} from './features/comments/comments.schema';
+import {Comment3, CommentSchema} from './features/comments/comments.schema';
 import {config} from 'dotenv';
 import {ConfigModule} from '@nestjs/config';
 import {AuthModule} from './features/auth/auth.module';
-import {Request, RequestSchema} from './infrastructure/utils/ip.schema';
+import {Request, RequestSchema} from './infrastructure/guards/rate.limit/request.schema';
 import {Device3, DeviceSchema} from './features/devices/devices.schema';
 import {CqrsModule} from '@nestjs/cqrs';
 import {BindBlogUseCase} from './features/blogs/application/sa.use.cases/bind.blog.use.case';
@@ -37,7 +36,7 @@ import {UpdateBlogUseCase} from './features/blogs/application/blogger.use.cases/
 import {BlogExistsConstraint} from './features/users/api/models/input/ban.user.current.blog.input.model';
 import {BannedUserForBlog3, BannedUserForBlogSchema,} from './features/users/entity/banned.users.for.blog.schema';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {UpdateCommentLikesUseCase} from './features/comments/application/use.cases/update.comment.likes.use.case';
+import {UpdateCommentUseCase} from './features/comments/application/use.cases/update.comment.use.case';
 import process from 'process';
 import {Users} from './features/users/entity/user.entity';
 import {BannedUsersForBlog} from './features/users/entity/banned.user.for.blog.entity';
@@ -54,7 +53,7 @@ const useCases = [
   CreatePostUseCase,
   CreateCommentUseCase,
   UpdateBlogUseCase,
-  UpdateCommentLikesUseCase,
+  UpdateCommentUseCase,
 ];
 
 @Module({
@@ -68,21 +67,21 @@ const useCases = [
       { name: Blog3.name, schema: BlogSchema },
       { name: Post3.name, schema: PostSchema },
       { name: Device3.name, schema: DeviceSchema },
-      { name: Comment.name, schema: CommentSchema },
+      { name: Comment3.name, schema: CommentSchema },
       { name: Request.name, schema: RequestSchema },
       { name: BannedUserForBlog3.name, schema: BannedUserForBlogSchema },
     ]),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      // url: process.env.PG_REMOTE_URL,
-      host: '127.0.0.1',
-      port: 4000,
-      username: 'postgres',
-      password: 'vgy78uhb',
-      database: 'postgres',
+      url: process.env.PG_REMOTE_URL,
+      // host: '127.0.0.1',
+      // port: 4000,
+      // username: 'postgres',
+      // password: 'vgy78uhb',
+      // database: 'postgres',
       autoLoadEntities: true,
       synchronize: true,
-      // ssl: true,
+      ssl: true,
     }),
     TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts])
   ],
@@ -112,7 +111,6 @@ const useCases = [
     PostsRepository,
     PostsQueryRepository,
 
-    CommentsService,
     CommentsRepository,
     CommentsQueryRepository,
   ],

@@ -35,9 +35,9 @@ class PostInfo {
 }
 const PostInfoSchema = SchemaFactory.createForClass(PostInfo);
 
-export type CommentDocument = HydratedDocument<Comment>;
+export type CommentDocument = HydratedDocument<Comment3>;
 @Schema({ versionKey: false })
-export class Comment {
+export class Comment3 {
   @Prop({ required: true, type: String })
   id: string;
   @Prop({ required: true, type: String })
@@ -53,7 +53,7 @@ export class Comment {
   postInfo: PostInfo;
 
   static create(inputModel: CreateCommentModel) {
-    const comment = new Comment();
+    const comment = new Comment3();
     comment.id = randomUUID();
     comment.content = inputModel.content;
     comment.createdAt = new Date();
@@ -71,4 +71,4 @@ export class Comment {
     return comment;
   }
 }
-export const CommentSchema = SchemaFactory.createForClass(Comment);
+export const CommentSchema = SchemaFactory.createForClass(Comment3);

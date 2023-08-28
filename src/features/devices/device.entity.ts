@@ -1,8 +1,9 @@
-import {Column, Entity, PrimaryColumn} from 'typeorm';
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {Users} from '../users/entity/user.entity';
 
 @Entity()
 export class Devices {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   deviceId: string;
   @Column()
   ip: string;
@@ -11,8 +12,8 @@ export class Devices {
   @Column()
   lastActiveDate: Date;
 
-  // @ManyToOne(() => Users, u => u.devices)
-  // user: Users;
-  @Column()
+  @ManyToOne(() => Users, u => u.devices)
+  user: Users;
+  @Column({ nullable: true })
   userId: string;
 }

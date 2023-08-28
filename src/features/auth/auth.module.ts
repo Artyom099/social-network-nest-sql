@@ -8,8 +8,8 @@ import {DevicesRepository} from '../devices/infrastructure/devices.repository';
 import {Device3, DeviceSchema} from '../devices/devices.schema';
 import {UsersQueryRepository} from '../users/infrastructure/users.query.repository';
 import {DevicesQueryRepository} from '../devices/infrastructure/devices.query.repository';
-import {IpService} from '../../infrastructure/utils/ip.service';
-import {Request, RequestSchema,} from '../../infrastructure/utils/ip.schema';
+import {RequestService} from '../../infrastructure/services/request.service';
+import {Request, RequestSchema,} from '../../infrastructure/guards/rate.limit/request.schema';
 import {JwtModule} from '@nestjs/jwt';
 import {DevicesController} from '../devices/api/devices.controller';
 import {HashService} from '../../infrastructure/services/hash.service';
@@ -82,7 +82,7 @@ const useCases = [
   providers: [
     ...useCases,
 
-    IpService,
+    RequestService,
     TokensService,
 
     EmailAdapter,

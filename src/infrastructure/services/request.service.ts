@@ -1,10 +1,10 @@
 import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
-import {Request, RequestDocument} from './ip.schema';
+import {Request, RequestDocument} from '../guards/rate.limit/request.schema';
 
 @Injectable()
-export class IpService {
+export class RequestService {
   constructor(
     @InjectModel(Request.name) private requestModel: Model<RequestDocument>,
   ) {}

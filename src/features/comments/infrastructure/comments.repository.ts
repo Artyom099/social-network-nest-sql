@@ -1,17 +1,17 @@
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
-import {Comment, CommentDocument} from '../comments.schema';
+import {Comment3, CommentDocument} from '../comments.schema';
 import {Model} from 'mongoose';
 import {CommentViewModel} from '../api/models/view/comment.view.model';
 
 @Injectable()
 export class CommentsRepository {
   constructor(
-    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Comment3.name) private commentModel: Model<CommentDocument>,
   ) {}
 
-  async createComment(comment: Comment): Promise<CommentViewModel> {
+  async createComment(comment: Comment3): Promise<CommentViewModel> {
     await this.commentModel.create(comment);
     return {
       id: comment.id,

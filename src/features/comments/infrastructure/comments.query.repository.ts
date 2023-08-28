@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {DefaultPaginationInput} from '../../../infrastructure/models/pagination.input.models';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
-import {Comment, CommentDocument} from '../comments.schema';
+import {Comment3, CommentDocument} from '../comments.schema';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {User3, UserDocument} from '../../users/entity/users.schema';
 import {Blog3, BlogDocument} from '../../blogs/blogs.schema';
@@ -12,7 +12,7 @@ import {PaginationViewModel} from '../../../infrastructure/models/pagination.vie
 @Injectable()
 export class CommentsQueryRepository {
   constructor(
-    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Comment3.name) private commentModel: Model<CommentDocument>,
     @InjectModel(Blog3.name) private blogModel: Model<BlogDocument>,
     @InjectModel(User3.name) private userModel: Model<UserDocument>,
   ) {}

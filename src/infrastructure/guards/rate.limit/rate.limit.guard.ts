@@ -1,9 +1,9 @@
 import {CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable,} from '@nestjs/common';
-import {IpService} from '../utils/ip.service';
+import {RequestService} from '../../services/request.service';
 
 @Injectable()
 export class RateLimitGuard implements CanActivate {
-  constructor(private ipService: IpService) {}
+  constructor(private ipService: RequestService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();

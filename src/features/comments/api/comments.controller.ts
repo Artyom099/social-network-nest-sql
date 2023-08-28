@@ -1,4 +1,3 @@
-import {CommentsService} from '../application/comments.service';
 import {
   Body,
   Controller,
@@ -21,16 +20,17 @@ import {CommentViewModel} from './models/view/comment.view.model';
 import {LikeStatusInputModel} from './models/input/like.status.input.model';
 import {UsersRepository} from '../../users/infrastructure/users.repository';
 import {CommandBus} from '@nestjs/cqrs';
+import {UpdateCommentCommand} from '../application/use.cases/update.comment.use.case';
+import {DeleteCommentCommand} from '../application/use.cases/delete.comment.use.case';
 import {UpdateCommentLikesCommand} from '../application/use.cases/update.comment.likes.use.case';
+
 
 @Controller('comments')
 export class CommentsController {
   constructor(
-    private commentsService: CommentsService,
-    private commentsQueryRepository: CommentsQueryRepository,
-    private usersRepository: UsersRepository,
-
     private commandBus: CommandBus,
+    private usersRepository: UsersRepository,
+    private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
   @Get(':id')
@@ -41,6 +41,7 @@ export class CommentsController {
     @Param('id') commentId: string,
   ): Promise<CommentViewModel | null> {
     // если юзер забанен, мы не можем получить его коммент
+    //todo - добавить проверку в use case?
     const comment = await this.commentsQueryRepository.getComment(
       commentId,
       req.userId,
@@ -72,11 +73,12 @@ export class CommentsController {
     if (!comment) throw new NotFoundException();
     if (req.userId !== comment.commentatorInfo.userId) {
       throw new ForbiddenException();
+    } else {
+      return this.commandBus.execute(new UpdateCommentCommand(
+        commentId,
+        InputModel.content
+      ));
     }
-    return this.commandBus.execute(new UpdateCommentLikesCommand(
-      commentId,
-      InputModel.content
-    ));
   }
 
   @Delete(':id')
@@ -90,8 +92,9 @@ export class CommentsController {
     if (!comment) throw new NotFoundException();
     if (req.userId !== comment.commentatorInfo.userId) {
       throw new ForbiddenException();
+    } else {
+      return this.commandBus.execute(new DeleteCommentCommand(commentId));
     }
-    return this.commentsService.deleteComment(commentId);
   }
 
   @Put(':id/like-status')
@@ -100,18 +103,16 @@ export class CommentsController {
   async updateLikeStatus(
     @Req() req,
     @Param('id') commentId: string,
-    @Body() InputModel: LikeStatusInputModel,
+    @Body() inputModel: LikeStatusInputModel,
   ) {
-    const comment = await this.commentsQueryRepository.getComment(
-      commentId,
-    );
+    const comment = await this.commentsQueryRepository.getComment(commentId);
     if (!comment) {
       throw new NotFoundException();
     } else {
-      return this.commentsService.updateCommentLikes(
+      return this.commandBus.execute(new UpdateCommentLikesCommand(
         commentId,
         req.userId,
-        InputModel.likeStatus,
+        inputModel.likeStatus,)
       );
     }
   }

@@ -1,10 +1,11 @@
-import {Column, Entity, PrimaryColumn} from 'typeorm';
+import {Column, Entity, JoinColumn, OneToOne, PrimaryColumn} from 'typeorm';
+import {Users} from './user.entity';
 
 @Entity()
 export class BannedUsersForBlog {
-  // @OneToOne(() => Users, u => u.bannedUsersForBlog)
-  // @JoinColumn()
-  // user: Users;
+  @OneToOne(() => Users, u => u.bannedUsersForBlog)
+  @JoinColumn()
+  user: Users;
   @PrimaryColumn()
   userId: string;
 
