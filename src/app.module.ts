@@ -43,6 +43,7 @@ import {BannedUsersForBlog} from './features/users/entity/banned.user.for.blog.e
 import {Devices} from './features/devices/device.entity';
 import {Blogs} from './features/blogs/blog.entity';
 import {Posts} from './features/posts/post.entity';
+import {TypeOrmOptions} from './options/type-orm.options';
 
 config();
 
@@ -60,7 +61,7 @@ const useCases = [
   imports: [
     AuthModule,
     CqrsModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({isGlobal: true}),
     MongooseModule.forRoot(process.env.MONGO_URL || ''),
     MongooseModule.forFeature([
       { name: User3.name, schema: UserSchema },
@@ -71,18 +72,7 @@ const useCases = [
       { name: Request.name, schema: RequestSchema },
       { name: BannedUserForBlog3.name, schema: BannedUserForBlogSchema },
     ]),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.PG_REMOTE_URL,
-      // host: '127.0.0.1',
-      // port: 4000,
-      // username: 'postgres',
-      // password: 'vgy78uhb',
-      // database: 'postgres',
-      autoLoadEntities: true,
-      synchronize: true,
-      ssl: true,
-    }),
+    TypeOrmModule.forRootAsync({useClass: TypeOrmOptions}),
     TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts])
   ],
   controllers: [
