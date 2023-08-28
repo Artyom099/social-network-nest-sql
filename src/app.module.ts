@@ -19,8 +19,7 @@ import {PostsQueryRepository} from './features/posts/infrastucture/posts.query.r
 import {BlogsQueryRepository} from './features/blogs/infrastructure/blogs.query.repository';
 import {Post3, PostSchema} from './features/posts/posts.schema';
 import {Comment3, CommentSchema} from './features/comments/comments.schema';
-import {config} from 'dotenv';
-import {ConfigModule} from '@nestjs/config';
+import {ConfigModule, ConfigService} from '@nestjs/config';
 import {AuthModule} from './features/auth/auth.module';
 import {Request, RequestSchema} from './infrastructure/guards/rate.limit/request.schema';
 import {Device3, DeviceSchema} from './features/devices/devices.schema';
@@ -37,15 +36,12 @@ import {BlogExistsConstraint} from './features/users/api/models/input/ban.user.c
 import {BannedUserForBlog3, BannedUserForBlogSchema,} from './features/users/entity/banned.users.for.blog.schema';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {UpdateCommentUseCase} from './features/comments/application/use.cases/update.comment.use.case';
-import process from 'process';
 import {Users} from './features/users/entity/user.entity';
 import {BannedUsersForBlog} from './features/users/entity/banned.user.for.blog.entity';
 import {Devices} from './features/devices/device.entity';
 import {Blogs} from './features/blogs/blog.entity';
 import {Posts} from './features/posts/post.entity';
 import {TypeOrmOptions} from './options/type-orm.options';
-
-config();
 
 const useCases = [
   CreateBlogUseCase,
@@ -62,7 +58,13 @@ const useCases = [
     AuthModule,
     CqrsModule,
     ConfigModule.forRoot({isGlobal: true}),
-    MongooseModule.forRoot(process.env.MONGO_URL || ''),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URL'),
+      }),
+      inject: [ConfigService]
+    }),
     MongooseModule.forFeature([
       { name: User3.name, schema: UserSchema },
       { name: Blog3.name, schema: BlogSchema },
