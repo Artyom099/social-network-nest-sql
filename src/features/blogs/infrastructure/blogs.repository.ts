@@ -9,7 +9,6 @@ import {CreateBlogModel} from '../api/models/dto/create.blog.model';
 export class BlogsRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  // SQL
   async createBlog(dto: CreateBlogModel): Promise<BlogViewModel> {
     await this.dataSource.query(`
     insert into "blogs"

@@ -1,5 +1,5 @@
-import { BlogsRepository } from '../../infrastructure/blogs.repository';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import {BlogsRepository} from '../../infrastructure/blogs.repository';
+import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 
 export class BanBlogCommand {
   constructor(public blogId: string, public banStatus: boolean) {}
@@ -11,9 +11,9 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
 
   async execute(command: BanBlogCommand) {
     if (command.banStatus) {
-      await this.blogsRepository.banBlog(command.blogId);
+      return this.blogsRepository.banBlog(command.blogId);
     } else {
-      await this.blogsRepository.unbanBlog(command.blogId);
+      return this.blogsRepository.unbanBlog(command.blogId);
     }
   }
 }
