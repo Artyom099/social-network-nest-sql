@@ -70,12 +70,12 @@ export class BlogsQueryRepository {
         createdAt: b.createdAt,
         isMembership: b.isMembership,
         blogOwnerInfo: {
-          userId: b.blogOwnerInfo.userId,
-          userLogin: b.blogOwnerInfo.userLogin,
+          userId: b.userId,
+          userLogin: b.userLogin,
         },
         banInfo: {
-          isBanned: b.banInfo.isBanned,
-          banDate: b.banInfo.banDate,
+          isBanned: b.isBanned,
+          banDate: b.banDate,
         },
       };
     });

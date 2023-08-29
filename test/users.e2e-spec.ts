@@ -216,6 +216,8 @@ describe('UsersController (e2e)', () => {
     expect.setState({fourthCreatedUser: fourthCreatedUser});
   });
 
+  //todo - start with solving this problem !!!
+
   it('6 – DELETE:/sa/users – return 404', async () => {
     await request(server)
       .delete('/sa/users/1')
@@ -247,6 +249,7 @@ describe('UsersController (e2e)', () => {
       });
   });
 
+  //todo - and also this:)
   it('8 – PUT:/sa/users/:id/ban – return 404', async () => {
     await request(server)
       .put('/sa/users/1111/ban')
