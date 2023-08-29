@@ -1,8 +1,9 @@
-import {Column, Entity, PrimaryColumn} from 'typeorm';
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {Posts} from '../posts/post.entity';
 
 @Entity()
 export class Blogs {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   name: string;
@@ -14,12 +15,16 @@ export class Blogs {
   createdAt: Date;
   @Column()
   isMembership: boolean;
-  @Column({nullable: true})
-  userId: string;
-  @Column({nullable: true})
-  userLogin: string;
   @Column()
   isBanned: boolean;
   @Column({nullable: true})
   banDate: Date;
+
+  @Column({nullable: true})
+  userId: string;
+  @Column({nullable: true})
+  userLogin: string;
+
+  @OneToMany(() => Posts, p => p.blog)
+  posts: Posts[];
 }

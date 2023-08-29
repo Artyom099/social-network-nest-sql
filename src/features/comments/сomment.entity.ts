@@ -1,8 +1,8 @@
-import {Column, Entity, PrimaryColumn} from 'typeorm';
+import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
 
 @Entity()
 export class Comments {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   content: string;
@@ -13,15 +13,17 @@ export class Comments {
   userId: string;
   @Column()
   userLogin: string;
+
   @Column()
   postId: string;
   @Column()
   postTitle: string;
+
   @Column()
   blogId: string;
   @Column()
   blogName: string;
 
-  @Column()
-  likesInfo: string[];
+  @Column({nullable: true})
+  likesInfo: string;
 }

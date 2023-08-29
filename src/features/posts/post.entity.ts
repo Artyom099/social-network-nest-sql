@@ -1,8 +1,9 @@
-import {Column, Entity, PrimaryColumn} from 'typeorm';
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {Blogs} from '../blogs/blog.entity';
 
 @Entity()
 export class Posts {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   title: string;
@@ -11,9 +12,13 @@ export class Posts {
   @Column()
   content: string;
   @Column()
+  createdAt: Date;
+
+  @ManyToOne(() => Blogs, b => b.posts)
+  blog: Blogs;
+
+  @Column({ nullable: true })
   blogId: string;
   @Column()
   blogName: string;
-  @Column()
-  createdAt: Date;
 }

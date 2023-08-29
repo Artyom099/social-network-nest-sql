@@ -1,8 +1,5 @@
 import {Injectable} from '@nestjs/common';
 import {BlogsPaginationInput} from '../../../infrastructure/models/pagination.input.models';
-import {InjectModel} from '@nestjs/mongoose';
-import {Blog3, BlogDocument} from '../blogs.schema';
-import {Model} from 'mongoose';
 import {SABlogViewModel} from '../api/models/view/sa.blog.view.model';
 import {BlogViewModel} from '../api/models/view/blog.view.model';
 import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
@@ -11,10 +8,7 @@ import {DataSource} from 'typeorm';
 
 @Injectable()
 export class BlogsQueryRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Blog3.name) private blogModel: Model<BlogDocument>
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   //super admin
   async getBlogSA(id: string): Promise<SABlogViewModel | null> {

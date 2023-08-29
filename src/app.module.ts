@@ -42,6 +42,7 @@ import {Devices} from './features/devices/device.entity';
 import {Blogs} from './features/blogs/blog.entity';
 import {Posts} from './features/posts/post.entity';
 import {TypeOrmOptions} from './infrastructure/options/type-orm.options';
+import {Comments} from './features/comments/сomment.entity';
 
 const useCases = [
   CreateBlogUseCase,
@@ -75,7 +76,7 @@ const useCases = [
       { name: BannedUserForBlog3.name, schema: BannedUserForBlogSchema },
     ]),
     TypeOrmModule.forRootAsync({useClass: TypeOrmOptions}),
-    TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts])
+    TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts, Comments])
   ],
   controllers: [
     AppController,

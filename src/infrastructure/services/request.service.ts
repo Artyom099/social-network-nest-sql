@@ -16,6 +16,6 @@ export class RequestService {
   }
 
   async addIpAndUrl(ip: string, url: string, date: Date) {
-    await this.requestModel.create({ ip, url, date });
+    return this.requestModel.create({ ip, url, date });
   }
 }

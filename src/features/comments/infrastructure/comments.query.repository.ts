@@ -8,10 +8,13 @@ import {User3, UserDocument} from '../../users/entity/users.schema';
 import {Blog3, BlogDocument} from '../../blogs/blogs.schema';
 import {CommentViewModel} from '../api/models/view/comment.view.model';
 import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
+import {InjectDataSource} from '@nestjs/typeorm';
+import {DataSource} from 'typeorm';
 
 @Injectable()
 export class CommentsQueryRepository {
   constructor(
+    @InjectDataSource() private dataSource: DataSource,
     @InjectModel(Comment3.name) private commentModel: Model<CommentDocument>,
     @InjectModel(Blog3.name) private blogModel: Model<BlogDocument>,
     @InjectModel(User3.name) private userModel: Model<UserDocument>,
@@ -187,5 +190,149 @@ export class CommentsQueryRepository {
       totalCount, // общее количество блогов
       items,
     };
+  }
+
+  //SQL
+
+  async getComment2(
+    id: string,
+    currentUserId?: string | null,
+  ): Promise<CommentViewModel | null> {
+    const [comment] = await this.dataSource.query(`
+    select *
+    from "comments"
+    where "id" = $1
+    `, [id])
+
+    return comment ? {
+      id: comment.id,
+      content: comment.content,
+      createdAt: comment.createdAt,
+      commentatorInfo: {
+        userId: comment.userId,
+        userLogin: comment.userLogin,
+      },
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikeStatus.None,
+      },
+      postInfo: {
+        id: comment.postId,
+        title: comment.postTitle,
+        blogId: comment.blogId,
+        blogName: comment.blogName,
+      },
+    } : null
+  }
+
+  async getCommentsCurrentPost2(
+    currentUserId: string | null,
+    postId: string,
+    query: DefaultPaginationInput,
+  ): Promise<PaginationViewModel<CommentViewModel[]>> {
+    const [totalCount] = await this.dataSource.query(`
+    select count(*)
+    from "comments"
+    `)
+
+    const sortedComments = await this.dataSource.query(`
+    select *
+    from "comments"
+    where "postId" = $1
+    order by "${query.sortBy}" ${query.sortDirection}
+    limit $2
+    offset $3
+    `, [
+      postId,
+      query.pageSize,
+      query.offset(),
+    ])
+
+    const items = sortedComments.map((c) => {
+      return {
+        id: c.id,
+        content: c.content,
+        createdAt: c.createdAt,
+        commentatorInfo: {
+          userId: c.userId,
+          userLogin: c.userLogin,
+        },
+        likesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: LikeStatus.None,
+        },
+        postInfo: {
+          id: c.postId,
+          title: c.postTitle,
+          blogId: c.blogId,
+          blogName: c.blogName,
+        },
+      }
+    })
+
+    return {
+      pagesCount: query.pagesCountSql(totalCount), // общее количество страниц
+      page: query.pageNumber, // текущая страница
+      pageSize: query.pageSize, // количество пользователей на странице
+      totalCount: query.totalCountSql(totalCount), // общее количество пользователей
+      items,
+    };
+  }
+
+  async getCommentsCurrentBlogger2(
+    currentUserId: string,
+    query: DefaultPaginationInput,
+  ): Promise<PaginationViewModel<CommentViewModel[]>> {
+    const [totalCount] = await this.dataSource.query(`
+    select count (*)
+    from "comments"
+    where "userId" = $1
+    `, [currentUserId])
+
+    const sortedComments = await this.dataSource.query(`
+    select *
+    from "comments"
+    where "userId" = $1
+    order by "${query.sortBy}" ${query.sortDirection}
+    limit $2
+    offset $3
+    `, [
+      currentUserId,
+      query.pageSize,
+      query.offset(),
+    ])
+
+    const items = sortedComments.map((c) => {
+      return {
+        id: c.id,
+        content: c.content,
+        createdAt: c.createdAt,
+        commentatorInfo: {
+          userId: c.userId,
+          userLogin: c.userLogin,
+        },
+        likesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: LikeStatus.None,
+        },
+        postInfo: {
+          id: c.postId,
+          title: c.postTitle,
+          blogId: c.blogId,
+          blogName: c.blogName,
+        },
+      }
+    })
+
+    return {
+      pagesCount: query.pagesCountSql(totalCount), // общее количество страниц
+      page: query.pageNumber, // текущая страница
+      pageSize: query.pageSize, // количество пользователей на странице
+      totalCount: query.totalCountSql(totalCount), // общее количество пользователей
+      items,
+    }
   }
 }
