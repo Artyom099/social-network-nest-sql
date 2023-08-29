@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {DefaultPaginationInput} from '../../../infrastructure/models/pagination.input.models';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {InjectModel} from '@nestjs/mongoose';
-import {Post3, PostDocument} from '../posts.schema';
+import {Post3, PostDocument} from '../entity/posts.schema';
 import {Model} from 'mongoose';
 import {User3, UserDocument} from '../../users/entity/users.schema';
 import {NewestLikesViewModel, PostViewModel,} from '../api/models/view/post.view.model';

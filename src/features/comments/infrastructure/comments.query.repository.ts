@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {DefaultPaginationInput} from '../../../infrastructure/models/pagination.input.models';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
-import {Comment3, CommentDocument} from '../comments.schema';
+import {Comment3, CommentDocument} from '../entity/comments.schema';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {User3, UserDocument} from '../../users/entity/users.schema';
 import {Blog3, BlogDocument} from '../../blogs/blogs.schema';
@@ -20,51 +20,7 @@ export class CommentsQueryRepository {
     @InjectModel(User3.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async getComment(
-    id: string,
-    currentUserId?: string | null,
-  ): Promise<CommentViewModel | null> {
-    const comment = await this.commentModel.findOne({ id }).exec();
-    if (!comment) return null;
-    let myStatus = LikeStatus.None;
-    let likesCount = 0;
-    let dislikesCount = 0;
-
-    const bannedUsers = await this.userModel
-      .find({ 'banInfo.isBanned': true })
-      .lean()
-      .exec();
-    const idBannedUsers = bannedUsers.map((u) => u.id);
-
-    comment.likesInfo.forEach((l) => {
-      if (l.userId === currentUserId) myStatus = l.status;
-      if (idBannedUsers.includes(l.userId)) return;
-      if (l.status === LikeStatus.Like) likesCount++;
-      if (l.status === LikeStatus.Dislike) dislikesCount++;
-    });
-    return {
-      id: comment.id,
-      content: comment.content,
-      createdAt: comment.createdAt.toISOString(),
-      commentatorInfo: {
-        userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin,
-      },
-      likesInfo: {
-        likesCount,
-        dislikesCount,
-        myStatus,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
-      },
-    };
-  }
-
-  async getCommentsCurrentPost(
+  async getCommentsCurrentPost2(
     currentUserId: string | null,
     postId: string,
     query: DefaultPaginationInput,
@@ -125,8 +81,7 @@ export class CommentsQueryRepository {
       items,
     };
   }
-
-  async getCommentsCurrentBlogger(
+  async getCommentsCurrentBlogger2(
     currentUserId: string,
     query: DefaultPaginationInput,
   ): Promise<PaginationViewModel<CommentViewModel[]>> {
@@ -194,7 +149,7 @@ export class CommentsQueryRepository {
 
   //SQL
 
-  async getComment2(
+  async getComment(
     id: string,
     currentUserId?: string | null,
   ): Promise<CommentViewModel | null> {
@@ -203,6 +158,12 @@ export class CommentsQueryRepository {
     from "comments"
     where "id" = $1
     `, [id])
+
+    const [myLikeInfo] = await this.dataSource.query(`
+    select *
+    from "comment_likes"
+    where "userId" = $1
+    `, [currentUserId])
 
     return comment ? {
       id: comment.id,
@@ -213,9 +174,9 @@ export class CommentsQueryRepository {
         userLogin: comment.userLogin,
       },
       likesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: LikeStatus.None,
+        likesCount: comment.likesCount,
+        dislikesCount: comment.dislikesCount,
+        myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
       },
       postInfo: {
         id: comment.postId,
@@ -226,7 +187,7 @@ export class CommentsQueryRepository {
     } : null
   }
 
-  async getCommentsCurrentPost2(
+  async getCommentsCurrentPost(
     currentUserId: string | null,
     postId: string,
     query: DefaultPaginationInput,
@@ -249,7 +210,14 @@ export class CommentsQueryRepository {
       query.offset(),
     ])
 
-    const items = sortedComments.map((c) => {
+    const items = sortedComments.map(async (c) => {
+      //todo - здесь нужно достать мои лайки только из тукщкго комментв
+      const [myLikeInfo] = await this.dataSource.query(`
+      select *
+      from "comment_likes"
+      where "userId" = $1 and "commentId" = $2
+      `, [currentUserId, c.id])
+
       return {
         id: c.id,
         content: c.content,
@@ -259,9 +227,9 @@ export class CommentsQueryRepository {
           userLogin: c.userLogin,
         },
         likesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: LikeStatus.None,
+          likesCount: c.likesCount,
+          dislikesCount: c.dislikesCount,
+          myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
         },
         postInfo: {
           id: c.postId,
@@ -281,7 +249,7 @@ export class CommentsQueryRepository {
     };
   }
 
-  async getCommentsCurrentBlogger2(
+  async getCommentsCurrentBlogger(
     currentUserId: string,
     query: DefaultPaginationInput,
   ): Promise<PaginationViewModel<CommentViewModel[]>> {
@@ -304,7 +272,13 @@ export class CommentsQueryRepository {
       query.offset(),
     ])
 
-    const items = sortedComments.map((c) => {
+    const items = sortedComments.map(async (c) => {
+      const [myLikeInfo] = await this.dataSource.query(`
+      select *
+      from "comment_likes"
+      where "userId" = $1 and "commentId" = $2
+      `, [currentUserId, c.id])
+
       return {
         id: c.id,
         content: c.content,
@@ -314,9 +288,9 @@ export class CommentsQueryRepository {
           userLogin: c.userLogin,
         },
         likesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: LikeStatus.None,
+          likesCount: c.likesCount,
+          dislikesCount: c.dislikesCount,
+          myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
         },
         postInfo: {
           id: c.postId,

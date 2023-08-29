@@ -17,8 +17,8 @@ import {User3, UserSchema} from './features/users/entity/users.schema';
 import {CommentsQueryRepository} from './features/comments/infrastructure/comments.query.repository';
 import {PostsQueryRepository} from './features/posts/infrastucture/posts.query.repository';
 import {BlogsQueryRepository} from './features/blogs/infrastructure/blogs.query.repository';
-import {Post3, PostSchema} from './features/posts/posts.schema';
-import {Comment3, CommentSchema} from './features/comments/comments.schema';
+import {Post3, PostSchema} from './features/posts/entity/posts.schema';
+import {Comment3, CommentSchema} from './features/comments/entity/comments.schema';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {AuthModule} from './features/auth/auth.module';
 import {Request, RequestSchema} from './infrastructure/guards/rate.limit/request.schema';
@@ -40,9 +40,11 @@ import {Users} from './features/users/entity/user.entity';
 import {BannedUsersForBlog} from './features/users/entity/banned.user.for.blog.entity';
 import {Devices} from './features/devices/device.entity';
 import {Blogs} from './features/blogs/blog.entity';
-import {Posts} from './features/posts/post.entity';
+import {Posts} from './features/posts/entity/post.entity';
 import {TypeOrmOptions} from './infrastructure/options/type-orm.options';
-import {Comments} from './features/comments/сomment.entity';
+import {Comments} from './features/comments/entity/сomment.entity';
+import {CommentLikes} from './features/comments/entity/comment.likes.entity';
+import {PostLikes} from './features/posts/entity/post.likes.entity';
 
 const useCases = [
   CreateBlogUseCase,
@@ -76,7 +78,7 @@ const useCases = [
       { name: BannedUserForBlog3.name, schema: BannedUserForBlogSchema },
     ]),
     TypeOrmModule.forRootAsync({useClass: TypeOrmOptions}),
-    TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts, Comments])
+    TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts, PostLikes, Comments, CommentLikes])
   ],
   controllers: [
     AppController,

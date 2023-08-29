@@ -1,13 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {HttpStatus, INestApplication} from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { LikeStatus } from '../src/infrastructure/utils/constants';
-import { appSettings } from '../src/infrastructure/settings/app.settings';
-import {
-  getRefreshTokenByResponse,
-  getRefreshTokenByResponseWithTokenName,
-} from '../src/infrastructure/utils/utils';
+import {AppModule} from '../src/app.module';
+import {LikeStatus} from '../src/infrastructure/utils/constants';
+import {appSettings} from '../src/infrastructure/settings/app.settings';
+import {getRefreshTokenByResponse, getRefreshTokenByResponseWithTokenName,} from '../src/infrastructure/utils/utils';
 
 describe('CommentsController (e2e)', () => {
   let app: INestApplication;
@@ -166,13 +163,13 @@ describe('CommentsController (e2e)', () => {
 
     expect(createPostResponse).toBeDefined();
     expect(createPostResponse.status).toEqual(HttpStatus.CREATED);
-    expect.setState({ postId: createPostResponse.body.id });
+    expect.setState({ post: createPostResponse.body });
   });
   it('6 – POST:/posts/:postId/comments – return 201 & create comment', async () => {
-    const { postId, firstAccessToken, firstUser } = expect.getState();
+    const { post, firstAccessToken, firstUser } = expect.getState();
 
     const createCommentResponse = await request(server)
-      .post(`/posts/${postId}/comments`)
+      .post(`/posts/${post.id}/comments`)
       .auth(firstAccessToken, { type: 'bearer' })
       .send({ content: 'valid-super-long-content' });
 
@@ -191,6 +188,12 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 0,
         myStatus: LikeStatus.None,
       },
+      postInfo: {
+        id: post.id,
+        title: post.title,
+        blogId: post.blogId,
+        blogName: post.blogName,
+      },
     });
 
     expect.setState({ commentId: createCommentResponse.body.id });
@@ -200,7 +203,7 @@ describe('CommentsController (e2e)', () => {
     const { firstAccessToken } = expect.getState();
 
     const setLike = await request(server)
-      .put(`/comments/${123}/like-status`)
+      .put(`/comments/44fcc4e9-cb32-4833-8482-2db64438a47b/like-status`)
       .auth(firstAccessToken, { type: 'bearer' })
       .send({ likeStatus: LikeStatus.Like });
 
@@ -209,6 +212,7 @@ describe('CommentsController (e2e)', () => {
   });
   it('8 – PUT:/comments/:commentId/like-status – return 400 – likeStatus: invalid', async () => {
     const { commentId, firstAccessToken } = expect.getState();
+
     const setLike = await request(server)
       .put(`/comments/${commentId}/like-status`)
       .auth(firstAccessToken, { type: 'bearer' })
@@ -228,7 +232,8 @@ describe('CommentsController (e2e)', () => {
   });
 
   it('10 – GET:/comments/:id – return 200 & found comment', async () => {
-    const { commentId, firstUser, firstCreatedUser } = expect.getState();
+    const { post, commentId, firstUser, firstCreatedUser } = expect.getState();
+
     const getComment = await request(server).get(`/comments/${commentId}`);
 
     expect(getComment).toBeDefined();
@@ -245,6 +250,12 @@ describe('CommentsController (e2e)', () => {
         likesCount: 0,
         dislikesCount: 0,
         myStatus: LikeStatus.None,
+      },
+      postInfo: {
+        id: post.id,
+        title: post.title,
+        blogId: post.blogId,
+        blogName: post.blogName,
       },
     });
   });

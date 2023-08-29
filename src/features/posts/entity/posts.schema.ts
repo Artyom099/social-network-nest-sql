@@ -1,9 +1,9 @@
 import {HydratedDocument} from 'mongoose';
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
-import {LikeStatus} from '../../infrastructure/utils/constants';
+import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {randomUUID} from 'crypto';
-import {SABlogViewModel} from '../blogs/api/models/view/sa.blog.view.model';
-import {PostInputModel} from './api/models/input/post.input.model';
+import {SABlogViewModel} from '../../blogs/api/models/view/sa.blog.view.model';
+import {PostInputModel} from '../api/models/input/post.input.model';
 
 @Schema({ _id: false, versionKey: false })
 class ExtendedLikesInfo {

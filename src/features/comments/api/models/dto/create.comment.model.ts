@@ -1,9 +1,11 @@
 export type CreateCommentModel = {
-  postId: string;
+  id: string;
   content: string;
+  createdAt: Date;
   userId: string;
   userLogin: string;
-  title: string;
+  postId: string;
+  postTitle: string;
   blogId: string;
   blogName: string;
 };

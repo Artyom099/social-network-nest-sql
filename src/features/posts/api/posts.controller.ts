@@ -97,17 +97,12 @@ export class PostsController {
     const isUserBannedForBlog =
       await this.bannedUsersForBlogQueryRepository.getBannedUserForBlog(user.id, post.blogId);
     if (isUserBannedForBlog) {
-      //todo -1 какой статус отдавать, если юзер забанен в блоге и пишет коммент?
       throw new ForbiddenException();
     } else {
       const model = {
         postId,
         content: inputModel.content,
         userId: user.id,
-        userLogin: user.login,
-        title: post.title,
-        blogId: post.blogId,
-        blogName: post.blogName,
       };
       return this.commandBus.execute(new CreateCommentCommand(model));
     }

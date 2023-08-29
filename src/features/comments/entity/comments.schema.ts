@@ -1,8 +1,8 @@
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
-import {LikeStatus} from '../../infrastructure/utils/constants';
+import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {HydratedDocument} from 'mongoose';
 import {randomUUID} from 'crypto';
-import {CreateCommentModel} from './api/models/dto/create.comment.model';
+import {CreateCommentModel} from '../api/models/dto/create.comment.model';
 
 @Schema({ _id: false, versionKey: false })
 class CommentatorInfo {
@@ -64,7 +64,7 @@ export class Comment3 {
     comment.likesInfo = [];
     comment.postInfo = {
       id: inputModel.postId,
-      title: inputModel.title,
+      title: inputModel.blogName,
       blogId: inputModel.blogId,
       blogName: inputModel.blogName,
     };

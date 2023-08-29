@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
-import {Comment3, CommentDocument} from '../comments/comments.schema';
+import {Comment3, CommentDocument} from '../comments/entity/comments.schema';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 import {Request, RequestDocument} from '../../infrastructure/guards/rate.limit/request.schema';
