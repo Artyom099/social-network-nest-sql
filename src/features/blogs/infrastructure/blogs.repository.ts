@@ -66,8 +66,8 @@ export class BlogsRepository {
   async updateBlogOwner(id: string, userId: string, login: string) {
     return this.dataSource.query(`
     update "blogs"
-    set "userId" = $1, "login" = $2, "websiteUrl" = $3
-    where "id" = $4
+    set "userId" = $1, "userLogin" = $2
+    where "id" = $3
     `, [
       userId,
       login,
@@ -78,9 +78,9 @@ export class BlogsRepository {
   async banBlog(id: string) {
     return this.dataSource.query(`
     update "blogs"
-    set "isBanned" = true, "banDate" = new Date()
+    set "isBanned" = true, "banDate" = $2
     where "id" = $1
-    `, [id])
+    `, [id, new Date()])
   }
   async unbanBlog(id: string) {
     return this.dataSource.query(`
