@@ -1,5 +1,6 @@
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {Posts} from '../posts/post.entity';
+import {Users} from '../users/entity/user.entity';
 
 @Entity()
 export class Blogs {
@@ -24,6 +25,9 @@ export class Blogs {
   userId: string;
   @Column({nullable: true})
   userLogin: string;
+
+  @ManyToOne(() => Users, u => u.blogs)
+  user: Users;
 
   @OneToMany(() => Posts, p => p.blog)
   posts: Posts[];

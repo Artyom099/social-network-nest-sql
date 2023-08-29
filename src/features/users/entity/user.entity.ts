@@ -1,6 +1,7 @@
 import {Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
 import {BannedUsersForBlog} from './banned.user.for.blog.entity';
 import {Devices} from '../../devices/device.entity';
+import {Blogs} from '../../blogs/blog.entity';
 
 @Entity()
 export class Users {
@@ -32,8 +33,11 @@ export class Users {
   recoveryCode: string;
 
   @OneToOne(() => BannedUsersForBlog, b => b.user)
-  bannedUsersForBlog: BannedUsersForBlog
+  bannedUsersForBlog: BannedUsersForBlog;
 
   @OneToMany(() => Devices, d => d.user)
   devices: Devices[];
+
+  @OneToMany(() => Blogs, b => b.user)
+  blogs: Blogs[];
 }
