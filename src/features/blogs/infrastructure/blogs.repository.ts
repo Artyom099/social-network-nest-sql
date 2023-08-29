@@ -1,7 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {InjectModel} from '@nestjs/mongoose';
-import {Blog3, BlogDocument} from '../blogs.schema';
-import {Model} from 'mongoose';
 import {BlogViewModel} from '../api/models/view/blog.view.model';
 import {BlogInputModel} from '../api/models/input/blog.input.model';
 import {InjectDataSource} from '@nestjs/typeorm';
@@ -10,10 +7,7 @@ import {CreateBlogModel} from '../api/models/dto/create.blog.model';
 
 @Injectable()
 export class BlogsRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Blog3.name) private blogModel: Model<BlogDocument>,
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   // SQL
   async createBlog(dto: CreateBlogModel): Promise<BlogViewModel> {
@@ -85,7 +79,7 @@ export class BlogsRepository {
   async banBlog(id: string) {
     return this.dataSource.query(`
     update "blogs"
-    set "isBanned" = true
+    set "isBanned" = true, "banDate" = new Date()
     where "id" = $1
     `, [id])
   }
