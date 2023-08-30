@@ -4,13 +4,13 @@ import {CreateCommentModel} from '../api/models/dto/create.comment.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 import {UpdateCommentLikeModel} from '../api/models/dto/update.comment.like.model';
-import {BLoggerCommentViewModel} from '../api/models/view/blogger.comment.view.model';
+import {CommentViewModel} from '../api/models/view/comment.view.model';
 
 @Injectable()
 export class CommentsRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async createComment(dto: CreateCommentModel): Promise<BLoggerCommentViewModel> {
+  async createComment(dto: CreateCommentModel): Promise<CommentViewModel> {
     await this.dataSource.query(`
     insert into "comments"
     ("id", "content", "createdAt", "userId", "userLogin", "postId", "postTitle", "blogId", "blogName")
@@ -45,12 +45,6 @@ export class CommentsRepository {
         likesCount: 0,
         dislikesCount: 0,
         myStatus: LikeStatus.None,
-      },
-      postInfo: {
-        id: comment.postId,
-        title: comment.postTitle,
-        blogId: comment.blogId,
-        blogName: comment.blogName,
       },
     }
   }

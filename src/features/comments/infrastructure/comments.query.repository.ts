@@ -5,6 +5,7 @@ import {CommentViewModel} from '../api/models/view/comment.view.model';
 import {PaginationViewModel} from '../../../infrastructure/models/pagination.view.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
+import {BLoggerCommentViewModel} from '../api/models/view/blogger.comment.view.model';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -101,7 +102,7 @@ export class CommentsQueryRepository {
   async getCommentsCurrentBlogger(
     currentUserId: string,
     query: DefaultPaginationInput,
-  ): Promise<PaginationViewModel<CommentViewModel[]>> {
+  ): Promise<PaginationViewModel<BLoggerCommentViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count (*)
     from "comments"

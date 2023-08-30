@@ -251,12 +251,6 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 0,
         myStatus: LikeStatus.None,
       },
-      postInfo: {
-        id: post.id,
-        title: post.title,
-        blogId: post.blogId,
-        blogName: post.blogName,
-      },
     });
   });
 
@@ -291,12 +285,6 @@ describe('CommentsController (e2e)', () => {
         likesCount: 1,
         dislikesCount: 0,
         myStatus: LikeStatus.Like,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
       },
     });
   });
@@ -333,12 +321,6 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 1,
         myStatus: LikeStatus.Dislike,
       },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
-      },
     });
   });
 
@@ -374,12 +356,6 @@ describe('CommentsController (e2e)', () => {
         likesCount: 0,
         dislikesCount: 0,
         myStatus: LikeStatus.None,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
       },
     });
   });
@@ -446,12 +422,6 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 0,
         myStatus: LikeStatus.Like,
       },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
-      },
     });
 
     const getCommentBySecondUser = await request(server)
@@ -472,12 +442,6 @@ describe('CommentsController (e2e)', () => {
         likesCount: 1,
         dislikesCount: 0,
         myStatus: LikeStatus.None,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
       },
     });
   });
@@ -513,12 +477,6 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 0,
         myStatus: LikeStatus.Like,
       },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
-      },
     });
 
     const getCommentBySecondUser = await request(server)
@@ -539,12 +497,6 @@ describe('CommentsController (e2e)', () => {
         likesCount: 1,
         dislikesCount: 0,
         myStatus: LikeStatus.None,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
       },
     });
   });
@@ -581,12 +533,6 @@ describe('CommentsController (e2e)', () => {
         likesCount: 2,
         dislikesCount: 0,
         myStatus: LikeStatus.Like,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
       },
     });
 
@@ -650,12 +596,6 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 0,
         myStatus: LikeStatus.Like,
       },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
-      },
     });
 
     const getCommentBySecondUser = await request(server)
@@ -716,12 +656,6 @@ describe('CommentsController (e2e)', () => {
           dislikesCount: 0,
           myStatus: LikeStatus.Like,
         },
-        postInfo: {
-          id: comment.postInfo.id,
-          title: comment.postInfo.title,
-          blogId: comment.postInfo.blogId,
-          blogName: comment.postInfo.blogName,
-        },
       },
     ]);
   });
@@ -767,12 +701,6 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 1,
         myStatus: LikeStatus.Dislike,
       },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
-      },
     });
 
     const getCommentBySecondUser = await request(server)
@@ -793,12 +721,6 @@ describe('CommentsController (e2e)', () => {
         likesCount: 0,
         dislikesCount: 1,
         myStatus: LikeStatus.None,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
       },
     });
   });
