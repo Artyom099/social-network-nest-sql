@@ -1,6 +1,6 @@
 import {LikeStatus} from '../../../../../infrastructure/utils/constants';
 
-export type CommentViewModel = {
+export type BLoggerCommentViewModel = {
   id: string;
   content: string;
   createdAt: string;
@@ -12,5 +12,11 @@ export type CommentViewModel = {
     likesCount: number;
     dislikesCount: number;
     myStatus: LikeStatus;
+  };
+  postInfo: {
+    id: string;
+    title: string;
+    blogId: string;
+    blogName: string;
   };
 };

@@ -39,12 +39,6 @@ export class CommentsQueryRepository {
         dislikesCount: comment.dislikesCount,
         myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
       },
-      postInfo: {
-        id: comment.postId,
-        title: comment.postTitle,
-        blogId: comment.blogId,
-        blogName: comment.blogName,
-      },
     } : null
   }
 
@@ -91,12 +85,6 @@ export class CommentsQueryRepository {
           likesCount: c.likesCount,
           dislikesCount: c.dislikesCount,
           myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
-        },
-        postInfo: {
-          id: c.postId,
-          title: c.postTitle,
-          blogId: c.blogId,
-          blogName: c.blogName,
         },
       }
     }))

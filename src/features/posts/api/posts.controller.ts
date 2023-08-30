@@ -30,14 +30,13 @@ import {BannedUsersForBlogQueryRepository} from '../../users/infrastructure/bann
 @Controller('posts')
 export class PostsController {
   constructor(
+    private commandBus: CommandBus,
     private postsService: PostsService,
     private blogsQueryRepository: BlogsQueryRepository,
     private postsQueryRepository: PostsQueryRepository,
     private usersQueryRepository: UsersQueryRepository,
     private commentsQueryRepository: CommentsQueryRepository,
     private bannedUsersForBlogQueryRepository: BannedUsersForBlogQueryRepository,
-
-    private commandBus: CommandBus,
   ) {}
 
   @Get()
