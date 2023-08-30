@@ -70,7 +70,7 @@ export class AuthController {
 
     //todo - move to IsUserBannedUseCase??
     // или можно проверять на бан в CheckCredentialsUseCase?
-    const user = await this.usersRepository.getUserByLoginOrEmail(InputModel.loginOrEmail);
+    const user = await this.usersQueryRepository.getUserByLoginOrEmail(InputModel.loginOrEmail);
     if (user?.banInfo.isBanned) {
       throw new UnauthorizedException();
     } else {
@@ -115,7 +115,7 @@ export class AuthController {
   // @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async setNewPassword(@Body() InputModel: SetNewPasswordInputModel) {
-    const isUserConfirm = await this.usersRepository.getUserByRecoveryCode(InputModel.recoveryCode);
+    const isUserConfirm = await this.usersQueryRepository.getUserByRecoveryCode(InputModel.recoveryCode);
     if (!isUserConfirm) {
       throw new BadRequestException();
     } else {
@@ -139,10 +139,10 @@ export class AuthController {
   // @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() inputModel: CreateUserInputModel) {
-    const emailExist = await this.usersRepository.getUserByLoginOrEmail(inputModel.email);
+    const emailExist = await this.usersQueryRepository.getUserByLoginOrEmail(inputModel.email);
     if (emailExist) throw new BadRequestException('email exist=>email');
 
-    const loginExist = await this.usersRepository.getUserByLoginOrEmail(inputModel.login);
+    const loginExist = await this.usersQueryRepository.getUserByLoginOrEmail(inputModel.login);
     if (loginExist) {
       throw new BadRequestException('login exist=>login');
     } else {
@@ -167,7 +167,7 @@ export class AuthController {
   // @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationEmail(@Body() body: { email: string }) {
-    const user = await this.usersRepository.getUserByLoginOrEmail(body.email);
+    const user = await this.usersQueryRepository.getUserByLoginOrEmail(body.email);
     if (!user || user.isConfirmed) {
       throw new BadRequestException('email not exist or confirm=>email');
     } else {

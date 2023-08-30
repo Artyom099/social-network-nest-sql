@@ -1,6 +1,7 @@
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {UsersRepository} from '../../../users/infrastructure/users.repository';
 import {HashService} from '../../../../infrastructure/services/hash.service';
+import {UsersQueryRepository} from '../../../users/infrastructure/users.query.repository';
 
 export class UpdatePasswordCommand {
   constructor(public code: string, public password: string) {}
@@ -13,10 +14,11 @@ export class UpdatePasswordUseCase
   constructor(
     private hashService: HashService,
     private usersRepository: UsersRepository,
+    private usersQueryRepository: UsersQueryRepository,
   ) {}
 
   async execute(command: UpdatePasswordCommand) {
-    const user = await this.usersRepository.getUserByRecoveryCode(command.code);
+    const user = await this.usersQueryRepository.getUserByRecoveryCode(command.code);
     if (!user) return null;
 
     const { salt, hash } = await this.hashService.generateSaltAndHash(command.password)

@@ -344,10 +344,10 @@ export class PostsQueryRepository {
       }
     })
 
-    console.log({totalCount: totalCount});
-    console.log({sortedPosts: sortedPosts});
-    console.log({pagesCount: query.pagesCountSql(totalCount)});
-    console.log({totalCount: query.totalCountSql(totalCount)});
+    // console.log({totalCount: totalCount});
+    // console.log({sortedPosts: sortedPosts});
+    // console.log({pagesCount: query.pagesCountSql(totalCount)});
+    // console.log({totalCount: query.totalCountSql(totalCount)});
 
     return {
       pagesCount: query.pagesCountSql(totalCount), // общее количество страниц

@@ -18,18 +18,18 @@ import {CheckUserIdGuard} from '../../../infrastructure/guards/check-userId.guar
 import {CommentsQueryRepository} from '../infrastructure/comments.query.repository';
 import {CommentViewModel} from './models/view/comment.view.model';
 import {LikeStatusInputModel} from './models/input/like.status.input.model';
-import {UsersRepository} from '../../users/infrastructure/users.repository';
 import {CommandBus} from '@nestjs/cqrs';
 import {UpdateCommentCommand} from '../application/use.cases/update.comment.use.case';
 import {DeleteCommentCommand} from '../application/use.cases/delete.comment.use.case';
 import {UpdateCommentLikesCommand} from '../application/use.cases/update.comment.likes.use.case';
+import {UsersQueryRepository} from '../../users/infrastructure/users.query.repository';
 
 
 @Controller('comments')
 export class CommentsController {
   constructor(
     private commandBus: CommandBus,
-    private usersRepository: UsersRepository,
+    private usersQueryRepository: UsersQueryRepository,
     private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
@@ -48,7 +48,7 @@ export class CommentsController {
     );
     if (!comment) throw new NotFoundException();
 
-    const user = await this.usersRepository.getUserById(
+    const user = await this.usersQueryRepository.getUserByIdSA(
       comment.commentatorInfo.userId,
     );
     if (user?.banInfo.isBanned) {
@@ -112,8 +112,8 @@ export class CommentsController {
       return this.commandBus.execute(new UpdateCommentLikesCommand(
         commentId,
         req.userId,
-        inputModel.likeStatus,)
-      );
+        inputModel.likeStatus,
+      ));
     }
   }
 }

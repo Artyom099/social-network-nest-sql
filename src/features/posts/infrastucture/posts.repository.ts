@@ -8,8 +8,8 @@ import {PostViewModel} from '../api/models/view/post.view.model';
 import {CreatePostModel} from '../api/models/dto/create.post.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
-import {id} from 'date-fns/locale';
 import {UpdatePostLikesModel} from '../api/models/dto/update.post.likes.model';
+import {id} from 'date-fns/locale';
 
 @Injectable()
 export class PostsRepository {
@@ -50,21 +50,20 @@ export class PostsRepository {
   async deletePost2(id: string) {
     return this.postModel.deleteOne({ id });
   }
-
-  async updatePostLikes(dto: UpdatePostLikesModel) {
+  async updatePostLikes2(dto: UpdatePostLikesModel) {
     const post = await this.postModel.findOne({ id });
     if (!post) return false;
     // если юзер есть в массиве, обновляем его статус
     for (const s of post.extendedLikesInfo) {
       if (s.userId === dto.userId) {
-        if (s.status === dto.newLikeStatus) return true;
+        if (s.status === dto.likeStatus) return true;
         return this.postModel.updateOne(
           { id },
           {
             extendedLikesInfo: {
               addedAt: dto.addedAt,
               userId: dto.userId,
-              status: dto.newLikeStatus,
+              status: dto.likeStatus,
               login: dto.login,
             },
           },
@@ -79,7 +78,7 @@ export class PostsRepository {
           extendedLikesInfo: {
             addedAt: dto.addedAt,
             userId: dto.userId,
-            status: dto.newLikeStatus,
+            status: dto.likeStatus,
             login: dto.login,
           },
         },
@@ -144,10 +143,98 @@ export class PostsRepository {
     `, [id])
   }
 
-  async updatePostLikes2(dto: UpdatePostLikesModel) {
+  async setPostNone(dto: UpdatePostLikesModel) {
+    const [postLikes] = await this.dataSource.query(`
+    select *
+    from "post_likes"
+    where "postId" = $1 and "userId" = $2
+    `, [dto.postId, dto.userId])
+
+    if (postLikes && postLikes.status === LikeStatus.Like) {
+      await this.dataSource.query(`
+      update "post_likes"
+      set "status" = $1
+      where "postId" = $2 and "userId" = $3
+      `, [dto.likeStatus, dto.postId, dto.userId])
+
+      // likesCount -1
+      return this.dataSource.query(`
+      update "posts"
+      set "likesCount" = "likesCount" - 1
+      where "id" = $1
+    `, [dto.postId])
+    }
+
+    if (postLikes && postLikes.status === LikeStatus.Dislike) {
+      await this.dataSource.query(`
+      update "post_likes"
+      set "status" = $1
+      where "postId" = $2 and "userId" = $3
+      `, [dto.likeStatus, dto.postId, dto.userId])
+
+      // dislikesCount -1
+      return this.dataSource.query(`
+      update "posts"
+      set "dislikesCount" = "dislikesCount" - 1
+      where "id" = $1
+    `, [dto.postId])
+    }
+  }
+
+  async setPostLike(dto: UpdatePostLikesModel) {
+    const [postLikes] = await this.dataSource.query(`
+    select *
+    from "post_likes"
+    where "postId" = $1 and "userId" = $2
+    `, [dto.postId, dto.userId])
+
+    if (postLikes) {
+      await this.dataSource.query(`
+      update "post_likes"
+      set "status" = $1
+      where "postId" = $2 and "userId" = $3
+      `, [dto.likeStatus, dto.postId, dto.userId])
+    } else {
+      await this.dataSource.query(`
+      insert into "post_likes"
+      ("postId", "userId", "status", "addedAt", "login")
+      values ($1, $2, $3, $4, $5)
+      `, [
+        dto.postId,
+        dto.userId,
+        dto.likeStatus,
+        dto.addedAt,
+        dto.login,
+      ])
+    }
+    // likesCount +1
     return this.dataSource.query(`
     update "posts"
-    set
-    `)
+    set "likesCount" = "likesCount" + 1
+    where "id" = $1
+    `, [dto.postId])
+  }
+
+  async setPostDislike(dto: UpdatePostLikesModel) {
+    const [postLikes] = await this.dataSource.query(`
+    select *
+    from "post_likes"
+    where "postId" = $1 and "userId" = $2
+    `, [dto.postId, dto.userId])
+
+    if (postLikes) {
+      await this.dataSource.query(`
+      update "post_likes"
+      set "status" = $1
+      where "postId" = $2 and "userId" = $3
+      `, [dto.likeStatus, dto.postId, dto.userId])
+
+      // dislikesCount +1
+      return this.dataSource.query(`
+      update "posts"
+      set "dislikesCount" = "dislikesCount" + 1
+      where "id" = $1
+      `, [dto.postId])
+    }
   }
 }

@@ -1,7 +1,7 @@
 export type UpdatePostLikesModel = {
-  id: string;
+  postId: string;
   userId: string;
-  newLikeStatus: string;
+  likeStatus: string;
   addedAt: Date,
   login: string;
 }

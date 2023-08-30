@@ -21,6 +21,11 @@ export class Posts {
   @Column()
   blogName: string;
 
+  @Column({ default: 0 })
+  likesCount: number;
+  @Column({ default: 0 })
+  dislikesCount: number;
+
   @ManyToOne(() => Blogs, b => b.posts)
   blog: Blogs;
 

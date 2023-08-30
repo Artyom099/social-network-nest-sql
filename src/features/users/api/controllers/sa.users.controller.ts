@@ -23,17 +23,14 @@ import {UsersPaginationInput} from '../../../../infrastructure/models/pagination
 import {DeleteUserCommand} from '../../application/sa.users.use.cases/delete.user.use.case';
 import {BanUserInputModel} from '../models/input/ban.user.input.model';
 import {CreateUserInputModel} from '../models/input/create.user.input.model';
-import {UsersRepository} from '../../infrastructure/users.repository';
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
 export class SaUsersController {
   constructor(
-    private usersQueryRepository: UsersQueryRepository,
-    private devicesService: DevicesService,
-    private usersRepository: UsersRepository,
-
     private commandBus: CommandBus,
+    private devicesService: DevicesService,
+    private usersQueryRepository: UsersQueryRepository,
   ) {}
 
   @Get()
@@ -65,7 +62,7 @@ export class SaUsersController {
     @Param('id') userId: string,
     @Body() inputModel: BanUserInputModel,
   ) {
-    const user = await this.usersRepository.getUserById(userId);
+    const user = await this.usersQueryRepository.getUserByIdSA(userId);
     if (!user) throw new NotFoundException('User not found');
 
     if (inputModel.isBanned) {

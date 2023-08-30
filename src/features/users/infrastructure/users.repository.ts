@@ -9,93 +9,6 @@ import {CreateUserDTO} from '../api/models/dto/create.user.dto';
 export class UsersRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async getUserById(id: string): Promise<SAUserViewModel | null> {
-    const user = await this.dataSource.query(`
-    select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
-    from "users"
-    where "id" = $1
-    `, [id])
-
-    return user.length ? {
-      id: user[0].id,
-      login: user[0].login,
-      email: user[0].email,
-      createdAt: user[0].createdAt,
-      banInfo: {
-        isBanned: user[0].isBanned,
-        banDate: user[0].banDate,
-        banReason: user[0].banReason,
-      },
-    } : null
-  }
-  async getUserByLoginOrEmail(logOrMail: string): Promise<any | null> {
-    const user = await this.dataSource.query(`
-    select *
-    from "users"
-    where "login" like $1 or "email" like $1
-    `, [ `%${logOrMail}%` ])
-
-    return user.length ? {
-      id: user[0].id,
-      login: user[0].login,
-      email: user[0].email,
-      salt: user[0].passwordSalt,
-      hash: user[0].passwordHash,
-      createdAt: user[0].createdAt,
-      isConfirmed: user[0].isConfirmed,
-      confirmationCode: user[0].confirmationCode,
-      passwordSalt: user[0].passwordSalt,
-      passwordHash: user[0].passwordHash,
-      banInfo: {
-        isBanned: user[0].isBanned,
-        banDate: user[0].banDate,
-        banReason: user[0].banReason,
-      },
-    } : null
-
-  }
-  async getUserByRecoveryCode(code: string): Promise<SAUserViewModel | null> {
-    const user = await this.dataSource.query(`
-    select *
-    from "users"
-    where "recoveryCode" = $1
-    `, [code])
-
-    return user.length ? {
-      id: user[0].id,
-      login: user[0].login,
-      email: user[0].email,
-      createdAt: user[0].createdAt,
-      banInfo: {
-        isBanned: user[0].isBanned,
-        banDate: user[0].banDate,
-        banReason: user[0].banReason,
-      },
-    } :null
-  }
-  async getUserByConfirmationCode(code: string): Promise<any | null> {
-    const user = await this.dataSource.query(`
-    select *
-    from "users"
-    where "confirmationCode" = $1
-    `, [code])
-
-    return user.length ? {
-      id: user[0].id,
-      login: user[0].login,
-      email: user[0].email,
-      createdAt: user[0].createdAt,
-      isConfirmed: user[0].isConfirmed,
-      confirmationCode: user[0].confirmationCode,
-      expirationDate: user[0].expirationDate,
-      banInfo: {
-        isBanned: user[0].isBanned,
-        banDate: user[0].banDate,
-        banReason: user[0].banReason,
-      },
-    } : null
-  }
-
   async createUserByAdmin(dto: CreateUserDTO): Promise<SAUserViewModel> {
     await this.dataSource.query(`
     insert into "users"
@@ -172,6 +85,7 @@ export class UsersRepository {
     };
   }
 
+  //todo - удалить все лайки забаненого юзера
   async banUser(id: string, banReason: string) {
     return this.dataSource.query(`
     update "users"
@@ -179,6 +93,7 @@ export class UsersRepository {
     where "id" = $3
     `, [banReason, new Date(), id])
   }
+  //todo - вернуть все лайки разбаненого юзера
   async unbanUser(id: string) {
     return this.dataSource.query(`
     update "users"
@@ -186,6 +101,7 @@ export class UsersRepository {
     where "id" = $1
     `, [id])
   }
+
   async confirmEmail(id: string) {
     return this.dataSource.query(`
     update "users"

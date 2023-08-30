@@ -45,6 +45,7 @@ import {TypeOrmOptions} from './infrastructure/options/type-orm.options';
 import {Comments} from './features/comments/entity/сomment.entity';
 import {CommentLikes} from './features/comments/entity/comment.likes.entity';
 import {PostLikes} from './features/posts/entity/post.likes.entity';
+import {UpdateCommentLikesUseCase} from './features/comments/application/use.cases/update.comment.likes.use.case';
 
 const useCases = [
   CreateBlogUseCase,
@@ -54,6 +55,7 @@ const useCases = [
   CreateCommentUseCase,
   UpdateBlogUseCase,
   UpdateCommentUseCase,
+  UpdateCommentLikesUseCase,
 ];
 
 @Module({
@@ -78,7 +80,16 @@ const useCases = [
       { name: BannedUserForBlog3.name, schema: BannedUserForBlogSchema },
     ]),
     TypeOrmModule.forRootAsync({useClass: TypeOrmOptions}),
-    TypeOrmModule.forFeature([Users, BannedUsersForBlog, Devices, Blogs, Posts, PostLikes, Comments, CommentLikes])
+    TypeOrmModule.forFeature([
+      Users,
+      BannedUsersForBlog,
+      Devices,
+      Blogs,
+      Posts,
+      PostLikes,
+      Comments,
+      CommentLikes,
+    ])
   ],
   controllers: [
     AppController,

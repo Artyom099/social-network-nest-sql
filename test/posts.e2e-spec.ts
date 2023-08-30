@@ -314,7 +314,7 @@ describe('PostsController (e2e)', () => {
   it('10 – GET:/posts/:id – return 404 with not existing postId', async () => {
     const { firstAccessToken } = expect.getState();
     await request(server)
-      .get('/posts/123')
+      .get('/posts/862cd5fa-dd4d-4d6f-a78b-339ed319b77d')
       .auth(firstAccessToken, { type: 'bearer' })
       .expect(HttpStatus.NOT_FOUND);
   });

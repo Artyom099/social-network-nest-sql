@@ -1,8 +1,8 @@
-import {UsersRepository} from '../../../users/infrastructure/users.repository';
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {randomUUID} from 'crypto';
 import {TokensService} from '../../../../infrastructure/services/tokens.service';
 import {HashService} from '../../../../infrastructure/services/hash.service';
+import {UsersQueryRepository} from '../../../users/infrastructure/users.query.repository';
 
 export class CheckCredentialsCommand {
   constructor(
@@ -16,12 +16,12 @@ export class CheckCredentialsUseCase implements ICommandHandler<CheckCredentials
   constructor(
     private hashService: HashService,
     private tokensService: TokensService,
-    private usersRepository: UsersRepository,
+    private usersQueryRepository: UsersQueryRepository,
   ) {}
 
   async execute(command: CheckCredentialsCommand) {
     const {loginOrEmail, password} = command
-    const user = await this.usersRepository.getUserByLoginOrEmail(loginOrEmail);
+    const user = await this.usersQueryRepository.getUserByLoginOrEmail(loginOrEmail);
     if (!user) return null;
 
     const hash = await this.hashService.generateHash(password, user.passwordSalt);

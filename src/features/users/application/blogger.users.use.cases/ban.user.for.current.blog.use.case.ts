@@ -1,8 +1,8 @@
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {BanUserCurrentBlogInputModel} from '../../api/models/input/ban.user.current.blog.input.model';
-import {UsersRepository} from '../../infrastructure/users.repository';
 import {BannedUsersForBlogRepository} from '../../infrastructure/banned.users.for.blog.repository';
 import {BannedUsersForBlogQueryRepository} from '../../infrastructure/banned.users.for.blog.query.repository';
+import {UsersQueryRepository} from '../../infrastructure/users.query.repository';
 
 export class BanUserForCurrentBlogCommand {
   constructor(
@@ -16,14 +16,14 @@ export class BanUserForCurrentBlogUseCase
   implements ICommandHandler<BanUserForCurrentBlogCommand>
 {
   constructor(
-    private usersRepository: UsersRepository,
+    private usersQueryRepository: UsersQueryRepository,
     private bannedUsersForBlogRepository: BannedUsersForBlogRepository,
     private bannedUsersForBlogQueryRepository: BannedUsersForBlogQueryRepository,
   ) {}
 
   async execute(command: BanUserForCurrentBlogCommand) {
     const { userId, inputModel } = command;
-    const user = await this.usersRepository.getUserById(userId);
+    const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) return null;
 
     const bannedUser =
