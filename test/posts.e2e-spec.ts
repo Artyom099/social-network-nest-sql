@@ -726,6 +726,7 @@ describe('PostsController (e2e)', () => {
       fourthUserInputModel,
       fifthUserInputModel,
     } = expect.getState();
+    console.log('31-------31');
 
     const getPost = await request(server)
       .get(`/posts/${firstPost.id}`)
@@ -774,6 +775,7 @@ describe('PostsController (e2e)', () => {
       fourthUserInputModel,
       fifthUserInputModel,
     } = expect.getState();
+    console.log('32-------32');
 
     const getPosts = await request(server)
       .get('/posts')

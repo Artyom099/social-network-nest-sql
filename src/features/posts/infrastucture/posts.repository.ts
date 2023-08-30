@@ -9,7 +9,6 @@ import {CreatePostModel} from '../api/models/dto/create.post.model';
 import {InjectDataSource} from '@nestjs/typeorm';
 import {DataSource} from 'typeorm';
 import {UpdatePostLikesModel} from '../api/models/dto/update.post.likes.model';
-import {id} from 'date-fns/locale';
 
 @Injectable()
 export class PostsRepository {
@@ -18,75 +17,6 @@ export class PostsRepository {
     @InjectModel(Post3.name) private postModel: Model<PostDocument>
   ) {}
 
-  async createPost2(post: CreatePostModel) {
-    await this.postModel.create(post);
-    return {
-      // id: newPost._id.toString(),
-      id: post.id,
-      title: post.title,
-      shortDescription: post.shortDescription,
-      content: post.content,
-      blogId: post.blogId,
-      blogName: post.blogName,
-      createdAt: post.createdAt,
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: LikeStatus.None,
-        newestLikes: [],
-      },
-    };
-  }
-  async updatePost2(id: string, InputModel: PostInputModel) {
-    return this.postModel.updateOne(
-      { id },
-      {
-        title: InputModel.title,
-        shortDescription: InputModel.shortDescription,
-        content: InputModel.content,
-      },
-    );
-  }
-  async deletePost2(id: string) {
-    return this.postModel.deleteOne({ id });
-  }
-  async updatePostLikes2(dto: UpdatePostLikesModel) {
-    const post = await this.postModel.findOne({ id });
-    if (!post) return false;
-    // если юзер есть в массиве, обновляем его статус
-    for (const s of post.extendedLikesInfo) {
-      if (s.userId === dto.userId) {
-        if (s.status === dto.likeStatus) return true;
-        return this.postModel.updateOne(
-          { id },
-          {
-            extendedLikesInfo: {
-              addedAt: dto.addedAt,
-              userId: dto.userId,
-              status: dto.likeStatus,
-              login: dto.login,
-            },
-          },
-        );
-      }
-    }
-    // иначе добавляем юзера, его лайк статус, дату и логин в массив
-    return this.postModel.updateOne(
-      { id },
-      {
-        $addToSet: {
-          extendedLikesInfo: {
-            addedAt: dto.addedAt,
-            userId: dto.userId,
-            status: dto.likeStatus,
-            login: dto.login,
-          },
-        },
-      },
-    );
-  }
-
-  // SQL
   async createPost(dto: CreatePostModel): Promise<PostViewModel> {
     await this.dataSource.query(`
     insert into "posts"
@@ -180,7 +110,6 @@ export class PostsRepository {
     `, [dto.postId])
     }
   }
-
   async setPostLike(dto: UpdatePostLikesModel) {
     const [postLikes] = await this.dataSource.query(`
     select *
@@ -214,7 +143,6 @@ export class PostsRepository {
     where "id" = $1
     `, [dto.postId])
   }
-
   async setPostDislike(dto: UpdatePostLikesModel) {
     const [postLikes] = await this.dataSource.query(`
     select *

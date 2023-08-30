@@ -72,13 +72,12 @@ export class CommentsQueryRepository {
       query.offset(),
     ])
 
-    const items = sortedComments.map(async (c) => {
-      //todo - здесь нужно достать мои лайки только из тукщкго комментв
+    const items = await Promise.all(sortedComments.map(async (c): Promise<CommentViewModel> => {
       const [myLikeInfo] = await this.dataSource.query(`
       select *
       from "comment_likes"
-      where "userId" = $1 and "commentId" = $2
-      `, [currentUserId, c.id])
+      where "commentId" = $1 and "userId" = $2
+      `, [c.id, currentUserId])
 
       return {
         id: c.id,
@@ -100,7 +99,7 @@ export class CommentsQueryRepository {
           blogName: c.blogName,
         },
       }
-    })
+    }))
 
     return {
       pagesCount: query.pagesCountSql(totalCount), // общее количество страниц
@@ -134,7 +133,7 @@ export class CommentsQueryRepository {
       query.offset(),
     ])
 
-    const items = sortedComments.map(async (c) => {
+    const items = await Promise.all(sortedComments.map(async (c) => {
       const [myLikeInfo] = await this.dataSource.query(`
       select *
       from "comment_likes"
@@ -161,7 +160,7 @@ export class CommentsQueryRepository {
           blogName: c.blogName,
         },
       }
-    })
+    }))
 
     return {
       pagesCount: query.pagesCountSql(totalCount), // общее количество страниц
