@@ -10,7 +10,7 @@ export class DeleteCommentCommand {
 export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentCommand> {
   constructor(private commentsRepository: CommentsRepository) {}
 
-  async execute(command: DeleteCommentCommand): Promise<void> {
+  async execute(command: DeleteCommentCommand) {
     return this.commentsRepository.deleteComment(command.commentId);
   }
 }

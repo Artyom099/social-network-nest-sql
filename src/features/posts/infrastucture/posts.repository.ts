@@ -1,9 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {PostInputModel} from '../api/models/input/post.input.model';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
-import {InjectModel} from '@nestjs/mongoose';
-import {Post3, PostDocument} from '../entity/posts.schema';
-import {Model} from 'mongoose';
 import {PostViewModel} from '../api/models/view/post.view.model';
 import {CreatePostModel} from '../api/models/dto/create.post.model';
 import {InjectDataSource} from '@nestjs/typeorm';
@@ -12,10 +9,7 @@ import {UpdatePostLikesModel} from '../api/models/dto/update.post.likes.model';
 
 @Injectable()
 export class PostsRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    @InjectModel(Post3.name) private postModel: Model<PostDocument>
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async createPost(dto: CreatePostModel): Promise<PostViewModel> {
     await this.dataSource.query(`

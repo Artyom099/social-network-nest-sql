@@ -147,13 +147,13 @@ describe('CommentsController (e2e)', () => {
 
     expect(createBlogResponse).toBeDefined();
     expect(createBlogResponse.status).toEqual(HttpStatus.CREATED);
-    expect.setState({ blogId: createBlogResponse.body.id });
+    expect.setState({ blog: createBlogResponse.body });
   });
   it('5 – POST:/blogger/blogs/:id/posts – return 201 & create post', async () => {
-    const { firstAccessToken, blogId } = expect.getState();
+    const { firstAccessToken, blog } = expect.getState();
 
     const createPostResponse = await request(server)
-      .post(`/blogger/blogs/${blogId}/posts`)
+      .post(`/blogger/blogs/${blog.id}/posts`)
       .auth(firstAccessToken, { type: 'bearer' })
       .send({
         title: 'valid-title',
@@ -188,14 +188,9 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 0,
         myStatus: LikeStatus.None,
       },
-      postInfo: {
-        id: post.id,
-        title: post.title,
-        blogId: post.blogId,
-        blogName: post.blogName,
-      },
     });
 
+    console.log({ comment: createCommentResponse.body });
     expect.setState({ comment: createCommentResponse.body });
   });
 
@@ -232,9 +227,10 @@ describe('CommentsController (e2e)', () => {
   });
 
   it('10 – GET:/comments/:id – return 200 & found comment', async () => {
-    const { post, comment, firstUser, firstCreatedUser } = expect.getState();
+    const { comment, firstUser, firstCreatedUser } = expect.getState();
 
-    const getComment = await request(server).get(`/comments/${comment.id}`);
+    const getComment = await request(server)
+      .get(`/comments/${comment.id}`);
 
     expect(getComment).toBeDefined();
     expect(getComment.status).toEqual(HttpStatus.OK);
@@ -555,17 +551,12 @@ describe('CommentsController (e2e)', () => {
         dislikesCount: 0,
         myStatus: LikeStatus.Like,
       },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
-      },
     });
   });
 
   it('24 – PUT:/comments/:commentId/like-status – return 204 & set like by 2nd user again', async () => {
     const { comment, secondAccessToken } = expect.getState();
+
     const setLikeBySecondUserAgain = await request(server)
       .put(`/comments/${comment.id}/like-status`)
       .auth(secondAccessToken, { type: 'bearer' })
@@ -616,12 +607,6 @@ describe('CommentsController (e2e)', () => {
         likesCount: 2,
         dislikesCount: 0,
         myStatus: LikeStatus.Like,
-      },
-      postInfo: {
-        id: comment.postInfo.id,
-        title: comment.postInfo.title,
-        blogId: comment.postInfo.blogId,
-        blogName: comment.postInfo.blogName,
       },
     });
   });

@@ -46,6 +46,7 @@ import {Comments} from './features/comments/entity/сomment.entity';
 import {CommentLikes} from './features/comments/entity/comment.likes.entity';
 import {PostLikes} from './features/posts/entity/post.likes.entity';
 import {UpdateCommentLikesUseCase} from './features/comments/application/use.cases/update.comment.likes.use.case';
+import {DeleteCommentUseCase} from './features/comments/application/use.cases/delete.comment.use.case';
 
 const useCases = [
   CreateBlogUseCase,
@@ -55,6 +56,7 @@ const useCases = [
   CreateCommentUseCase,
   UpdateBlogUseCase,
   UpdateCommentUseCase,
+  DeleteCommentUseCase,
   UpdateCommentLikesUseCase,
 ];
 
