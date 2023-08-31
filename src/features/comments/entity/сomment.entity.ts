@@ -32,5 +32,5 @@ export class Comments {
   postTitle: string;
 
   @OneToMany(() => CommentLikes, l => l.comment)
-  likes: CommentLikes;
+  likes: CommentLikes[];
 }
