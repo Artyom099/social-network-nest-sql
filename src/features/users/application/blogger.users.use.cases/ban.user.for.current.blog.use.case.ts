@@ -26,18 +26,18 @@ export class BanUserForCurrentBlogUseCase
     const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) return null;
 
-    const bannedUser =
-      await this.bannedUsersForBlogQueryRepository.getBannedUserForBlog(
-        userId,
-        inputModel.blogId,
-      );
+    const bannedUser = await this.bannedUsersForBlogQueryRepository.getBannedUserForBlog(
+      userId,
+      inputModel.blogId,
+    );
     if (!bannedUser && inputModel.isBanned) {
-      return this.bannedUsersForBlogRepository.banUserForBlog(
+      const model = {
         userId,
-        user.login,
-        user.createdAt,
+        login: user.login,
+        createdAt: user.createdAt,
         inputModel,
-      );
+      }
+      return this.bannedUsersForBlogRepository.banUserForBlog(model);
     }
     if (bannedUser && !inputModel.isBanned) {
       return this.bannedUsersForBlogRepository.unbanUserForBlog(userId);

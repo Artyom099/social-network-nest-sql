@@ -1,14 +1,20 @@
-import {Column, Entity, ManyToOne, PrimaryColumn} from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 import {LikeStatus} from '../../../infrastructure/utils/constants';
 import {Comments} from './сomment.entity';
+import {Users} from '../../users/entity/user.entity';
 
 @Entity()
 export class CommentLikes {
-  @PrimaryColumn()
-  userId: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @Column()
   status: LikeStatus;
 
   @ManyToOne(() => Comments, c => c.likes)
-  comment: Comments
+  @JoinColumn()
+  comment: Comments;
+
+  @ManyToOne(() => Users, u => u.comment_likes)
+  @JoinColumn()
+  user: Users;
 }

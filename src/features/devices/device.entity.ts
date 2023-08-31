@@ -14,6 +14,4 @@ export class Devices {
 
   @ManyToOne(() => Users, u => u.devices)
   user: Users;
-  @Column()
-  userId: string;
 }

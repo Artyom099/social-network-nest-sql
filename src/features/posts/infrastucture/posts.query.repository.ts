@@ -18,7 +18,16 @@ export class PostsQueryRepository {
     currentUserId?: string | null,
   ): Promise<PostViewModel | null> {
     const [post] = await this.dataSource.query(`
-    select *
+    select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
+    
+        (select count (*) as "likesCount" 
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Like'),
+        
+        (select count (*) as "dislikesCount"
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Dislike')
+    
     from "posts"
     where "id" = $1
     `, [id])
@@ -37,8 +46,6 @@ export class PostsQueryRepository {
     limit 3
     `, [id, LikeStatus.Like])
 
-    console.log({post: post});
-
     return post ? {
       id: post.id,
       title: post.title,
@@ -48,8 +55,8 @@ export class PostsQueryRepository {
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
-        likesCount: post.likesCount,
-        dislikesCount: post.dislikesCount,
+        likesCount: parseInt(post.likesCount, 10),
+        dislikesCount: parseInt(post.dislikesCount, 10),
         myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
         newestLikes,
       }
@@ -66,7 +73,16 @@ export class PostsQueryRepository {
     `)
     // where "isBanned" = false
     const sortedPosts = await this.dataSource.query(`
-    select *
+    select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
+    
+        (select count (*) as "likesCount" 
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Like'),
+        
+        (select count (*) as "dislikesCount"
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Dislike')
+    
     from "posts"
     order by "${query.sortBy}" ${query.sortDirection}
     limit $1
@@ -100,8 +116,8 @@ export class PostsQueryRepository {
         blogName: p.blogName,
         createdAt: p.createdAt,
         extendedLikesInfo: {
-          likesCount: p.likesCount,
-          dislikesCount: p.dislikesCount,
+          likesCount: parseInt(p.likesCount, 10),
+          dislikesCount: parseInt(p.dislikesCount, 10),
           myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
           newestLikes,
         }
@@ -129,7 +145,16 @@ export class PostsQueryRepository {
     `, [blogId])
 
     const sortedPosts = await this.dataSource.query(`
-    select *
+    select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
+    
+        (select count (*) as "likesCount" 
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Like'),
+        
+        (select count (*) as "dislikesCount"
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Dislike')
+    
     from "posts"
     where "isBanned" = false and "blogId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
@@ -165,8 +190,8 @@ export class PostsQueryRepository {
         blogName: p.blogName,
         createdAt: p.createdAt,
         extendedLikesInfo: {
-          likesCount: p.likesCount,
-          dislikesCount: p.dislikesCount,
+          likesCount: parseInt(p.likesCount, 10),
+          dislikesCount: parseInt(p.dislikesCount, 10),
           myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
           newestLikes,
         }
@@ -194,7 +219,16 @@ export class PostsQueryRepository {
     `, [blogId])
     // "isBanned" = false
     const sortedPosts = await this.dataSource.query(`
-    select *
+    select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
+    
+        (select count (*) as "likesCount" 
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Like'),
+        
+        (select count (*) as "dislikesCount"
+        from post_likes 
+        where "postId" = posts.id and "status" = 'Dislike')
+        
     from "posts"
     where "blogId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
@@ -230,8 +264,8 @@ export class PostsQueryRepository {
         blogName: p.blogName,
         createdAt: p.createdAt,
         extendedLikesInfo: {
-          likesCount: p.likesCount,
-          dislikesCount: p.dislikesCount,
+          likesCount: parseInt(p.likesCount, 10),
+          dislikesCount: parseInt(p.dislikesCount, 10),
           myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
           newestLikes,
         }

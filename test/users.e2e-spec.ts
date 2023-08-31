@@ -216,11 +216,9 @@ describe('UsersController (e2e)', () => {
     expect.setState({fourthCreatedUser: fourthCreatedUser});
   });
 
-  //todo - start with solving this problem !!!
-
   it('6 – DELETE:/sa/users – return 404', async () => {
     await request(server)
-      .delete('/sa/users/1')
+      .delete('/sa/users/c1191d30-d904-4a0f-92ab-cdd8896971f8')
       .auth('admin', 'qwerty', {type: 'basic'})
       .expect(HttpStatus.NOT_FOUND);
   });
@@ -249,10 +247,9 @@ describe('UsersController (e2e)', () => {
       });
   });
 
-  //todo - and also this:)
   it('8 – PUT:/sa/users/:id/ban – return 404', async () => {
     await request(server)
-      .put('/sa/users/1111/ban')
+      .put('/sa/users/c1191d30-d904-4a0f-92ab-cdd8896971f8/ban')
       .auth('admin', 'qwerty', {type: 'basic'})
       .send({
         isBanned: true,
@@ -1111,8 +1108,7 @@ describe('Ban users for different blogs', () => {
 
   // 1й юзер смотрит все комменты своего блога
   it('15 – GET:/blogger/blogs/comments – return 201', async () => {
-    const {firstRefreshToken, thirdCreatedUser, createdPost, createdBLog} =
-      expect.getState();
+    const {firstRefreshToken, thirdCreatedUser, createdPost, createdBLog} = expect.getState();
 
     const getCommentsCurrentBlog = await request(server)
       .get(`/blogger/blogs/comments`)

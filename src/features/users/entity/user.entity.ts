@@ -2,6 +2,9 @@ import {Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeo
 import {BannedUsersForBlog} from './banned.user.for.blog.entity';
 import {Devices} from '../../devices/device.entity';
 import {Blogs} from '../../blogs/blog.entity';
+import {CommentLikes} from '../../comments/entity/comment.likes.entity';
+import {PostLikes} from '../../posts/entity/post.likes.entity';
+import {Comments} from '../../comments/entity/сomment.entity';
 
 @Entity()
 export class Users {
@@ -40,4 +43,13 @@ export class Users {
 
   @OneToMany(() => Blogs, b => b.user)
   blogs: Blogs[];
+
+  @OneToMany(() => PostLikes, p => p.user)
+  post_likes: PostLikes[];
+
+  @OneToMany(() => Comments, c => c.user)
+  comments: Comments[];
+
+  @OneToMany(() => CommentLikes, c => c.user)
+  comment_likes: CommentLikes[];
 }

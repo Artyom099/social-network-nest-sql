@@ -190,7 +190,6 @@ describe('CommentsController (e2e)', () => {
       },
     });
 
-    console.log({ comment: createCommentResponse.body });
     expect.setState({ comment: createCommentResponse.body });
   });
 

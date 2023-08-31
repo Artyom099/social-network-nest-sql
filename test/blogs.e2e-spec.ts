@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {HttpStatus, INestApplication} from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { LikeStatus } from '../src/infrastructure/utils/constants';
-import { appSettings } from '../src/infrastructure/settings/app.settings';
-import { getRefreshTokenByResponse } from '../src/infrastructure/utils/utils';
+import {AppModule} from '../src/app.module';
+import {LikeStatus} from '../src/infrastructure/utils/constants';
+import {appSettings} from '../src/infrastructure/settings/app.settings';
+import {getRefreshTokenByResponse} from '../src/infrastructure/utils/utils';
 
 describe('BlogsController (e2e)', () => {
   let app: INestApplication;
@@ -107,7 +107,7 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .get('/blogger/blogs/11/posts')
+      .get('/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8/posts')
       .auth(firstRefreshToken, { type: 'bearer' })
       .expect(HttpStatus.NOT_FOUND);
   });
@@ -115,7 +115,7 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .post(`/blogger/blogs/11/posts`)
+      .post(`/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8/posts`)
       .auth(firstRefreshToken, { type: 'bearer' })
       .send({
         title: 'valid-title',
@@ -324,7 +324,7 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .put('/blogger/blogs/' + -3)
+      .put('/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8')
       .auth(firstRefreshToken, { type: 'bearer' })
       .send({
         name: 'val_name update',
@@ -404,7 +404,7 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .delete('/blogger/blogs/1')
+      .delete('/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8')
       .auth(firstRefreshToken, { type: 'bearer' })
       .expect(HttpStatus.NOT_FOUND);
   });

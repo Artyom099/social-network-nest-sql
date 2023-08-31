@@ -1,6 +1,8 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {CommentLikes} from './comment.likes.entity';
 import {Posts} from '../../posts/entity/post.entity';
+import {Users} from '../../users/entity/user.entity';
+import {Blogs} from '../../blogs/blog.entity';
 
 @Entity()
 export class Comments {
@@ -11,28 +13,24 @@ export class Comments {
   @Column()
   createdAt: Date;
 
-  @Column()
-  userId: string;
+  @ManyToOne(() => Users, u => u.comments)
+  @JoinColumn()
+  user: Users;
   @Column()
   userLogin: string;
 
-  @Column({ nullable: true })
-  postId: string;
-  @Column()
-  postTitle: string;
-
-  @Column()
-  blogId: string;
+  @ManyToOne(() => Blogs, b => b.comments)
+  @JoinColumn()
+  blog: Blogs;
   @Column()
   blogName: string;
 
-  @Column({ default: 0 })
-  likesCount: number;
-  @Column({ default: 0 })
-  dislikesCount: number;
-
   @ManyToOne(() => Posts, p => p.comments)
-  post: Posts
+  @JoinColumn()
+  post: Posts;
+  @Column()
+  postTitle: string;
+
   @OneToMany(() => CommentLikes, l => l.comment)
-  likes: CommentLikes
+  likes: CommentLikes;
 }

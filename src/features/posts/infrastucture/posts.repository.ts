@@ -80,13 +80,6 @@ export class PostsRepository {
       set "status" = $1
       where "postId" = $2 and "userId" = $3
       `, [dto.likeStatus, dto.postId, dto.userId])
-
-      // likesCount -1
-      return this.dataSource.query(`
-      update "posts"
-      set "likesCount" = "likesCount" - 1
-      where "id" = $1
-    `, [dto.postId])
     }
 
     if (postLikes && postLikes.status === LikeStatus.Dislike) {
@@ -95,13 +88,6 @@ export class PostsRepository {
       set "status" = $1
       where "postId" = $2 and "userId" = $3
       `, [dto.likeStatus, dto.postId, dto.userId])
-
-      // dislikesCount -1
-      return this.dataSource.query(`
-      update "posts"
-      set "dislikesCount" = "dislikesCount" - 1
-      where "id" = $1
-    `, [dto.postId])
     }
   }
   async setPostLike(dto: UpdatePostLikesModel) {
@@ -130,12 +116,6 @@ export class PostsRepository {
         dto.login,
       ])
     }
-    // likesCount +1
-    return this.dataSource.query(`
-    update "posts"
-    set "likesCount" = "likesCount" + 1
-    where "id" = $1
-    `, [dto.postId])
   }
   async setPostDislike(dto: UpdatePostLikesModel) {
     const [postLikes] = await this.dataSource.query(`
@@ -150,13 +130,6 @@ export class PostsRepository {
       set "status" = $1
       where "postId" = $2 and "userId" = $3
       `, [dto.likeStatus, dto.postId, dto.userId])
-
-      // dislikesCount +1
-      return this.dataSource.query(`
-      update "posts"
-      set "dislikesCount" = "dislikesCount" + 1
-      where "id" = $1
-      `, [dto.postId])
     }
   }
 }

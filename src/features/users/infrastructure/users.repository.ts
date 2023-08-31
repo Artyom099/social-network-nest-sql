@@ -87,6 +87,15 @@ export class UsersRepository {
 
   //todo - удалить все лайки забаненого юзера
   async banUser(id: string, banReason: string) {
+    // await this.dataSource.query(`
+    // delete from "post_likes"
+    // where "userId" = $1
+    // `, [id])
+    // await this.dataSource.query(`
+    // delete from "comment_likes"
+    // where "userId" = $1
+    // `, [id])
+
     return this.dataSource.query(`
     update "users"
     set "isBanned" = true, "banReason" = $1,  "banDate" = $2

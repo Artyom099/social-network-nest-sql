@@ -32,13 +32,12 @@ import {CommentsQueryRepository} from '../../../comments/infrastructure/comments
 @UseGuards(BearerAuthGuard)
 export class BloggerBlogsController {
   constructor(
+    private commandBus: CommandBus,
     private blogsService: BlogsService,
     private postsService: PostsService,
     private blogsQueryRepository: BlogsQueryRepository,
     private postsQueryRepository: PostsQueryRepository,
     private commentsQueryRepository: CommentsQueryRepository,
-
-    private commandBus: CommandBus,
   ) {}
 
   // логика блогов блоггера
@@ -66,11 +65,11 @@ export class BloggerBlogsController {
     @Param('id') blogId: string,
     @Body() inputModel: BlogInputModel,
   ) {
-    const foundBlog = await this.blogsQueryRepository.getBlogSA(blogId);
-    if (!foundBlog) {
+    const blog = await this.blogsQueryRepository.getBlogSA(blogId);
+    if (!blog) {
       throw new NotFoundException('blog not found');
     }
-    if (req.userId !== foundBlog.blogOwnerInfo.userId) {
+    if (req.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     } else {
       return this.commandBus.execute(new UpdateBlogCommand(blogId, inputModel));
@@ -80,10 +79,10 @@ export class BloggerBlogsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Req() req, @Param('id') blogId: string) {
-    const foundBlog = await this.blogsQueryRepository.getBlogSA(blogId);
-    if (!foundBlog) throw new NotFoundException('blog not found');
+    const blog = await this.blogsQueryRepository.getBlogSA(blogId);
+    if (!blog) throw new NotFoundException('blog not found');
 
-    if (req.userId !== foundBlog.blogOwnerInfo.userId) {
+    if (req.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     } else {
       return this.blogsService.deleteBlog(blogId);
@@ -100,8 +99,8 @@ export class BloggerBlogsController {
     @Param('id') blogId: string,
     @Query() query: DefaultPaginationInput,
   ) {
-    const foundBlog = await this.blogsQueryRepository.getBlog(blogId);
-    if (!foundBlog) {
+    const blog = await this.blogsQueryRepository.getBlog(blogId);
+    if (!blog) {
       throw new NotFoundException('blog not found');
     } else {
       return this.postsQueryRepository.getPostsCurrentBlogForBlogger(
@@ -119,14 +118,14 @@ export class BloggerBlogsController {
     @Param('id') blogId: string,
     @Body() inputModel: PostInputModel,
   ) {
-    const foundBlog = await this.blogsQueryRepository.getBlogSA(blogId);
-    if (!foundBlog) throw new NotFoundException('blog not found');
+    const blog = await this.blogsQueryRepository.getBlogSA(blogId);
+    if (!blog) throw new NotFoundException('blog not found');
 
-    if (req.userId !== foundBlog.blogOwnerInfo.userId) {
+    if (req.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     } else {
       return this.commandBus.execute(
-        new CreatePostCommand(foundBlog, inputModel),
+        new CreatePostCommand(blog, inputModel),
       );
     }
   }
@@ -139,14 +138,14 @@ export class BloggerBlogsController {
     @Param('postId') postId: string,
     @Body() inputModel: PostInputModel,
   ) {
-    const foundBlog = await this.blogsQueryRepository.getBlogSA(blogId);
-    if (!foundBlog) throw new NotFoundException('blog not found');
-    if (req.userId !== foundBlog.blogOwnerInfo.userId) {
+    const blog = await this.blogsQueryRepository.getBlogSA(blogId);
+    if (!blog) throw new NotFoundException('blog not found');
+    if (req.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     }
 
-    const foundPost = await this.postsQueryRepository.getPost(postId);
-    if (!foundPost) {
+    const post = await this.postsQueryRepository.getPost(postId);
+    if (!post) {
       throw new NotFoundException('post not found');
     } else {
       return this.postsService.updatePost(postId, inputModel);
@@ -160,14 +159,14 @@ export class BloggerBlogsController {
     @Param('id') blogId: string,
     @Param('postId') postId: string,
   ) {
-    const foundBlog = await this.blogsQueryRepository.getBlogSA(blogId);
-    if (!foundBlog) throw new NotFoundException('blog not found');
-    if (req.userId !== foundBlog.blogOwnerInfo.userId) {
+    const blog = await this.blogsQueryRepository.getBlogSA(blogId);
+    if (!blog) throw new NotFoundException('blog not found');
+    if (req.userId !== blog.blogOwnerInfo.userId) {
       throw new ForbiddenException();
     }
 
-    const foundPost = await this.postsQueryRepository.getPost(postId);
-    if (!foundPost) {
+    const post = await this.postsQueryRepository.getPost(postId);
+    if (!post) {
       throw new NotFoundException('post not found');
     } else {
       return this.postsService.deletePost(postId);

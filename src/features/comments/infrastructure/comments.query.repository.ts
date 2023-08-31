@@ -16,7 +16,16 @@ export class CommentsQueryRepository {
     currentUserId?: string | null,
   ): Promise<CommentViewModel | null> {
     const [comment] = await this.dataSource.query(`
-    select *
+    select "id", "content", "createdAt", "userId", "userLogin",
+    
+        (select count (*) as "likesCount" 
+        from comment_likes 
+        where "commentId" = comments.id and "status" = 'Like'),
+        
+        (select count (*) as "dislikesCount"
+        from comment_likes 
+        where "commentId" = comments.id and "status" = 'Dislike')
+        
     from "comments"
     where "id" = $1
     `, [id])
@@ -36,8 +45,8 @@ export class CommentsQueryRepository {
         userLogin: comment.userLogin,
       },
       likesInfo: {
-        likesCount: comment.likesCount,
-        dislikesCount: comment.dislikesCount,
+        likesCount: parseInt(comment.likesCount, 10),
+        dislikesCount: parseInt(comment.dislikesCount, 10),
         myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
       },
     } : null
@@ -55,7 +64,16 @@ export class CommentsQueryRepository {
     `, [postId])
 
     const sortedComments = await this.dataSource.query(`
-    select *
+    select "id", "content", "createdAt", "userId", "userLogin",
+    
+        (select count (*) as "likesCount" 
+        from comment_likes 
+        where "commentId" = comments.id and "status" = 'Like'),
+        
+        (select count (*) as "dislikesCount"
+        from comment_likes 
+        where "commentId" = comments.id and "status" = 'Dislike')
+    
     from "comments"
     where "postId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
@@ -66,6 +84,7 @@ export class CommentsQueryRepository {
       query.pageSize,
       query.offset(),
     ])
+
 
     const items = await Promise.all(sortedComments.map(async (c): Promise<CommentViewModel> => {
       const [myLikeInfo] = await this.dataSource.query(`
@@ -83,8 +102,8 @@ export class CommentsQueryRepository {
           userLogin: c.userLogin,
         },
         likesInfo: {
-          likesCount: c.likesCount,
-          dislikesCount: c.dislikesCount,
+          likesCount: parseInt(c.likesCount, 10),
+          dislikesCount: parseInt(c.dislikesCount, 10),
           myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
         },
       }
@@ -99,6 +118,7 @@ export class CommentsQueryRepository {
     };
   }
 
+  //todo - вроде не работает этот метод в users tests
   async getCommentsCurrentBlogger(
     currentUserId: string,
     query: DefaultPaginationInput,
@@ -110,7 +130,16 @@ export class CommentsQueryRepository {
     `, [currentUserId])
 
     const sortedComments = await this.dataSource.query(`
-    select *
+    select "id", "content", "createdAt", "userId", "userLogin",
+    
+        (select count (*) as "likesCount" 
+        from comment_likes 
+        where "commentId" = comments.id and "status" = 'Like'),
+        
+        (select count (*) as "dislikesCount"
+        from comment_likes 
+        where "commentId" = comments.id and "status" = 'Dislike')
+    
     from "comments"
     where "userId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
@@ -138,8 +167,8 @@ export class CommentsQueryRepository {
           userLogin: c.userLogin,
         },
         likesInfo: {
-          likesCount: c.likesCount,
-          dislikesCount: c.dislikesCount,
+          likesCount: parseInt(c.likesCount, 10),
+          dislikesCount: parseInt(c.dislikesCount, 10),
           myStatus: myLikeInfo ? myLikeInfo.status : LikeStatus.None,
         },
         postInfo: {

@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {Blogs} from '../../blogs/blog.entity';
 import {Comments} from '../../comments/entity/сomment.entity';
 import {PostLikes} from './post.likes.entity';
@@ -16,22 +16,15 @@ export class Posts {
   @Column()
   createdAt: Date;
 
-  @Column({ nullable: true })
-  blogId: string;
+  @ManyToOne(() => Blogs, b => b.posts)
+  @JoinColumn()
+  blog: Blogs;
   @Column()
   blogName: string;
 
-  @Column({ default: 0 })
-  likesCount: number;
-  @Column({ default: 0 })
-  dislikesCount: number;
-
-  @ManyToOne(() => Blogs, b => b.posts)
-  blog: Blogs;
-
   @OneToMany(() => Comments, c => c.post)
-  comments: Comments
+  comments: Comments[];
 
   @OneToMany(() => PostLikes, l => l.post)
-  likes: PostLikes
+  likes: PostLikes[];
 }

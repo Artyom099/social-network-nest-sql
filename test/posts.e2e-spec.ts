@@ -280,6 +280,7 @@ describe('PostsController (e2e)', () => {
 
   it('9 – GET:/posts – return 200 and 1st post', async () => {
     const { firstAccessToken, firstPost, firstCreatedBlog } = expect.getState();
+    console.log('9---------9');
 
     const getPosts = await request(server)
       .get('/posts')
