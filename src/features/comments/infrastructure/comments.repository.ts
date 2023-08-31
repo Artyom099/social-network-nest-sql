@@ -69,21 +69,14 @@ export class CommentsRepository {
     where "commentId" = $1 and "userId" = $2
     `, [dto.commentId, dto.userId])
 
-    if (commentLikes && commentLikes.status === LikeStatus.Like) {
+    if (commentLikes && (commentLikes.status === LikeStatus.Like || commentLikes.status === LikeStatus.Dislike)) {
       return this.dataSource.query(`
       update "comment_likes"
       set "status" = $1
       where "commentId" = $2 and "userId" = $3
-      `, [dto.likeStatus, dto.commentId, dto.userId])
+      `, ['None', dto.commentId, dto.userId])
     }
 
-    if (commentLikes && commentLikes.status === LikeStatus.Dislike) {
-      return this.dataSource.query(`
-      update "comment_likes"
-      set "status" = $1
-      where "commentId" = $2 and "userId" = $3
-      `, [dto.likeStatus, dto.commentId, dto.userId])
-    }
   }
   async setCommentLike(dto: UpdateCommentLikeModel) {
     const [commentLikes] = await this.dataSource.query(`
@@ -119,6 +112,12 @@ export class CommentsRepository {
       set "status" = $1
       where "commentId" = $2 and "userId" = $3
       `, [dto.likeStatus, dto.commentId, dto.userId])
+    } else {
+      return this.dataSource.query(`
+      insert into "comment_likes"
+      ("commentId", "userId", "status")
+      values ($1, $2, $3)
+      `, [dto.commentId, dto.userId, dto.likeStatus])
     }
   }
 }

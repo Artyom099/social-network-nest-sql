@@ -26,9 +26,6 @@ export class DefaultPaginationInput {
   })
   pageSize = 10;
 
-  sort() {
-    return { [this.sortBy]: this.sortDirection };
-  }
   offset(): number {
     return (this.pageNumber - 1) * this.pageSize;
   }

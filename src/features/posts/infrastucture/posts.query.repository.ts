@@ -20,13 +20,13 @@ export class PostsQueryRepository {
     const [post] = await this.dataSource.query(`
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
-        (select count (*) as "likesCount" 
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Like'),
-        
-        (select count (*) as "dislikesCount"
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Dislike')
+      (select count (*) as "likesCount" 
+      from post_likes 
+      where "postId" = $1 and "status" = 'Like'),
+      
+      (select count (*) as "dislikesCount"
+      from post_likes 
+      where "postId" = $1 and "status" = 'Dislike')
     
     from "posts"
     where "id" = $1
@@ -138,25 +138,28 @@ export class PostsQueryRepository {
     blogId: string,
     query: DefaultPaginationInput,
   ): Promise<PaginationViewModel<PostViewModel[]>> {
+    //todo - как исключить посты забаненых блогов?
+    // QueryFailedError: column "isBanned" does not exist
+    //  "isBanned" = false and
     const totalCount = await this.dataSource.query(`
     select count (*)
     from "posts"
-    where "isBanned" = false and "blogId" = $1
+    where "blogId" = $1 and (select "blogId" from blogs where "isBanned" = false)
     `, [blogId])
 
     const sortedPosts = await this.dataSource.query(`
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
-        (select count (*) as "likesCount" 
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Like'),
-        
-        (select count (*) as "dislikesCount"
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Dislike')
+      (select count (*) as "likesCount" 
+      from post_likes 
+      where "postId" = posts.id and "status" = 'Like'),
+      
+      (select count (*) as "dislikesCount"
+      from post_likes 
+      where "postId" = posts.id and "status" = 'Dislike')
     
     from "posts"
-    where "isBanned" = false and "blogId" = $1
+    where "blogId" = $1 and (select "blogId" from blogs where "isBanned" = false)
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2
     offset $3
@@ -221,13 +224,13 @@ export class PostsQueryRepository {
     const sortedPosts = await this.dataSource.query(`
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
-        (select count (*) as "likesCount" 
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Like'),
-        
-        (select count (*) as "dislikesCount"
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Dislike')
+      (select count (*) as "likesCount" 
+      from post_likes 
+      where "postId" = posts.id and "status" = 'Like'),
+      
+      (select count (*) as "dislikesCount"
+      from post_likes 
+      where "postId" = posts.id and "status" = 'Dislike')
         
     from "posts"
     where "blogId" = $1
