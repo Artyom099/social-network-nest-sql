@@ -74,23 +74,15 @@ export class PostsRepository {
     where "postId" = $1 and "userId" = $2
     `, [dto.postId, dto.userId])
 
-    if (postLikes && postLikes.status === LikeStatus.Like) {
+    if (postLikes && (postLikes.status === LikeStatus.Like || postLikes.status === LikeStatus.Dislike)) {
       return this.dataSource.query(`
       update "post_likes"
       set "status" = $1
       where "postId" = $2 and "userId" = $3
       `, ['None', dto.postId, dto.userId])
     }
-
-    if (postLikes && postLikes.status === LikeStatus.Dislike) {
-      await this.dataSource.query(`
-      update "post_likes"
-      set "status" = $1
-      where "postId" = $2 and "userId" = $3
-      `, ['None', dto.postId, dto.userId])
-    }
   }
-  async setPostLike(dto: UpdatePostLikesModel) {
+  async setPostReaction(dto: UpdatePostLikesModel) {
     const [postLikes] = await this.dataSource.query(`
     select *
     from "post_likes"

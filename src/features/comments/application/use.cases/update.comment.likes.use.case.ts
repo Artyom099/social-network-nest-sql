@@ -3,7 +3,6 @@ import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {CommentsRepository} from '../../infrastructure/comments.repository';
 import {UpdateCommentLikeModel} from '../../api/models/dto/update.comment.like.model';
 
-
 export class UpdateCommentLikesCommand {
   constructor(
     public commentId: string,
@@ -22,15 +21,7 @@ export class UpdateCommentLikesUseCase implements ICommandHandler<UpdateCommentL
       userId: command.currentUserId,
       likeStatus: command.likeStatus,
     }
-    if (command.likeStatus === LikeStatus.Like) {
-      await this.commentsRepository.setCommentNone(model)
-      return this.commentsRepository.setCommentLike(model)
-    }
-    if (command.likeStatus === LikeStatus.Dislike) {
-      await this.commentsRepository.setCommentNone(model)
-      return this.commentsRepository.setCommentDislike(model)
-    } else {
-      return this.commentsRepository.setCommentNone(model)
-    }
+    await this.commentsRepository.setCommentNone(model)
+    return this.commentsRepository.setCommentReaction(model)
   }
 }

@@ -30,15 +30,7 @@ export class PostsService {
       addedAt: new Date(),
       login: user.login,
     }
-    if (likeStatus === LikeStatus.Like) {
-      await this.postsRepository.setPostNone(updatePostLikesModel)
-      return this.postsRepository.setPostLike(updatePostLikesModel)
-    }
-    if (likeStatus === LikeStatus.Dislike) {
-      await this.postsRepository.setPostNone(updatePostLikesModel)
-      return this.postsRepository.setPostDislike(updatePostLikesModel)
-    } else {
-      return this.postsRepository.setPostNone(updatePostLikesModel)
-    }
+    await this.postsRepository.setPostNone(updatePostLikesModel)
+    return this.postsRepository.setPostReaction(updatePostLikesModel)
   }
 }

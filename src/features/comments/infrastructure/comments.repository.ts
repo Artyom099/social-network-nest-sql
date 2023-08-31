@@ -78,7 +78,7 @@ export class CommentsRepository {
     }
 
   }
-  async setCommentLike(dto: UpdateCommentLikeModel) {
+  async setCommentReaction(dto: UpdateCommentLikeModel) {
     const [commentLikes] = await this.dataSource.query(`
     select *
     from "comment_likes"
