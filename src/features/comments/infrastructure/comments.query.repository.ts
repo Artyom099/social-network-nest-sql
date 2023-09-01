@@ -131,27 +131,33 @@ export class CommentsQueryRepository {
   ): Promise<PaginationViewModel<BLoggerCommentViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
     select count (*)
-    from "comments"
-    where "userId" = $1
+    from "comments" c
+    left join blogs b
+    on c."blogId" = b."id"
+    where b."userId" = $1
     `, [currentUserId])
 
+    //  and c."userId" =
     const sortedComments = await this.dataSource.query(`
-    select "id", "content", "createdAt", "userId", "userLogin",
+    select c."id", "content", c."createdAt", c."userId", c."userLogin", 
+      c."postId", c."postTitle", b."id" as "blogId", b."name" as "blogName",
     
       (select count (*) as "likesCount" 
       from comment_likes cl
       left join users u 
       on cl."userId" = u."id"
-      where cl."commentId" = comments.id and cl."status" = 'Like' and u."isBanned" = false),
+      where cl."commentId" = c.id and cl."status" = 'Like' and u."isBanned" = false),
       
       (select count (*) as "dislikesCount"
       from comment_likes cl
       left join users u 
       on cl."userId" = u."id"
-      where cl."commentId" = comments.id and cl."status" = 'Dislike' and u."isBanned" = false)
+      where cl."commentId" = c.id and cl."status" = 'Dislike' and u."isBanned" = false)
     
-    from "comments"
-    where "userId" in (select "id" from blogs where "userId" = $1)
+    from "comments" c
+    left join blogs b
+    on c."blogId" = b."id"
+    where b."userId" = $1
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2
     offset $3
@@ -160,6 +166,7 @@ export class CommentsQueryRepository {
       query.pageSize,
       query.offset(),
     ])
+    console.log({sortedComments: sortedComments});
 
     const items = await Promise.all(sortedComments.map(async (c) => {
       const [myLikeInfo] = await this.dataSource.query(`
