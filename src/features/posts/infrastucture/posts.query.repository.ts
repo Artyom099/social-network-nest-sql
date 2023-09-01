@@ -10,7 +10,6 @@ import {DataSource} from 'typeorm';
 export class PostsQueryRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  //todo - как сделать так, чтобы лайки забаненых юзеров не учитывались? как-то через join?
   async getPost(
     id: string,
     currentUserId?: string | null,
@@ -19,12 +18,16 @@ export class PostsQueryRepository {
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
       (select count (*) as "likesCount" 
-      from post_likes 
-      where "postId" = $1 and "status" = 'Like'),
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Like' and u."isBanned" = false),
       
       (select count (*) as "dislikesCount"
-      from post_likes 
-      where "postId" = $1 and "status" = 'Dislike')
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Dislike' and u."isBanned" = false)
     
     from "posts"
     where "id" = $1
@@ -37,9 +40,11 @@ export class PostsQueryRepository {
     `, [id, currentUserId])
 
     const newestLikes = await this.dataSource.query(`
-    select "addedAt", "login", "userId"
-    from "post_likes"
-    where "postId" = $1 and "status" = $2
+    select "addedAt", pl."login", "userId"
+    from post_likes pl
+    left join users u
+    on pl."userId" = u."id"
+    where pl."postId" = $1 and pl."status" = $2 and u."isBanned" = false
     order by "addedAt" desc
     limit 3
     `, [id, LikeStatus.Like])
@@ -74,13 +79,17 @@ export class PostsQueryRepository {
     const sortedPosts = await this.dataSource.query(`
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
-        (select count (*) as "likesCount" 
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Like'),
-        
-        (select count (*) as "dislikesCount"
-        from post_likes 
-        where "postId" = posts.id and "status" = 'Dislike')
+      (select count (*) as "likesCount"
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Like' and u."isBanned" = false),
+      
+      (select count (*) as "dislikesCount"
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Dislike' and u."isBanned" = false)
     
     from "posts"
     where "blogId" in (select "blogId" from blogs where "isBanned" = false)
@@ -100,9 +109,11 @@ export class PostsQueryRepository {
       `, [p.id, currentUserId])
 
       const newestLikes = await this.dataSource.query(`
-      select "addedAt", "login", "userId"
-      from "post_likes"
-      where "postId" = $1 and "status" = $2
+      select "addedAt", pl."login", "userId"
+      from post_likes pl
+      left join users u
+      on pl."userId" = u."id"
+      where pl."postId" = $1 and pl."status" = $2 and u."isBanned" = false
       order by "addedAt" desc
       limit 3
       `, [p.id, LikeStatus.Like])
@@ -148,12 +159,16 @@ export class PostsQueryRepository {
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
       (select count (*) as "likesCount" 
-      from post_likes 
-      where "postId" = posts.id and "status" = 'Like'),
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Like' and u."isBanned" = false),
       
       (select count (*) as "dislikesCount"
-      from post_likes 
-      where "postId" = posts.id and "status" = 'Dislike')
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Dislike' and u."isBanned" = false)
     
     from "posts"
     where "blogId" = $1 and "blogId" in (select "blogId" from blogs where "isBanned" = false)
@@ -174,9 +189,11 @@ export class PostsQueryRepository {
       `, [p.id, currentUserId])
 
       const newestLikes = await this.dataSource.query(`
-      select "addedAt", "login", "userId"
-      from "post_likes"
-      where "postId" = $1 and "status" = $2
+      select "addedAt", pl."login", "userId"
+      from post_likes pl
+      left join users u
+      on pl."userId" = u."id"
+      where pl."postId" = $1 and pl."status" = $2 and u."isBanned" = false
       order by "addedAt" desc
       limit 3
       `, [p.id, LikeStatus.Like])
@@ -217,17 +234,21 @@ export class PostsQueryRepository {
     from "posts"
     where "blogId" = $1
     `, [blogId])
-    // "isBanned" = false ???
+
     const sortedPosts = await this.dataSource.query(`
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
       (select count (*) as "likesCount" 
-      from post_likes 
-      where "postId" = posts.id and "status" = 'Like'),
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Like' and u."isBanned" = false),
       
       (select count (*) as "dislikesCount"
-      from post_likes 
-      where "postId" = posts.id and "status" = 'Dislike')
+      from post_likes pl
+      left join users u 
+      on pl."userId" = u."id"
+      where pl."postId" = posts.id and pl."status" = 'Dislike' and u."isBanned" = false)
         
     from "posts"
     where "blogId" = $1
@@ -248,9 +269,11 @@ export class PostsQueryRepository {
       `, [p.id, currentUserId])
 
       const newestLikes = await this.dataSource.query(`
-      select "addedAt", "login", "userId"
-      from "post_likes"
-      where "postId" = $1 and "status" = $2
+      select "addedAt", pl."login", "userId"
+      from post_likes pl
+      left join users u
+      on pl."userId" = u."id"
+      where pl."postId" = $1 and pl."status" = $2 and u."isBanned" = false
       order by "addedAt" desc
       limit 3
       `, [p.id, LikeStatus.Like])

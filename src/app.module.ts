@@ -12,17 +12,12 @@ import {TestRepository} from './features/test/test.repository';
 import {CommentsController} from './features/comments/api/comments.controller';
 import {CommentsRepository} from './features/comments/infrastructure/comments.repository';
 import {MongooseModule} from '@nestjs/mongoose';
-import {Blog3, BlogSchema} from './features/blogs/blogs.schema';
-import {User3, UserSchema} from './features/users/entity/users.schema';
 import {CommentsQueryRepository} from './features/comments/infrastructure/comments.query.repository';
 import {PostsQueryRepository} from './features/posts/infrastucture/posts.query.repository';
 import {BlogsQueryRepository} from './features/blogs/infrastructure/blogs.query.repository';
-import {Post3, PostSchema} from './features/posts/entity/posts.schema';
-import {Comment3, CommentSchema} from './features/comments/entity/comments.schema';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {AuthModule} from './features/auth/auth.module';
 import {Request, RequestSchema} from './infrastructure/guards/rate.limit/request.schema';
-import {Device3, DeviceSchema} from './features/devices/devices.schema';
 import {CqrsModule} from '@nestjs/cqrs';
 import {BindBlogUseCase} from './features/blogs/application/sa.use.cases/bind.blog.use.case';
 import {CreateBlogUseCase} from './features/blogs/application/blogger.use.cases/create.blog.use.case';
@@ -33,7 +28,6 @@ import {CreateCommentUseCase} from './features/comments/application/use.cases/cr
 import {BanBlogUseCase} from './features/blogs/application/sa.use.cases/ban.blog.use.case';
 import {UpdateBlogUseCase} from './features/blogs/application/blogger.use.cases/update.blog.use.case';
 import {BlogExistsConstraint} from './features/users/api/models/input/ban.user.current.blog.input.model';
-import {BannedUserForBlog3, BannedUserForBlogSchema,} from './features/users/entity/banned.users.for.blog.schema';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {UpdateCommentUseCase} from './features/comments/application/use.cases/update.comment.use.case';
 import {Users} from './features/users/entity/user.entity';
@@ -73,13 +67,7 @@ const useCases = [
       inject: [ConfigService]
     }),
     MongooseModule.forFeature([
-      { name: User3.name, schema: UserSchema },
-      { name: Blog3.name, schema: BlogSchema },
-      { name: Post3.name, schema: PostSchema },
-      { name: Device3.name, schema: DeviceSchema },
-      { name: Comment3.name, schema: CommentSchema },
       { name: Request.name, schema: RequestSchema },
-      { name: BannedUserForBlog3.name, schema: BannedUserForBlogSchema },
     ]),
     TypeOrmModule.forRootAsync({useClass: TypeOrmOptions}),
     TypeOrmModule.forFeature([

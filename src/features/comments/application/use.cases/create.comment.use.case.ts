@@ -24,7 +24,7 @@ export class CreateCommentUseCase
     const {postId, content, userId} = command.inputModel
     const post = await this.postsQueryRepository.getPost(postId);
     const user = await this.usersQueryRepository.getUserById(userId);
-    //todo -1 добавить проверку не забанен ли пользователь в текущем блоге??
+    //todo - добавить проверку не забанен ли пользователь в текущем блоге!!!
 
     const model = {
       id: randomUUID(),

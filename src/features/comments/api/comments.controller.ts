@@ -40,8 +40,7 @@ export class CommentsController {
     @Req() req,
     @Param('id') commentId: string,
   ): Promise<CommentViewModel | null> {
-    // если юзер забанен, мы не можем получить его коммент
-    //todo - добавить проверку в use case?
+    //todo - если юзер забанен, мы не можем получить его коммент - добавить проверку в use case?
     const comment = await this.commentsQueryRepository.getComment(
       commentId,
       req.userId,

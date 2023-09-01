@@ -6,6 +6,9 @@ import {Test} from '@nestjs/testing';
 import {AppModule} from '../../../app.module';
 
 describe('AuthService – integration test', () => {
+
+  //todo - разобраться как писать интеграуионные тесты
+
   let mongoServer: MongoMemoryServer;
   let app;
   const emailAdapterMock: jest.Mocked<EmailAdapter> = {

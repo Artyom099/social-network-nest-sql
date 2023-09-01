@@ -1,7 +1,6 @@
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs';
 import {CommentsRepository} from '../../infrastructure/comments.repository';
 
-
 export class UpdateCommentCommand {
   constructor(public commentId: string, public content: string) {}
 }

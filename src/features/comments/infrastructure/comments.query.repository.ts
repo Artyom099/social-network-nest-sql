@@ -18,13 +18,17 @@ export class CommentsQueryRepository {
     const [comment] = await this.dataSource.query(`
     select "id", "content", "createdAt", "userId", "userLogin",
     
-        (select count (*) as "likesCount" 
-        from comment_likes 
-        where "commentId" = comments.id and "status" = 'Like'),
-        
-        (select count (*) as "dislikesCount"
-        from comment_likes 
-        where "commentId" = comments.id and "status" = 'Dislike')
+      (select count (*) as "likesCount" 
+      from comment_likes cl
+      left join users u 
+      on cl."userId" = u."id"
+      where cl."commentId" = comments.id and cl."status" = 'Like' and u."isBanned" = false),
+      
+      (select count (*) as "dislikesCount"
+      from comment_likes cl
+      left join users u 
+      on cl."userId" = u."id"
+      where cl."commentId" = comments.id and cl."status" = 'Dislike' and u."isBanned" = false)
         
     from "comments"
     where "id" = $1
@@ -66,13 +70,17 @@ export class CommentsQueryRepository {
     const sortedComments = await this.dataSource.query(`
     select "id", "content", "createdAt", "userId", "userLogin",
     
-        (select count (*) as "likesCount" 
-        from comment_likes 
-        where "commentId" = comments.id and "status" = 'Like'),
-        
-        (select count (*) as "dislikesCount"
-        from comment_likes 
-        where "commentId" = comments.id and "status" = 'Dislike')
+      (select count (*) as "likesCount" 
+      from comment_likes cl
+      left join users u 
+      on cl."userId" = u."id"
+      where cl."commentId" = comments.id and cl."status" = 'Like' and u."isBanned" = false),
+      
+      (select count (*) as "dislikesCount"
+      from comment_likes cl
+      left join users u 
+      on cl."userId" = u."id"
+      where cl."commentId" = comments.id and cl."status" = 'Dislike' and u."isBanned" = false)
     
     from "comments"
     where "postId" = $1
@@ -84,7 +92,6 @@ export class CommentsQueryRepository {
       query.pageSize,
       query.offset(),
     ])
-
 
     const items = await Promise.all(sortedComments.map(async (c): Promise<CommentViewModel> => {
       const [myLikeInfo] = await this.dataSource.query(`
@@ -118,7 +125,6 @@ export class CommentsQueryRepository {
     };
   }
 
-  //todo - вроде не работает этот метод в users tests
   async getCommentsCurrentBlogger(
     currentUserId: string,
     query: DefaultPaginationInput,
@@ -132,16 +138,20 @@ export class CommentsQueryRepository {
     const sortedComments = await this.dataSource.query(`
     select "id", "content", "createdAt", "userId", "userLogin",
     
-        (select count (*) as "likesCount" 
-        from comment_likes 
-        where "commentId" = comments.id and "status" = 'Like'),
-        
-        (select count (*) as "dislikesCount"
-        from comment_likes 
-        where "commentId" = comments.id and "status" = 'Dislike')
+      (select count (*) as "likesCount" 
+      from comment_likes cl
+      left join users u 
+      on cl."userId" = u."id"
+      where cl."commentId" = comments.id and cl."status" = 'Like' and u."isBanned" = false),
+      
+      (select count (*) as "dislikesCount"
+      from comment_likes cl
+      left join users u 
+      on cl."userId" = u."id"
+      where cl."commentId" = comments.id and cl."status" = 'Dislike' and u."isBanned" = false)
     
     from "comments"
-    where "userId" = $1
+    where "userId" in (select "id" from blogs where "userId" = $1)
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2
     offset $3
