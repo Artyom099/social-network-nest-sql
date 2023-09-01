@@ -22,6 +22,8 @@ export class UpdateCommentLikesUseCase implements ICommandHandler<UpdateCommentL
       likeStatus: command.likeStatus,
     }
     await this.commentsRepository.setCommentNone(model)
-    return this.commentsRepository.setCommentReaction(model)
+    if (command.likeStatus !== LikeStatus.None) {
+      return this.commentsRepository.setCommentReaction(model)
+    }
   }
 }

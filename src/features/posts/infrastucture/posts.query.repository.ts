@@ -10,9 +10,7 @@ import {DataSource} from 'typeorm';
 export class PostsQueryRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  //todo - как сделать так, чтобы лайки забаненых юзеров не учитывались?
-  //как-то через join?
-
+  //todo - как сделать так, чтобы лайки забаненых юзеров не учитывались? как-то через join?
   async getPost(
     id: string,
     currentUserId?: string | null,
@@ -70,8 +68,9 @@ export class PostsQueryRepository {
     const [totalCount] = await this.dataSource.query(`
     select count (*)
     from "posts"
+    where "blogId" in (select "blogId" from blogs where "isBanned" = false)
     `)
-    // where "isBanned" = false
+
     const sortedPosts = await this.dataSource.query(`
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     
@@ -84,6 +83,7 @@ export class PostsQueryRepository {
         where "postId" = posts.id and "status" = 'Dislike')
     
     from "posts"
+    where "blogId" in (select "blogId" from blogs where "isBanned" = false)
     order by "${query.sortBy}" ${query.sortDirection}
     limit $1
     offset $2
@@ -138,13 +138,10 @@ export class PostsQueryRepository {
     blogId: string,
     query: DefaultPaginationInput,
   ): Promise<PaginationViewModel<PostViewModel[]>> {
-    //todo - как исключить посты забаненых блогов?
-    // QueryFailedError: column "isBanned" does not exist
-    //  "isBanned" = false and
-    const totalCount = await this.dataSource.query(`
+    const [totalCount] = await this.dataSource.query(`
     select count (*)
     from "posts"
-    where "blogId" = $1 and (select "blogId" from blogs where "isBanned" = false)
+    where "blogId" = $1 and "blogId" in (select "blogId" from blogs where "isBanned" = false)
     `, [blogId])
 
     const sortedPosts = await this.dataSource.query(`
@@ -159,7 +156,7 @@ export class PostsQueryRepository {
       where "postId" = posts.id and "status" = 'Dislike')
     
     from "posts"
-    where "blogId" = $1 and (select "blogId" from blogs where "isBanned" = false)
+    where "blogId" = $1 and "blogId" in (select "blogId" from blogs where "isBanned" = false)
     order by "${query.sortBy}" ${query.sortDirection}
     limit $2
     offset $3
@@ -220,7 +217,7 @@ export class PostsQueryRepository {
     from "posts"
     where "blogId" = $1
     `, [blogId])
-    // "isBanned" = false
+    // "isBanned" = false ???
     const sortedPosts = await this.dataSource.query(`
     select "id", "title", "shortDescription", "content", "createdAt", "blogName", "blogId",
     

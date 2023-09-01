@@ -31,6 +31,8 @@ export class PostsService {
       login: user.login,
     }
     await this.postsRepository.setPostNone(updatePostLikesModel)
-    return this.postsRepository.setPostReaction(updatePostLikesModel)
+    if (likeStatus !== LikeStatus.None) {
+      return this.postsRepository.setPostReaction(updatePostLikesModel)
+    }
   }
 }
