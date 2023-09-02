@@ -986,6 +986,22 @@ describe('Ban users for different blogs', () => {
     expect(banUserResponse).toBeDefined();
     expect(banUserResponse.status).toEqual(HttpStatus.NO_CONTENT);
   });
+  it('8.2 – PUT:/blogger/users/:id/ban – return 204 & ban 2nd user for blog AGAIN', async () => {
+    const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();
+
+    const banUserResponse = await request(server)
+      .put(`/blogger/users/${secondCreatedUser.id}/ban`)
+      .auth(firstAccessToken, {type: 'bearer'})
+      .send({
+        isBanned: true,
+        banReason: 'length_21-weqweqweqwq',
+        blogId,
+      });
+
+    expect(banUserResponse).toBeDefined();
+    expect(banUserResponse.status).toEqual(HttpStatus.NO_CONTENT);
+  });
+
   it('9 – GET:/blogger/users/blog/:id – return 200 & banned 2nd user for blog', async () => {
     const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();
 
@@ -1014,7 +1030,7 @@ describe('Ban users for different blogs', () => {
     });
   });
 
-  // 2й юзер создает свой блог и не может написать коммент под постом
+  // 2й юзер логинится и не может написать коммент под постом 1 юзера
   it('10 – POST:/auth/login – return 200, 2nd user login', async () => {
     const {secondUser} = expect.getState();
 
@@ -1068,7 +1084,7 @@ describe('Ban users for different blogs', () => {
     expect.setState({secondBLog: createBlogResponse.body});
   });
 
-  // 3й юзер пишет коммент под постом
+  // 3й юзер логинится и пишет коммент под постом
   it('13 – POST:/auth/login – return 200, 3rd user login', async () => {
     const {thirdUser} = expect.getState();
 
@@ -1210,7 +1226,7 @@ describe('Ban users for different blogs', () => {
     });
   });
 
-  // админ банит 2й блог
+  // админ банит блог 2го юзера
   it('19 – PUT:/blogger/users/:id/ban – return 204', async () => {
     const {secondBLog} = expect.getState();
 
@@ -1223,7 +1239,7 @@ describe('Ban users for different blogs', () => {
     expect(banUserResponse.status).toEqual(HttpStatus.NO_CONTENT);
   });
 
-  // незареганый юзер видит 1й блог и не видит 2й
+  // незареганый юзер видит 1й блог и не видит 2й блог
   it('20 – GET:/blogs – return 201', async () => {
     const {blogId} = expect.getState();
 

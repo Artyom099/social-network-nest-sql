@@ -8,36 +8,34 @@ import {DataSource} from 'typeorm';
 
 @Injectable()
 export class UsersQueryRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async getUserById(id: string): Promise<UserViewModel | null> {
-    const user = await this.dataSource.query(`
+    const [user] = await this.dataSource.query(`
     select "id", "login", "email", "createdAt"
     from "users"
     where "id" = $1
     `, [id])
 
-    return user.length ? user[0] : null
+    return user ? user : null
   }
 
   async getUserByIdSA(id: string): Promise<SAUserViewModel | null> {
-    const user = await this.dataSource.query(`
+    const [user] = await this.dataSource.query(`
     select "id", "login", "email", "createdAt", "isBanned", "banDate", "banReason"
     from "users"
     where "id" = $1
     `, [id])
 
-    return user.length ? {
-      id: user[0].id,
-      login: user[0].login,
-      email: user[0].email,
-      createdAt: user[0].createdAt,
+    return user ? {
+      id: user.id,
+      login: user.login,
+      email: user.email,
+      createdAt: user.createdAt,
       banInfo: {
-        isBanned: user[0].isBanned,
-        banDate: user[0].banDate,
-        banReason: user[0].banReason,
+        isBanned: user.isBanned,
+        banDate: user.banDate,
+        banReason: user.banReason,
       },
     } : null
   }

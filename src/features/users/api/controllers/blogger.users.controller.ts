@@ -60,13 +60,26 @@ export class BloggerUsersController {
     const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) throw new NotFoundException();
 
-    const blog = await this.blogsQueryRepository.getBlogSA(inputModel.blogId);
-    if (!blog || req.userId !== blog.blogOwnerInfo.userId) {
-      throw new ForbiddenException();
-    } else {
-      return this.commandBus.execute(
-        new BanUserForCurrentBlogCommand(userId, inputModel),
-      );
+    try {
+      const blog = await this.blogsQueryRepository.getBlogSA(inputModel.blogId);
+      console.log({blog: blog});
+      console.log({userId: req.userId});
+      if (!blog || req.userId !== blog.blogOwnerInfo.userId) {
+        throw new ForbiddenException();
+      }
+    } catch (e) {
+      console.log({controller_1: e});
     }
+
+    try {
+      // else {
+        return this.commandBus.execute(
+          new BanUserForCurrentBlogCommand(userId, inputModel),
+        );
+      // }
+    } catch (e) {
+      console.log({controller_2: e});
+    }
+
   }
 }

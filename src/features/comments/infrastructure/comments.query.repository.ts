@@ -137,7 +137,6 @@ export class CommentsQueryRepository {
     where b."userId" = $1
     `, [currentUserId])
 
-    //  and c."userId" =
     const sortedComments = await this.dataSource.query(`
     select c."id", "content", c."createdAt", c."userId", c."userLogin", 
       c."postId", c."postTitle", b."id" as "blogId", b."name" as "blogName",
@@ -166,7 +165,6 @@ export class CommentsQueryRepository {
       query.pageSize,
       query.offset(),
     ])
-    console.log({sortedComments: sortedComments});
 
     const items = await Promise.all(sortedComments.map(async (c) => {
       const [myLikeInfo] = await this.dataSource.query(`
