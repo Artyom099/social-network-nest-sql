@@ -25,28 +25,28 @@ export class BanUserForCurrentBlogUseCase
     const { userId, inputModel } = command;
     const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) return null;
+    console.log({user: user});
 
-    try {
-      const bannedUser = await this.bannedUsersForBlogQueryRepository.getBannedUserForBlog(
+    const bannedUser = await this.bannedUsersForBlogQueryRepository.getBannedUserForBlog(
+      userId,
+      inputModel.blogId,
+    );
+    console.log({bannedUser: bannedUser});
+    console.log({inputModel: inputModel});
+    if (!bannedUser && inputModel.isBanned) {
+      const model = {
         userId,
-        inputModel.blogId,
-      );
-      if (!bannedUser && inputModel.isBanned) {
-        const model = {
-          userId,
-          login: user.login,
-          createdAt: user.createdAt,
-          inputModel,
-        }
-        return this.bannedUsersForBlogRepository.banUserForBlog(model);
+        login: user.login,
+        createdAt: user.createdAt,
+        inputModel,
       }
-      if (bannedUser && !inputModel.isBanned) {
-        return this.bannedUsersForBlogRepository.unbanUserForBlog(userId);
-      }
+      await this.bannedUsersForBlogRepository.banUserForBlog(model);
       return;
-    } catch (e) {
-      console.log({use_case: e});
     }
-
+    if (bannedUser && !inputModel.isBanned) {
+      await this.bannedUsersForBlogRepository.unbanUserForBlog(userId);
+      return;
+    }
+    return;
   }
 }

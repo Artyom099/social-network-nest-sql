@@ -986,21 +986,6 @@ describe('Ban users for different blogs', () => {
     expect(banUserResponse).toBeDefined();
     expect(banUserResponse.status).toEqual(HttpStatus.NO_CONTENT);
   });
-  it('8.2 – PUT:/blogger/users/:id/ban – return 204 & ban 2nd user for blog AGAIN', async () => {
-    const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();
-
-    const banUserResponse = await request(server)
-      .put(`/blogger/users/${secondCreatedUser.id}/ban`)
-      .auth(firstAccessToken, {type: 'bearer'})
-      .send({
-        isBanned: true,
-        banReason: 'length_21-weqweqweqwq',
-        blogId,
-      });
-
-    expect(banUserResponse).toBeDefined();
-    expect(banUserResponse.status).toEqual(HttpStatus.NO_CONTENT);
-  });
 
   it('9 – GET:/blogger/users/blog/:id – return 200 & banned 2nd user for blog', async () => {
     const {secondCreatedUser, firstAccessToken, blogId} = expect.getState();

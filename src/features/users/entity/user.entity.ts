@@ -1,4 +1,4 @@
-import {Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {BannedUsersForBlog} from './banned.user.for.blog.entity';
 import {Devices} from '../../devices/device.entity';
 import {Blogs} from '../../blogs/blog.entity';
@@ -35,8 +35,8 @@ export class Users {
   @Column({nullable: true})
   recoveryCode: string;
 
-  @OneToOne(() => BannedUsersForBlog, b => b.user)
-  bannedUsersForBlog: BannedUsersForBlog;
+  @OneToMany(() => BannedUsersForBlog, b => b.user)
+  bannedUsersForBlog: BannedUsersForBlog[];
 
   @OneToMany(() => Devices, d => d.user)
   devices: Devices[];

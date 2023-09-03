@@ -7,18 +7,16 @@ import {BannedUserForBlogViewModel} from '../api/models/view/banned.user.for.blo
 
 @Injectable()
 export class BannedUsersForBlogQueryRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-  ) {}
-
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
+// and "isBanned" = true
   async getBannedUserForBlog(id: string, blogId: string) {
-    const user = await this.dataSource.query(`
+    const [user] = await this.dataSource.query(`
     select "userId" as "id", "login", "blogId", "isBanned", "banDate", "banReason"
     from "banned_users_for_blog"
-    where "userId" = $1 and "blogId" = $2 and "isBanned" = true
+    where "userId" = $1 and "blogId" = $2
     `, [id, blogId])
 
-    return user.length ? user[0] : null
+    return user ? user : null
   }
 
   async getBannedUsersForBlog(
@@ -26,10 +24,10 @@ export class BannedUsersForBlogQueryRepository {
     query: BannedUsersPaginationInput,
   ): Promise<PaginationViewModel<BannedUserForBlogViewModel[]>> {
     const [totalCount] = await this.dataSource.query(`
-      select count(*)
-      from "banned_users_for_blog"
-      where "isBanned" = true and "blogId" = $1
-      `, [blogId])
+    select count(*)
+    from "banned_users_for_blog"
+    where "isBanned" = true and "blogId" = $1
+    `, [blogId])
 
     const sortedUsers = await this.dataSource.query(`
     select "userId" as "id", "login", "blogId", "isBanned", "banDate", "banReason"

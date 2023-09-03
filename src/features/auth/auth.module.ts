@@ -35,6 +35,16 @@ import {BannedUsersForBlogQueryRepository} from '../users/infrastructure/banned.
 import {ResendConfirmationUseCase} from './application/use.cases/resend.confirmation.use.case';
 import {CheckCredentialsUseCase} from './application/use.cases/check.credentials.use.case';
 import {RefreshTokenUseCase} from './application/use.cases/refresh.token.use.case';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {TypeOrmOptions} from '../../infrastructure/options/type-orm.options';
+import {Users} from '../users/entity/user.entity';
+import {BannedUsersForBlog} from '../users/entity/banned.user.for.blog.entity';
+import {Devices} from '../devices/device.entity';
+import {Blogs} from '../blogs/blog.entity';
+import {Posts} from '../posts/entity/post.entity';
+import {PostLikes} from '../posts/entity/post.likes.entity';
+import {Comments} from '../comments/entity/сomment.entity';
+import {CommentLikes} from '../comments/entity/comment.likes.entity';
 
 const useCases = [
   BanUserUseCase,
@@ -61,7 +71,17 @@ const useCases = [
     MongooseModule.forFeature([
       { name: Request.name, schema: RequestSchema },
     ]),
-    // TypeOrmModule.forFeature([User, BannedUserForBlog])
+    TypeOrmModule.forRootAsync({useClass: TypeOrmOptions}),
+    TypeOrmModule.forFeature([
+      Users,
+      BannedUsersForBlog,
+      Devices,
+      Blogs,
+      Posts,
+      PostLikes,
+      Comments,
+      CommentLikes,
+    ])
   ],
   controllers: [
     AuthController,

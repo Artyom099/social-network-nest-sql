@@ -8,26 +8,35 @@ export class BannedUsersForBlogRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async banUserForBlog(dto: BanUserForBlogModel) {
-    return this.dataSource.query(`
-    insert into "banned_users_for_blog" 
-    ("userId", "login", "createdAt", "blogId", "isBanned", "banDate", "banReason")
-    values ($1, $2, $3, $4, $5, $6, $7)
-    `, [
-      dto.userId,
-      dto.login,
-      dto.createdAt,
-      dto.inputModel.blogId,
-      dto.inputModel.isBanned,
-      new Date(),
-      dto.inputModel.banReason
-    ])
+    console.log({dto: dto});
+    try {
+      return this.dataSource.query(`
+      insert into "banned_users_for_blog" 
+      ("userId", "login", "createdAt", "blogId", "isBanned", "banDate", "banReason")
+      values ($1, $2, $3, $4, $5, $6, $7)
+      `, [
+        dto.userId,
+        dto.login,
+        dto.createdAt,
+        dto.inputModel.blogId,
+        dto.inputModel.isBanned,
+        new Date(),
+        dto.inputModel.banReason
+      ])
+    } catch (e) {
+      console.log({banUserForBlog: e});
+    }
   }
 
   async unbanUserForBlog(id: string) {
-    return this.dataSource.query(`
-    update "banned_users_for_blog"
-    set "isBanned" = false
-    where "userId" = $1
-    `, [id])
+
+    try {
+      return this.dataSource.query(`
+      delete from "banned_users_for_blog"
+      where "userId" = $1
+      `, [id])
+    } catch (e) {
+      console.log({unbanUserForBlog: e});
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
 import {Users} from './user.entity';
 import {Blogs} from '../../blogs/blog.entity';
 
@@ -13,9 +13,11 @@ export class BannedUsersForBlog {
   @Column()
   banReason: string;
 
-  @OneToOne(() => Users, u => u.bannedUsersForBlog)
+  @ManyToOne(() => Users, u => u.bannedUsersForBlog)
   @JoinColumn()
   user: Users;
+  // @Column({nullable: true})
+  // userId: string;
   @Column()
   login: string;
   @Column()
@@ -24,4 +26,6 @@ export class BannedUsersForBlog {
   @OneToOne(() => Blogs, b => b.bannedUsersForBlog)
   @JoinColumn()
   blog: Blogs;
+  @Column({nullable: true})
+  blogId: string;
 }
