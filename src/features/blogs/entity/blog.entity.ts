@@ -1,8 +1,8 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
-import {Posts} from '../posts/entity/post.entity';
-import {Users} from '../users/entity/user.entity';
-import {BannedUsersForBlog} from '../users/entity/banned.user.for.blog.entity';
-import {Comments} from '../comments/entity/сomment.entity';
+import {Posts} from '../../posts/entity/post.entity';
+import {Users} from '../../users/entity/user.entity';
+import {BannedUsersForBlog} from '../../users/entity/banned.user.for.blog.entity';
+import {Comments} from '../../comments/entity/сomment.entity';
 
 @Entity()
 export class Blogs {

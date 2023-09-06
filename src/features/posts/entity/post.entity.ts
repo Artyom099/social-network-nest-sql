@@ -1,5 +1,5 @@
 import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
-import {Blogs} from '../../blogs/blog.entity';
+import {Blogs} from '../../blogs/entity/blog.entity';
 import {Comments} from '../../comments/entity/сomment.entity';
 import {PostLikes} from './post.likes.entity';
 

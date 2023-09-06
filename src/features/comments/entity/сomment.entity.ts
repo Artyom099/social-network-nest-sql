@@ -2,7 +2,7 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 import {CommentLikes} from './comment.likes.entity';
 import {Posts} from '../../posts/entity/post.entity';
 import {Users} from '../../users/entity/user.entity';
-import {Blogs} from '../../blogs/blog.entity';
+import {Blogs} from '../../blogs/entity/blog.entity';
 
 @Entity()
 export class Comments {

@@ -1,7 +1,7 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {BannedUsersForBlog} from './banned.user.for.blog.entity';
-import {Devices} from '../../devices/device.entity';
-import {Blogs} from '../../blogs/blog.entity';
+import {Devices} from '../../devices/entity/device.entity';
+import {Blogs} from '../../blogs/entity/blog.entity';
 import {CommentLikes} from '../../comments/entity/comment.likes.entity';
 import {PostLikes} from '../../posts/entity/post.likes.entity';
 import {Comments} from '../../comments/entity/сomment.entity';
