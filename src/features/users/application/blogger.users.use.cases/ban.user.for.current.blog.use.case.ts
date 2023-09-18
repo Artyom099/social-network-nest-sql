@@ -31,8 +31,6 @@ export class BanUserForCurrentBlogUseCase
       userId,
       inputModel.blogId,
     );
-    console.log({bannedUser: bannedUser});
-    console.log({inputModel: inputModel});
     if (!bannedUser && inputModel.isBanned) {
       const model = {
         userId,

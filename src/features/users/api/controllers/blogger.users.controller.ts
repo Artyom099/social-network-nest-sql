@@ -60,7 +60,6 @@ export class BloggerUsersController {
     const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) throw new NotFoundException();
 
-    console.log('-------------------');
     try {
       const blog = await this.blogsQueryRepository.getBlogSA(inputModel.blogId);
       console.log({blog: blog});
@@ -80,6 +79,5 @@ export class BloggerUsersController {
     } catch (e) {
       console.log({controller_2: e});
     }
-    console.log('+++++++++++++++++++++');
   }
 }
