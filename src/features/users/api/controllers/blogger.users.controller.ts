@@ -62,8 +62,6 @@ export class BloggerUsersController {
 
     try {
       const blog = await this.blogsQueryRepository.getBlogSA(inputModel.blogId);
-      console.log({blog: blog});
-      console.log({userId: req.userId});
       if (!blog || req.userId !== blog.blogOwnerInfo.userId) {
         throw new ForbiddenException();
       }
@@ -72,7 +70,6 @@ export class BloggerUsersController {
     }
 
     try {
-      console.log('execute_1');
       return this.commandBus.execute(
         new BanUserForCurrentBlogCommand(userId, inputModel),
       );
