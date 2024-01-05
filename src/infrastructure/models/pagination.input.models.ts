@@ -1,4 +1,4 @@
-import {BanStatus, SortBy, SortDirection} from '../utils/constants';
+import {BanStatus, SortBy, SortDirection} from '../utils/enums';
 import {IsBoolean, IsOptional, IsString} from 'class-validator';
 import {Transform} from 'class-transformer';
 import {isNil} from '@nestjs/common/utils/shared.utils';
@@ -11,17 +11,17 @@ export class DefaultPaginationInput {
   })
   sortBy = SortBy.default;
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }): SortDirection => {
     return value === SortDirection.asc ? SortDirection.asc : SortDirection.desc;
   })
   sortDirection: 'asc' | 'desc' = SortDirection.desc;
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }): number => {
     return value < 1 || value % 1 !== 0 ? 1 : Number(value);
   })
   pageNumber = 1;
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }): number => {
     return value < 1 || value % 1 !== 0 ? 10 : Number(value);
   })
   pageSize = 10;

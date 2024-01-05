@@ -45,7 +45,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(BearerAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async getMyInfo(@Req() req) {
+  async getMyInfo(@Req() req: any) {
     const user = await this.usersQueryRepository.getUserById(req.userId);
     return {
       email: user?.email,
@@ -58,7 +58,7 @@ export class AuthController {
   // @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.OK)
   async login(
-    @Req() req,
+    @Req() req: any,
     @Res({ passthrough: true }) res,
     @Body() InputModel: AuthInputModel,
   ) {
@@ -93,7 +93,7 @@ export class AuthController {
   @Post('refresh-token')
   @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@Req() req, @Res({ passthrough: true }) res) {
+  async refreshToken(@Req() req: any, @Res({ passthrough: true }) res: any) {
     const { deviceId, lastActiveDate, token } =
     await this.commandBus.execute(new RefreshTokenCommand(req.cookies.refreshToken))
 

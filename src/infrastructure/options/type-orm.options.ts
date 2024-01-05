@@ -6,7 +6,7 @@ import {ConfigService} from '@nestjs/config';
 export class TypeOrmOptions implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
 
-  createTypeOrmOptions():  TypeOrmModuleOptions {
+  createTypeOrmOptions(): TypeOrmModuleOptions {
     const nodeEnv = this.configService.getOrThrow<string>('NODE_ENV')
     console.log(nodeEnv);
     if  (nodeEnv && nodeEnv.toUpperCase() === 'DEVELOPMENT' || nodeEnv.toUpperCase() === 'TEST') {

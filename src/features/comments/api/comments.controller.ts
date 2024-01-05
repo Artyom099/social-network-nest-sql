@@ -37,7 +37,7 @@ export class CommentsController {
   @UseGuards(CheckUserIdGuard)
   @HttpCode(HttpStatus.OK)
   async getComment(
-    @Req() req,
+    @Req() req: any,
     @Param('id') commentId: string,
   ): Promise<CommentViewModel | null> {
     //todo - если юзер забанен, мы не можем получить его коммент - добавить проверку в use case?
@@ -61,7 +61,7 @@ export class CommentsController {
   @UseGuards(BearerAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateComment(
-    @Req() req,
+    @Req() req: any,
     @Param('id') commentId: string,
     @Body() InputModel: CommentInputModel,
   ) {
@@ -83,7 +83,7 @@ export class CommentsController {
   @Delete(':id')
   @UseGuards(BearerAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteComment(@Req() req, @Param('id') commentId: string) {
+  async deleteComment(@Req() req: any, @Param('id') commentId: string) {
     const comment = await this.commentsQueryRepository.getComment(
       commentId,
       req.userId,
@@ -100,7 +100,7 @@ export class CommentsController {
   @UseGuards(BearerAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateLikeStatus(
-    @Req() req,
+    @Req() req: any,
     @Param('id') commentId: string,
     @Body() inputModel: LikeStatusInputModel,
   ) {
