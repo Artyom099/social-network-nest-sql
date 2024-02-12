@@ -1,35 +1,36 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {HttpStatus, INestApplication} from '@nestjs/common';
-import request from 'supertest';
-import {AppModule} from '../src/app.module';
-import {LikeStatus} from '../src/infrastructure/utils/enums';
-import {appSettings} from '../src/infrastructure/settings/app.settings';
-import {getRefreshTokenByResponse} from '../src/infrastructure/utils/helpers';
+import { Test, TestingModule } from "@nestjs/testing";
+import { HttpStatus, INestApplication } from "@nestjs/common";
+import request from "supertest";
+import { AppModule } from "../src/app.module";
+import { LikeStatus } from "../src/infrastructure/utils/enums";
+import { appSettings } from "../src/infrastructure/settings/app.settings";
+import { getRefreshTokenByResponse } from "../src/infrastructure/utils/helpers";
 
-describe('BlogsController (e2e)', () => {
+describe("BlogsController (e2e)", () => {
   let app: INestApplication;
   let server: any;
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    appSettings(app);
+    appSettings<AppModule>(app, AppModule);
     await app.init();
     server = app.getHttpServer();
-    await request(server).delete('/testing/all-data');
+    await request(server).delete("/testing/all-data");
   });
 
-  it('0 – POST:/sa/users – create 1st user by admin', async () => {
+  it("0 – POST:/sa/users – create 1st user by admin", async () => {
     const firstUser = {
-      login: 'lg-1111',
-      password: 'qwerty1',
-      email: 'artyomgolubev1@gmail.com',
+      login: "lg-1111",
+      password: "qwerty1",
+      email: "artyomgolubev1@gmail.com",
     };
     const firstCreateResponse = await request(server)
-      .post('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .post("/sa/users")
+      .auth("admin", "qwerty", { type: "basic" })
       .send({
         login: firstUser.login,
         password: firstUser.password,
@@ -51,8 +52,8 @@ describe('BlogsController (e2e)', () => {
     });
 
     await request(server)
-      .get('/sa/users')
-      .auth('admin', 'qwerty', { type: 'basic' })
+      .get("/sa/users")
+      .auth("admin", "qwerty", { type: "basic" })
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -66,9 +67,9 @@ describe('BlogsController (e2e)', () => {
       firstCreateResponse: firstCreateResponse,
     });
   });
-  it('0 – POST:/auth/login – return 200 & login 1st user', async () => {
+  it("0 – POST:/auth/login – return 200 & login 1st user", async () => {
     const { firstUser } = expect.getState();
-    const loginResponse = await request(server).post('/auth/login').send({
+    const loginResponse = await request(server).post("/auth/login").send({
       loginOrEmail: firstUser.login,
       password: firstUser.password,
     });
@@ -85,12 +86,12 @@ describe('BlogsController (e2e)', () => {
     expect.setState({ accessToken, firstRefreshToken: refreshToken });
   });
 
-  it('1 – GET:/blogger/blogs – return 200 and empty array', async () => {
+  it("1 – GET:/blogger/blogs – return 200 and empty array", async () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 0,
         page: 1,
@@ -100,15 +101,15 @@ describe('BlogsController (e2e)', () => {
       });
   });
   //негативные тесты
-  it('2 – GET:/blogger/blogs/:id – return 404 for not existing blog', async () => {
-    await request(server).get('/blogger/blogs/1').expect(HttpStatus.NOT_FOUND);
+  it("2 – GET:/blogger/blogs/:id – return 404 for not existing blog", async () => {
+    await request(server).get("/blogger/blogs/1").expect(HttpStatus.NOT_FOUND);
   });
   it("3 – GET:/blogger/blogs/:id/posts – return 404 & can't get posts of not existing blog", async () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .get('/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8/posts')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8/posts")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.NOT_FOUND);
   });
   it("4 – POST:/blogger/blogs/:id/posts – return 404 & can't create posts of not existing blog", async () => {
@@ -116,11 +117,11 @@ describe('BlogsController (e2e)', () => {
 
     await request(server)
       .post(`/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8/posts`)
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
-        title: 'valid-title',
-        shortDescription: 'valid-shortDescription',
-        content: 'valid-content',
+        title: "valid-title",
+        shortDescription: "valid-shortDescription",
+        content: "valid-content",
       })
       .expect(HttpStatus.NOT_FOUND);
   });
@@ -129,17 +130,17 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .post('/blogger/blogs')
+      .post("/blogger/blogs")
       .send({
-        name: 'valid name',
-        description: 'valid description',
-        websiteUrl: 'https://valid-Url.com',
+        name: "valid name",
+        description: "valid description",
+        websiteUrl: "https://valid-Url.com",
       })
       .expect(HttpStatus.UNAUTHORIZED);
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 0,
         page: 1,
@@ -153,21 +154,21 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .post('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .post("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
         name: null,
-        description: 'valid description',
-        websiteUrl: 'https://valid-Url.com',
+        description: "valid description",
+        websiteUrl: "https://valid-Url.com",
       })
       .expect(
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
         // { errorsMessages: [{ message: 'Invalid value', field: 'name' }],}
       );
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 0,
         page: 1,
@@ -180,25 +181,25 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .post('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .post("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
-        name: 'valid name',
-        description: '<3',
-        websiteUrl: 'https://valid-Url.com',
+        name: "valid name",
+        description: "<3",
+        websiteUrl: "https://valid-Url.com",
       })
       .expect(HttpStatus.BAD_REQUEST, {
         errorsMessages: [
           {
-            message: 'description must be longer than or equal to 3 characters',
-            field: 'description',
+            message: "description must be longer than or equal to 3 characters",
+            field: "description",
           },
         ],
       });
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 0,
         page: 1,
@@ -211,22 +212,22 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .post('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .post("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
-        name: 'valid name',
-        description: 'valid description',
-        websiteUrl: 'Invalid-Url.c',
+        name: "valid name",
+        description: "valid description",
+        websiteUrl: "Invalid-Url.c",
       })
       .expect(HttpStatus.BAD_REQUEST, {
         errorsMessages: [
-          { message: 'websiteUrl must be an URL address', field: 'websiteUrl' },
+          { message: "websiteUrl must be an URL address", field: "websiteUrl" },
         ],
       });
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 0,
         page: 1,
@@ -236,17 +237,17 @@ describe('BlogsController (e2e)', () => {
       });
   });
 
-  it('9 – POST:/blogger/blogs – return 201 & create first blog', async () => {
+  it("9 – POST:/blogger/blogs – return 201 & create first blog", async () => {
     const { firstRefreshToken } = expect.getState();
     const firstBlog = {
-      name: 'valid-blog',
-      description: 'valid-description',
-      websiteUrl: 'valid-websiteUrl.com',
+      name: "valid-blog",
+      description: "valid-description",
+      websiteUrl: "valid-websiteUrl.com",
     };
 
     const createResponse = await request(server)
-      .post('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .post("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
         name: firstBlog.name,
         description: firstBlog.description,
@@ -265,8 +266,8 @@ describe('BlogsController (e2e)', () => {
     });
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -277,18 +278,18 @@ describe('BlogsController (e2e)', () => {
 
     expect.setState({ firstCreatedBlog: firstCreatedBlog });
   });
-  it('10 – POST:/blogger/blogs – return 201 & create second blog', async () => {
+  it("10 – POST:/blogger/blogs – return 201 & create second blog", async () => {
     const { firstRefreshToken } = expect.getState();
 
     const { firstCreatedBlog } = expect.getState();
     const secondBlog = {
-      name: 'second-blog',
-      description: '2-valid-description',
-      websiteUrl: '2-valid-websiteUrl.com',
+      name: "second-blog",
+      description: "2-valid-description",
+      websiteUrl: "2-valid-websiteUrl.com",
     };
     const createResponse = await request(server)
-      .post('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .post("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
         name: secondBlog.name,
         description: secondBlog.description,
@@ -307,8 +308,8 @@ describe('BlogsController (e2e)', () => {
     });
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -324,12 +325,12 @@ describe('BlogsController (e2e)', () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .put('/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .put("/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8")
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
-        name: 'val_name update',
-        description: 'valid description update',
-        websiteUrl: 'https://valid-Url-update.com',
+        name: "val_name update",
+        description: "valid description update",
+        websiteUrl: "https://valid-Url-update.com",
       })
       .expect(HttpStatus.NOT_FOUND);
   });
@@ -338,18 +339,18 @@ describe('BlogsController (e2e)', () => {
       expect.getState();
 
     await request(server)
-      .put('/blogger/blogs/' + firstCreatedBlog.id)
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .put("/blogger/blogs/" + firstCreatedBlog.id)
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
-        name: 'invalid long name update',
-        description: 'valid description update',
-        websiteUrl: 'https://valid-Url-update.com',
+        name: "invalid long name update",
+        description: "valid description update",
+        websiteUrl: "https://valid-Url-update.com",
       })
       .expect(HttpStatus.BAD_REQUEST);
 
     await request(server)
-      .get('/blogger/blogs/')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs/")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -359,18 +360,18 @@ describe('BlogsController (e2e)', () => {
       });
   });
 
-  it('13 – PUT:/blogger/blogs/:id – return 204 & update blog', async () => {
+  it("13 – PUT:/blogger/blogs/:id – return 204 & update blog", async () => {
     const { firstRefreshToken, firstCreatedBlog, secondCreatedBlog } =
       expect.getState();
     const firstUpdateBlog = {
-      name: 'val_name update',
-      description: 'valid description update',
-      websiteUrl: 'https://valid-Url-update.com',
+      name: "val_name update",
+      description: "valid description update",
+      websiteUrl: "https://valid-Url-update.com",
     };
 
     await request(server)
-      .put('/blogger/blogs/' + firstCreatedBlog.id)
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .put("/blogger/blogs/" + firstCreatedBlog.id)
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
         name: firstUpdateBlog.name,
         description: firstUpdateBlog.description,
@@ -379,8 +380,8 @@ describe('BlogsController (e2e)', () => {
       .expect(HttpStatus.NO_CONTENT);
 
     await request(server)
-      .get('/blogger/blogs/')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs/")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -400,27 +401,27 @@ describe('BlogsController (e2e)', () => {
     expect.setState({ firstUpdateBlog: firstUpdateBlog });
   });
 
-  it('14 – DELETE:/blogger/blogs/:id – return 404 for delete non-exist blog', async () => {
+  it("14 – DELETE:/blogger/blogs/:id – return 404 for delete non-exist blog", async () => {
     const { firstRefreshToken } = expect.getState();
 
     await request(server)
-      .delete('/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .delete("/blogger/blogs/c1191d30-d904-4a0f-92ab-cdd8896971f8")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.NOT_FOUND);
   });
 
-  it('15 – POST:/blogger/blogs/:id/posts – return 201 & create posts current blog', async () => {
+  it("15 – POST:/blogger/blogs/:id/posts – return 201 & create posts current blog", async () => {
     const { firstRefreshToken, firstCreatedBlog, firstUpdateBlog } =
       expect.getState();
     const firstPost = {
-      title: 'valid-title',
-      shortDescription: 'valid-shortDescription',
-      content: 'valid-content',
+      title: "valid-title",
+      shortDescription: "valid-shortDescription",
+      content: "valid-content",
     };
 
     const createPostResponse = await request(server)
       .post(`/blogger/blogs/${firstCreatedBlog.id}/posts`)
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .auth(firstRefreshToken, { type: "bearer" })
       .send({
         title: firstPost.title,
         shortDescription: firstPost.shortDescription,
@@ -447,13 +448,13 @@ describe('BlogsController (e2e)', () => {
 
     expect.setState({ createdPost: createPostResponse.body });
   });
-  it('16 – GET:/blogger/blogs/:id/posts – return 200 & get posts current blog', async () => {
+  it("16 – GET:/blogger/blogs/:id/posts – return 200 & get posts current blog", async () => {
     const { firstRefreshToken, firstCreatedBlog, createdPost } =
       expect.getState();
 
     const getPostsRequest = await request(server)
       .get(`/blogger/blogs/${firstCreatedBlog.id}/posts`)
-      .auth(firstRefreshToken, { type: 'bearer' });
+      .auth(firstRefreshToken, { type: "bearer" });
 
     expect(getPostsRequest).toBeDefined();
     expect(getPostsRequest.status).toBe(HttpStatus.OK);
@@ -466,13 +467,13 @@ describe('BlogsController (e2e)', () => {
     });
   });
 
-  it('17 – GET:/blogs/:id – return 200 & get posts current blog', async () => {
+  it("17 – GET:/blogs/:id – return 200 & get posts current blog", async () => {
     const { firstRefreshToken, firstCreatedBlog, firstUpdateBlog } =
       expect.getState();
 
     const getPostsRequest = await request(server)
       .get(`/blogs/${firstCreatedBlog.id}`)
-      .auth(firstRefreshToken, { type: 'bearer' });
+      .auth(firstRefreshToken, { type: "bearer" });
 
     expect(getPostsRequest).toBeDefined();
     expect(getPostsRequest.status).toBe(HttpStatus.OK);
@@ -486,21 +487,21 @@ describe('BlogsController (e2e)', () => {
     });
   });
 
-  it('18 – DELETE:/blogger/blogs/:id – delete both blogs', async () => {
+  it("18 – DELETE:/blogger/blogs/:id – delete both blogs", async () => {
     const { firstRefreshToken, firstCreatedBlog, secondCreatedBlog } =
       expect.getState();
     await request(server)
-      .delete('/blogger/blogs/' + firstCreatedBlog.id)
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .delete("/blogger/blogs/" + firstCreatedBlog.id)
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.NO_CONTENT);
 
     await request(app.getHttpServer())
-      .get('/blogger/blogs/' + firstCreatedBlog.id)
+      .get("/blogger/blogs/" + firstCreatedBlog.id)
       .expect(HttpStatus.NOT_FOUND);
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 1,
         page: 1,
@@ -510,18 +511,18 @@ describe('BlogsController (e2e)', () => {
       });
 
     await request(server)
-      .delete('/blogger/blogs/' + secondCreatedBlog.id)
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .delete("/blogger/blogs/" + secondCreatedBlog.id)
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.NO_CONTENT);
 
     await request(server)
-      .get('/blogger/blogs/' + secondCreatedBlog.id)
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs/" + secondCreatedBlog.id)
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.NOT_FOUND);
 
     await request(server)
-      .get('/blogger/blogs')
-      .auth(firstRefreshToken, { type: 'bearer' })
+      .get("/blogger/blogs")
+      .auth(firstRefreshToken, { type: "bearer" })
       .expect(HttpStatus.OK, {
         pagesCount: 0,
         page: 1,
