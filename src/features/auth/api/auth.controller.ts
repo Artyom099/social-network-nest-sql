@@ -44,6 +44,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async getMyInfo(@Req() req: any) {
     const user = await this.usersQueryRepository.getUserById(req.userId);
+
     return {
       email: user?.email,
       login: user?.login,
@@ -104,6 +105,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
     });
+
     return { accessToken: token.accessToken };
   }
 
@@ -114,6 +116,7 @@ export class AuthController {
     const payload = await this.tokensService.getTokenPayload(
       req.cookies.refreshToken
     );
+
     return this.devicesService.deleteCurrentDevice(payload.deviceId);
   }
 
