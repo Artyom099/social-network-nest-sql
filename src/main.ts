@@ -7,11 +7,12 @@ export const bootstrap = async () => {
     const app = await NestFactory.create(AppModule);
     appSettings<AppModule>(app, AppModule);
     const PORT = process.env.PORT || 3000;
+
     await app.listen(PORT, () => {
-      console.log(`App started at ${PORT} port`);
+      console.log(`App started at http://localhost:${PORT}`);
     });
   } catch (e) {
-    console.log("cant start", e);
+    console.log({ cannot_start_app: e });
   }
 };
 bootstrap();

@@ -50,7 +50,7 @@ export class SaUsersController {
   async deleteUser(@Param("id") userId: string) {
     const user = await this.usersQueryRepository.getUserById(userId);
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException("user not found");
     } else {
       return this.commandBus.execute(new DeleteUserCommand(userId));
     }
@@ -60,7 +60,7 @@ export class SaUsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async banUser(@Param("id") userId: string, @Body() body: BanUserInputModel) {
     const user = await this.usersQueryRepository.getUserByIdSA(userId);
-    if (!user) throw new NotFoundException("User not found");
+    if (!user) throw new NotFoundException("user not found");
 
     if (body.isBanned) {
       await this.commandBus.execute(new BanUserCommand(userId, body));

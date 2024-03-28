@@ -29,6 +29,7 @@ import { ResendConfirmationCommand } from "../application/use.cases/resend.confi
 import { CreateDeviceDTO } from "../../devices/api/models/create.device.dto";
 import { CheckCredentialsCommand } from "../application/use.cases/check.credentials.use.case";
 import { RefreshTokenCommand } from "../application/use.cases/refresh.token.use.case";
+import { CookieOptions } from "express";
 
 @Controller("auth")
 export class AuthController {
@@ -60,21 +61,24 @@ export class AuthController {
     @Res({ passthrough: true }) res,
     @Body() body: AuthInputModel
   ) {
+    const { loginOrEmail, password } = body;
+
     const token = await this.commandBus.execute(
-      new CheckCredentialsCommand(body.loginOrEmail, body.password)
+      new CheckCredentialsCommand(loginOrEmail, password)
     );
     if (!token) throw new UnauthorizedException();
 
     //todo - move to IsUserBannedUseCase??
     // или проверять на бан в CheckCredentialsUseCase?
     const user = await this.usersQueryRepository.getUserByLoginOrEmail(
-      body.loginOrEmail
+      loginOrEmail
     );
     if (user?.banInfo.isBanned) throw new UnauthorizedException();
 
     const payload = await this.tokensService.getTokenPayload(
       token.refreshToken
     );
+
     const dto: CreateDeviceDTO = {
       ip: req.ip,
       title: req.headers.host,
@@ -84,10 +88,13 @@ export class AuthController {
     };
     await this.devicesService.createDevise(dto);
 
-    res.cookie("refreshToken", token.refreshToken, {
+    const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
-    });
+    };
+
+    res.cookie("refreshToken", token.refreshToken, cookieOptions);
+
     return { accessToken: token.accessToken };
   }
 
@@ -101,10 +108,12 @@ export class AuthController {
 
     await this.devicesService.updateLastActiveDate(deviceId, lastActiveDate);
 
-    res.cookie("refreshToken", token.refreshToken, {
+    const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
-    });
+    };
+
+    res.cookie("refreshToken", token.refreshToken, cookieOptions);
 
     return { accessToken: token.accessToken };
   }
@@ -124,13 +133,15 @@ export class AuthController {
   // @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async setNewPassword(@Body() body: SetNewPasswordInputModel) {
+    const { recoveryCode, newPassword } = body;
+
     const isUserConfirm = await this.usersQueryRepository.getUserByRecoveryCode(
-      body.recoveryCode
+      recoveryCode
     );
     if (!isUserConfirm) throw new BadRequestException();
 
     return this.commandBus.execute(
-      new UpdatePasswordCommand(body.recoveryCode, body.newPassword)
+      new UpdatePasswordCommand(recoveryCode, newPassword)
     );
   }
 
@@ -173,6 +184,7 @@ export class AuthController {
     const confirmEmail = await this.commandBus.execute(
       new ConfirmEmailCommand(body.code)
     );
+
     if (!confirmEmail)
       throw new BadRequestException(
         "code is incorrect, expired or applied=>code"
@@ -188,6 +200,7 @@ export class AuthController {
     const user = await this.usersQueryRepository.getUserByLoginOrEmail(
       body.email
     );
+
     if (!user || user.isConfirmed) {
       throw new BadRequestException("email not exist or confirm=>email");
     } else {
