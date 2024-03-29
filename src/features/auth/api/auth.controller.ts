@@ -69,7 +69,6 @@ export class AuthController {
     if (!token) throw new UnauthorizedException();
 
     //todo - move to IsUserBannedUseCase??
-    // или проверять на бан в CheckCredentialsUseCase?
     const user = await this.usersQueryRepository.getUserByLoginOrEmail(
       loginOrEmail
     );
