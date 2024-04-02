@@ -41,11 +41,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 @Catch(Error)
 export class ErrorExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
-    // const status = exception.getStatus();
-
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    // const request = ctx.getRequest<Request>();
 
     if (process.env.environment !== "production") {
       response
