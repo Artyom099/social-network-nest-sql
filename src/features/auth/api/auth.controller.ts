@@ -30,6 +30,7 @@ import { CreateDeviceDTO } from "../../devices/api/models/create.device.dto";
 import { CheckCredentialsCommand } from "../application/use.cases/check.credentials.use.case";
 import { RefreshTokenCommand } from "../application/use.cases/refresh.token.use.case";
 import { CookieOptions } from "express";
+import { CodeInputModel } from "./models/code.input.model";
 
 @Controller("auth")
 export class AuthController {
@@ -58,7 +59,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Req() req: any,
-    @Res({ passthrough: true }) res,
+    @Res({ passthrough: true }) res: any,
     @Body() body: AuthInputModel
   ) {
     const { loginOrEmail, password } = body;
@@ -120,7 +121,7 @@ export class AuthController {
   @Post("logout")
   @UseGuards(CookieGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async logout(@Req() req) {
+  async logout(@Req() req: any) {
     const payload = await this.tokensService.getTokenPayload(
       req.cookies.refreshToken
     );
@@ -179,7 +180,7 @@ export class AuthController {
   // @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   //todo - add validation to code
-  async sendConfirmationEmail(@Body() body: { code: string }) {
+  async sendConfirmationEmail(@Body() body: CodeInputModel) {
     const confirmEmail = await this.commandBus.execute(
       new ConfirmEmailCommand(body.code)
     );
