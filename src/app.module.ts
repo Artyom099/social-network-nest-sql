@@ -123,6 +123,18 @@ const repositories = [
   CommentsQueryRepository,
 ];
 
+const services = [
+  AppService,
+  EmailAdapter,
+  EmailManager,
+  HashService,
+  TokensService,
+  RequestService,
+  DevicesService,
+  BlogsService,
+  PostsService,
+];
+
 @Module({
   imports: [
     CqrsModule,
@@ -164,19 +176,6 @@ const repositories = [
     PostsController,
     CommentsController,
   ],
-  providers: [
-    ...useCases,
-    ...repositories,
-
-    AppService,
-    EmailAdapter,
-    EmailManager,
-    HashService,
-    TokensService,
-    RequestService,
-    DevicesService,
-    BlogsService,
-    PostsService,
-  ],
+  providers: [...services, ...useCases, ...repositories],
 })
 export class AppModule {}
