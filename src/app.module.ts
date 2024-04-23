@@ -135,6 +135,17 @@ const services = [
   PostsService,
 ];
 
+const entities = [
+  Users,
+  BannedUsersForBlog,
+  Devices,
+  Blogs,
+  Posts,
+  PostLikes,
+  Comments,
+  CommentLikes,
+];
+
 @Module({
   imports: [
     CqrsModule,
@@ -149,16 +160,7 @@ const services = [
     }),
     MongooseModule.forFeature([{ name: Request.name, schema: RequestSchema }]),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmOptions }),
-    TypeOrmModule.forFeature([
-      Users,
-      BannedUsersForBlog,
-      Devices,
-      Blogs,
-      Posts,
-      PostLikes,
-      Comments,
-      CommentLikes,
-    ]),
+    TypeOrmModule.forFeature(entities),
   ],
   controllers: [
     AppController,
