@@ -167,14 +167,11 @@ const entities = [
     TestController,
     AuthController,
     DevicesController,
-
     SaUsersController,
     BloggerUsersController,
-
     PublicBlogsController,
     BloggerBlogsController,
     SABlogsController,
-
     PostsController,
     CommentsController,
   ],
